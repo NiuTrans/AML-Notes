@@ -1,0 +1,37 @@
+\begin{center}
+
+ \begin{tikzpicture}[scale=1]
+\begin{axis}[
+      xlabel near ticks,
+      width=10cm, height=6cm,
+      xlabel={性能},
+      xmin=0,xmax=10,
+      ymin=0,ymax=3.5,
+      xmajorticks=false,
+      ymajorticks=false,
+      legend style={xshift=-1em,yshift=-0.8em,legend cell align=left},
+  ]
+
+	
+  \addplot[color=blue,only marks,mark size=1.0pt,] table {figures/data/f1.dat};
+  \addplot[color=blue,fill=blue!50,opacity=0.5] table {figures/data/ff1.dat};
+  \addplot[color=blue,only marks,mark size=2.0pt] coordinates {(3.5,1)};
+  \addplot[color=blue!50] coordinates {(3.5,0.4)(3.5,1)};
+
+  \addplot[color=red,only marks,mark size=1.0pt,] table {figures/data/f2.dat};
+  \addplot[color=red,fill=red!50,opacity=0.5] table {figures/data/ff2.dat};
+  \addplot[color=red,only marks,mark size=2.0pt] coordinates {(2.5,2)};
+  \addplot[color=red!50] coordinates {(2.5,0.4)(2.5,2)};
+
+  \addplot[color=ugreen,only marks,mark size=1.0pt,] table {figures/data/f3.dat};
+  \addplot[color=ugreen,fill=ugreen!50,opacity=0.5] table {figures/data/ff3.dat};
+  \addplot[color=ugreen,only marks,mark size=2.0pt] coordinates {(7,3)};
+  \addplot[color=ugreen!50] coordinates {(7,0.4)(7,3)};
+  \end{axis}
+
+  \node[inner sep=0pt] (a) at (-1,1.25){系统 {\color{blue} A}};
+  \node[anchor=south,inner sep=0pt] (b) at ([yshift=2.3em]a.north){系统 {\color{red} B}};
+  \node[anchor=south,inner sep=0pt] (b) at ([yshift=2.3em]b.north){系统 {\color{ugreen} C}};
+  \end{tikzpicture}
+\end{center}
+

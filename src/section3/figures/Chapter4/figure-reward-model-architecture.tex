@@ -1,65 +1,64 @@
-
 \begin{center}
-\begin{tikzpicture}
-
-\def\ssep{1cm}
-\def\nsize{0.3cm}
-
-\tikzstyle{lnode} = [minimum width=7cm,minimum height=1.1cm,inner sep=2pt,draw,thick,fill=white];
-
-\begin{scope}
-
-\node [anchor=west] (x0) at (0,0) {\footnotesize{$x_0$}};
-\node [anchor=center] (x1) at ([xshift=\ssep]x0.center) {\footnotesize{$x_1$}};
-\node [anchor=center] (x2) at ([xshift=\ssep]x1.center) {\footnotesize{$x_2$}};
-\node [anchor=center] (x3) at ([xshift=\ssep]x2.center) {\footnotesize{$\cdots$}};
-\node [anchor=center] (x4) at ([xshift=\ssep]x3.center) {\footnotesize{$x_m$}};
-\node [anchor=center] (y1) at ([xshift=\ssep]x4.center) {\footnotesize{$y_1$}};
-\node [anchor=center] (y2) at ([xshift=\ssep]y1.center) {\footnotesize{$y_2$}};
-\node [anchor=center] (y3) at ([xshift=\ssep]y2.center) {\footnotesize{$\cdots$}};
-\node [anchor=center] (y4) at ([xshift=\ssep]y3.center) {\footnotesize{$y_n$}};
-\node [anchor=north] (y4label) at ([yshift=0.1cm]y4.south) {\scriptsize{(Last Token $\langle \mathrm{EOS} \rangle$)}};
-
-\draw [->] ([yshift=0.2cm]x0.center) -- ([yshift=0.55cm]x0.center);
-\draw [->] ([yshift=0.2cm]x1.center) -- ([yshift=0.55cm]x1.center);
-\draw [->] ([yshift=0.2cm]x2.center) -- ([yshift=0.55cm]x2.center);
-\draw [->] ([yshift=0.2cm]x4.center) -- ([yshift=0.55cm]x4.center);
-\draw [->] ([yshift=0.2cm]y1.center) -- ([yshift=0.55cm]y1.center);
-\draw [->] ([yshift=0.2cm]y2.center) -- ([yshift=0.55cm]y2.center);
-\draw [->] ([yshift=0.2cm]y4.center) -- ([yshift=0.55cm]y4.center);
-
-\node [anchor=center] (ox0) at ([yshift=2.6cm]x0.center) {\footnotesize{$\mathbf{h}_{x_0}$}};
-\node [anchor=center] (ox1) at ([yshift=2.6cm]x1.center) {\footnotesize{$\mathbf{h}_{x_1}$}};
-\node [anchor=center] (ox2) at ([yshift=2.6cm]x2.center) {\footnotesize{$\mathbf{h}_{x_2}$}};
-\node [anchor=center] (ox3) at ([yshift=2.6cm]x3.center) {\footnotesize{$\cdots$}};
-\node [anchor=center] (ox4) at ([yshift=2.6cm]x4.center) {\footnotesize{$\mathbf{h}_{x_m}$}};
-\node [anchor=center] (oy1) at ([yshift=2.6cm]y1.center) {\footnotesize{$\mathbf{h}_{y_1}$}};
-\node [anchor=center] (oy2) at ([yshift=2.6cm]y2.center) {\footnotesize{$\mathbf{h}_{y_2}$}};
-\node [anchor=center] (oy3) at ([yshift=2.6cm]y3.center) {\footnotesize{$\cdots$}};
-\node [anchor=center] (oy4) at ([yshift=2.6cm]y4.center) {\footnotesize{$\mathbf{h}_{\mathrm{last}}$}};
-
-\node [anchor=south,draw,thick,minimum width=9cm,minimum height=1.3cm] (llm) at ([yshift=0.4cm]x4.north) {\large{Transformer Decoder (LLM)}};
-\node [anchor=east] (representation) at ([xshift=-0.3cm]ox0.west) {\scriptsize{Representation}};
-\node [anchor=north west] (representation2) at ([yshift=0.1cm]representation.south west) {\scriptsize{at Each Position}};
-
-\draw [<-] ([yshift=-0.25cm]ox0.center) -- ([yshift=-0.6cm]ox0.center);
-\draw [<-] ([yshift=-0.25cm]ox1.center) -- ([yshift=-0.6cm]ox1.center);
-\draw [<-] ([yshift=-0.25cm]ox2.center) -- ([yshift=-0.6cm]ox2.center);
-\draw [<-] ([yshift=-0.25cm]ox4.center) -- ([yshift=-0.6cm]ox4.center);
-\draw [<-] ([yshift=-0.25cm]oy1.center) -- ([yshift=-0.6cm]oy1.center);
-\draw [<-] ([yshift=-0.25cm]oy2.center) -- ([yshift=-0.6cm]oy2.center);
-\draw [<-] ([yshift=-0.25cm]oy4.center) -- ([yshift=-0.6cm]oy4.center);
-
-\filldraw [fill=red!20,draw=white] ([xshift=-0.5cm,yshift=0.2cm]oy4.north west) -- ([xshift=0.5cm,yshift=0.2cm]oy4.north east) -- ([yshift=1cm,xshift=0]oy4.north east) -- ([yshift=1cm,xshift=0]oy4.north west) -- ([xshift=-0.5cm,yshift=0.2cm]oy4.north west);
-
-\node [anchor=south] (reward) at ([yshift=1.2cm]oy4.north) {\footnotesize{Reward (Scalar)}};
-\node [anchor=south] (Wr) at ([yshift=0.3cm]oy4.north) {\footnotesize{$\mathbf{W}_r$}};
-\node [anchor=west] (linear) at ([xshift=0.5cm]Wr.east) {\scriptsize{Linear Map}};
-
-\draw [->] ([yshift=-0.1cm]oy4.north) -- ([yshift=0.18cm]oy4.north);
-\draw [<-] ([yshift=0.1cm]reward.south) -- ([yshift=-0.18cm]reward.south);
-
-\end{scope}
-
-\end{tikzpicture}
-\end{center}
+    \begin{tikzpicture}
+    
+    \def\ssep{1cm}
+    \def\nsize{0.3cm}
+    
+    \tikzstyle{lnode} = [minimum width=7cm,minimum height=1.1cm,inner sep=2pt,draw,thick,fill=white];
+    
+    \begin{scope}
+    
+    \node [anchor=west] (x0) at (0,0) {\footnotesize{$x_0$}};
+    \node [anchor=center] (x1) at ([xshift=\ssep]x0.center) {\footnotesize{$x_1$}};
+    \node [anchor=center] (x2) at ([xshift=\ssep]x1.center) {\footnotesize{$x_2$}};
+    \node [anchor=center] (x3) at ([xshift=\ssep]x2.center) {\footnotesize{$\cdots$}};
+    \node [anchor=center] (x4) at ([xshift=\ssep]x3.center) {\footnotesize{$x_m$}};
+    \node [anchor=center] (y1) at ([xshift=\ssep]x4.center) {\footnotesize{$y_1$}};
+    \node [anchor=center] (y2) at ([xshift=\ssep]y1.center) {\footnotesize{$y_2$}};
+    \node [anchor=center] (y3) at ([xshift=\ssep]y2.center) {\footnotesize{$\cdots$}};
+    \node [anchor=center] (y4) at ([xshift=\ssep]y3.center) {\footnotesize{$y_n$}};
+    \node [anchor=north] (y4label) at ([yshift=0.1cm]y4.south) {\scriptsize{（最后一个 token $\langle \mathrm{EOS} \rangle$）}};
+    
+    \draw [->] ([yshift=0.2cm]x0.center) -- ([yshift=0.55cm]x0.center);
+    \draw [->] ([yshift=0.2cm]x1.center) -- ([yshift=0.55cm]x1.center);
+    \draw [->] ([yshift=0.2cm]x2.center) -- ([yshift=0.55cm]x2.center);
+    \draw [->] ([yshift=0.2cm]x4.center) -- ([yshift=0.55cm]x4.center);
+    \draw [->] ([yshift=0.2cm]y1.center) -- ([yshift=0.55cm]y1.center);
+    \draw [->] ([yshift=0.2cm]y2.center) -- ([yshift=0.55cm]y2.center);
+    \draw [->] ([yshift=0.2cm]y4.center) -- ([yshift=0.55cm]y4.center);
+    
+    \node [anchor=center] (ox0) at ([yshift=2.6cm]x0.center) {\footnotesize{$\mathbf{h}_{x_0}$}};
+    \node [anchor=center] (ox1) at ([yshift=2.6cm]x1.center) {\footnotesize{$\mathbf{h}_{x_1}$}};
+    \node [anchor=center] (ox2) at ([yshift=2.6cm]x2.center) {\footnotesize{$\mathbf{h}_{x_2}$}};
+    \node [anchor=center] (ox3) at ([yshift=2.6cm]x3.center) {\footnotesize{$\cdots$}};
+    \node [anchor=center] (ox4) at ([yshift=2.6cm]x4.center) {\footnotesize{$\mathbf{h}_{x_m}$}};
+    \node [anchor=center] (oy1) at ([yshift=2.6cm]y1.center) {\footnotesize{$\mathbf{h}_{y_1}$}};
+    \node [anchor=center] (oy2) at ([yshift=2.6cm]y2.center) {\footnotesize{$\mathbf{h}_{y_2}$}};
+    \node [anchor=center] (oy3) at ([yshift=2.6cm]y3.center) {\footnotesize{$\cdots$}};
+    \node [anchor=center] (oy4) at ([yshift=2.6cm]y4.center) {\footnotesize{$\mathbf{h}_{\mathrm{last}}$}};
+    
+    \node [anchor=south,draw,thick,minimum width=9cm,minimum height=1.3cm] (llm) at ([yshift=0.4cm]x4.north) {\large{Transformer 解码器（LLM）}};
+    \node [anchor=east] (representation) at ([xshift=-0.3cm]ox0.west) {\scriptsize{表示}};
+    \node [anchor=north west] (representation2) at ([yshift=0.1cm]representation.south west) {\scriptsize{（每个位置）}};
+    
+    \draw [<-] ([yshift=-0.25cm]ox0.center) -- ([yshift=-0.6cm]ox0.center);
+    \draw [<-] ([yshift=-0.25cm]ox1.center) -- ([yshift=-0.6cm]ox1.center);
+    \draw [<-] ([yshift=-0.25cm]ox2.center) -- ([yshift=-0.6cm]ox2.center);
+    \draw [<-] ([yshift=-0.25cm]ox4.center) -- ([yshift=-0.6cm]ox4.center);
+    \draw [<-] ([yshift=-0.25cm]oy1.center) -- ([yshift=-0.6cm]oy1.center);
+    \draw [<-] ([yshift=-0.25cm]oy2.center) -- ([yshift=-0.6cm]oy2.center);
+    \draw [<-] ([yshift=-0.25cm]oy4.center) -- ([yshift=-0.6cm]oy4.center);
+    
+    \filldraw [fill=red!20,draw=white] ([xshift=-0.5cm,yshift=0.2cm]oy4.north west) -- ([xshift=0.5cm,yshift=0.2cm]oy4.north east) -- ([yshift=1cm,xshift=0]oy4.north east) -- ([yshift=1cm,xshift=0]oy4.north west) -- ([xshift=-0.5cm,yshift=0.2cm]oy4.north west);
+    
+    \node [anchor=south] (reward) at ([yshift=1.2cm]oy4.north) {\footnotesize{奖励（标量）}};
+    \node [anchor=south] (Wr) at ([yshift=0.3cm]oy4.north) {\footnotesize{$\mathbf{W}_r$}};
+    \node [anchor=west] (linear) at ([xshift=0.5cm]Wr.east) {\scriptsize{线性映射}};
+    
+    \draw [->] ([yshift=-0.1cm]oy4.north) -- ([yshift=0.18cm]oy4.north);
+    \draw [<-] ([yshift=0.1cm]reward.south) -- ([yshift=-0.18cm]reward.south);
+    
+    \end{scope}
+    
+    \end{tikzpicture}
+    \end{center}

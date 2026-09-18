@@ -1,0 +1,37 @@
+\input{figures/figure-theme.tex}
+\begin{center}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+\begin{scope}
+
+\node [anchor=south west,minimum width=20em] (source) at (0,0) {源端序列： $\mathbf{x}=x_1...x_m$};
+\node [anchor=south west,minimum width=20em] (target) at ([yshift=16em]source.north west) {目标端序列： $\mathbf{y}=y_1...y_n$};
+
+\node [anchor=center,minimum width=9.6em,minimum height=1.8em,draw=FigureInk!65,fill=FigureMist,line width=.7pt,rounded corners=0.3em] (hidden) at ([yshift=8em]source.north) {};
+\node [anchor=west,minimum width=1.5em,minimum size=1.5em,fill=ugreen!20] (cell01) at ([xshift=0.2em]hidden.west) {\footnotesize{.2}};
+\node [anchor=west,minimum width=1.5em,minimum size=1.5em,fill=ugreen!10] (cell02) at (cell01.east) {\footnotesize{-1}};
+\node [anchor=west,minimum width=1.5em,minimum size=1.5em,fill=ugreen!70] (cell03) at (cell02.east) {\footnotesize{6}};
+\node [anchor=west,minimum width=1.5em,minimum size=1.5em,fill=ugreen!50] (cell04) at (cell03.east) {\footnotesize{5}};
+\node [anchor=west,minimum width=1.5em,minimum size=1.5em,fill=ugreen!30] (cell05) at (cell04.east) {\footnotesize{.7}};
+\node [anchor=west,minimum width=1.5em,minimum size=1.5em,fill=ugreen!10] (cell06) at (cell05.east) {\footnotesize{-2}};
+
+\node [anchor=west] (representation) at ([xshift=0.5em]cell06.east) {表示： $\mathbf{H}$};
+
+\filldraw [fill=FigureCoral!16,draw=white] (source.north west) -- (source.north east) -- ([xshift=-0.2em,yshift=-0.1em]hidden.south east) -- ([xshift=0.2em,yshift=-0.1em]hidden.south west);
+\filldraw [fill=FigureBlue!16,draw=white] (target.south west) -- (target.south east) -- ([xshift=-0.2em,yshift=0.1em]hidden.north east) -- ([xshift=0.2em,yshift=0.1em]hidden.north west);
+\draw [->,thick] (source.north west) -- ([xshift=0.2em,yshift=-0.1em]hidden.south west);
+\draw [->,thick] (source.north east) -- ([xshift=-0.2em,yshift=-0.1em]hidden.south east);
+\draw [->,thick] ([xshift=0.2em,yshift=0.1em]hidden.north west) -- (target.south west);
+\draw [->,thick] ([xshift=-0.2em,yshift=0.1em]hidden.north east) -- (target.south east);
+
+
+\node [anchor=south,align=center] (enclabel) at ([yshift=2em]source.north) {\Large{\textbf{Encoder}}\\($\mathbf{H}=\mathrm{Encode}(\mathbf{x})$)};
+\node [anchor=north,align=center] (declabel) at ([yshift=-2em]target.south) {\Large{\textbf{Decoder}}\\($\mathbf{y}=\mathrm{Decode}(\mathbf{H})$)};
+
+\end{scope}
+
+\end{tikzpicture}
+
+\end{center}

@@ -1,0 +1,122 @@
+\input{figures/figure-theme.tex}
+\begin{center}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\nodesep{2.5em}
+\def\noderowsep{2.5em}
+\tikzstyle{nnode} = [circle,minimum size=1.8em,draw=FigureInk!70,line width=.7pt,fill=FigureMist]
+
+%----------------------------------------------------------------------------------------
+% dropout training
+
+\begin{scope}
+
+% layer 1
+\node [anchor=center,nnode,draw=black] (node11) at (0,0) {};
+\node [anchor=west,nnode,draw=gray!50] (node12) at ([xshift=\nodesep]node11.east) {};
+\node [anchor=west,nnode,draw=black] (node13) at ([xshift=\nodesep]node12.east) {};
+
+% layer 2
+\node [anchor=south,nnode,draw=black] (node21) at ([yshift=\noderowsep]node11.north) {};
+\node [anchor=west,nnode,draw=black] (node22) at ([xshift=\nodesep]node21.east) {};
+\node [anchor=west,nnode,draw=gray!50] (node23) at ([xshift=\nodesep]node22.east) {};
+
+% layer 3
+\node [anchor=south,nnode,draw=black] (node31) at ([yshift=\noderowsep]node21.north) {};
+\node [anchor=west,nnode,draw=gray!50] (node32) at ([xshift=\nodesep]node31.east) {};
+\node [anchor=west,nnode,draw=black] (node33) at ([xshift=\nodesep]node32.east) {};
+
+% connections (layer 1 -> layer 2)
+\draw [->,thick] ([yshift=2pt]node11.90) -- ([yshift=-2pt]node21.-90);
+\draw [->,thick] ([yshift=2pt]node11.75) -- ([yshift=-2pt]node22.-110);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node11.60) -- ([yshift=-2pt]node23.-130);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node12.105) -- ([yshift=-2pt]node21.-75);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node12.90) -- ([yshift=-2pt]node22.-90);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node12.75) -- ([yshift=-2pt]node23.-105);
+\draw [->,thick] ([yshift=2pt]node13.120) -- ([yshift=-2pt]node21.-50);
+\draw [->,very thick,blue] ([yshift=2pt]node13.105) -- ([yshift=-2pt]node22.-70);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node13.90) -- ([yshift=-2pt]node23.-90);
+
+% connections (layer 2 -> layer 3)
+\draw [->,thick] ([yshift=2pt]node21.90) -- ([yshift=-2pt]node31.-90);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node21.75) -- ([yshift=-2pt]node32.-110);
+\draw [->,thick] ([yshift=2pt]node21.60) -- ([yshift=-2pt]node33.-130);
+\draw [->,thick] ([yshift=2pt]node22.105) -- ([yshift=-2pt]node31.-75);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node22.90) -- ([yshift=-2pt]node32.-90);
+\draw [->,thick] ([yshift=2pt]node22.75) -- ([yshift=-2pt]node33.-105);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node23.120) -- ([yshift=-2pt]node31.-50);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node23.105) -- ([yshift=-2pt]node32.-70);
+\draw [->,thick,dotted,gray!50] ([yshift=2pt]node23.90) -- ([yshift=-2pt]node33.-90);
+
+% labels
+\node [anchor=south west,align=center] (pnodelabel) at ([yshift=1em,xshift=0.0em]node33.north east) {\small{{\color{blue} 保留的神经元}}\\[-3pt]\small{{\color{blue} （保留概率为 $\rho$）}}};
+\draw [->] ([xshift=2em,yshift=2pt]pnodelabel.south west) .. controls +(south:1.2em) and +(north:1.2em) .. ([xshift=0.3em,yshift=0.3em]node33.center);
+
+\node [anchor=south west,align=center] (dnodelabel) at ([yshift=1em,xshift=0.0em]node23.north east) {\small{{\color{blue} 丢弃的神经元}}};
+\draw [->] ([xshift=2em,yshift=2pt]dnodelabel.south west) .. controls +(south:1.2em) and +(north:1.2em) .. ([xshift=0.3em,yshift=0.3em]node23.center);
+
+\node [anchor=south,align=center,fill=white,inner sep =0pt] (wlabel) at ([yshift=0.5em,xshift=1.8em]node13.north) {\small{{\color{blue} 权重 $W_{32}$}}};
+
+\node [anchor=north] (name) at ([yshift=-0.5em,xshift=2em]node12.south) {\small (a) 训练暂退网络};
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% dropout test
+
+\begin{scope}[xshift=19em]
+
+% layer 1
+\node [anchor=center,nnode,draw=black] (node11) at (0,0) {};
+\node [anchor=west,nnode,draw=black] (node12) at ([xshift=\nodesep]node11.east) {};
+\node [anchor=west,nnode,draw=black] (node13) at ([xshift=\nodesep]node12.east) {};
+
+% layer 2
+\node [anchor=south,nnode,draw=black] (node21) at ([yshift=\noderowsep]node11.north) {};
+\node [anchor=west,nnode,draw=black] (node22) at ([xshift=\nodesep]node21.east) {};
+\node [anchor=west,nnode,draw=black] (node23) at ([xshift=\nodesep]node22.east) {};
+
+% layer 3
+\node [anchor=south,nnode,draw=black] (node31) at ([yshift=\noderowsep]node21.north) {};
+\node [anchor=west,nnode,draw=black] (node32) at ([xshift=\nodesep]node31.east) {};
+\node [anchor=west,nnode,draw=black] (node33) at ([xshift=\nodesep]node32.east) {};
+
+% connections (layer 1 -> layer 2)
+\draw [->,thick] ([yshift=2pt]node11.90) -- ([yshift=-2pt]node21.-90);
+\draw [->,thick] ([yshift=2pt]node11.75) -- ([yshift=-2pt]node22.-110);
+\draw [->,thick] ([yshift=2pt]node11.60) -- ([yshift=-2pt]node23.-130);
+\draw [->,thick] ([yshift=2pt]node12.105) -- ([yshift=-2pt]node21.-75);
+\draw [->,thick] ([yshift=2pt]node12.90) -- ([yshift=-2pt]node22.-90);
+\draw [->,thick] ([yshift=2pt]node12.75) -- ([yshift=-2pt]node23.-105);
+\draw [->,thick] ([yshift=2pt]node13.120) -- ([yshift=-2pt]node21.-50);
+\draw [->,very thick,blue] ([yshift=2pt]node13.105) -- ([yshift=-2pt]node22.-70);
+\draw [->,thick] ([yshift=2pt]node13.90) -- ([yshift=-2pt]node23.-90);
+
+% connections (layer 2 -> layer 3)
+\draw [->,thick] ([yshift=2pt]node21.90) -- ([yshift=-2pt]node31.-90);
+\draw [->,thick] ([yshift=2pt]node21.75) -- ([yshift=-2pt]node32.-110);
+\draw [->,thick] ([yshift=2pt]node21.60) -- ([yshift=-2pt]node33.-130);
+\draw [->,thick] ([yshift=2pt]node22.105) -- ([yshift=-2pt]node31.-75);
+\draw [->,thick] ([yshift=2pt]node22.90) -- ([yshift=-2pt]node32.-90);
+\draw [->,thick] ([yshift=2pt]node22.75) -- ([yshift=-2pt]node33.-105);
+\draw [->,thick] ([yshift=2pt]node23.120) -- ([yshift=-2pt]node31.-50);
+\draw [->,thick] ([yshift=2pt]node23.105) -- ([yshift=-2pt]node32.-70);
+\draw [->,thick] ([yshift=2pt]node23.90) -- ([yshift=-2pt]node33.-90);
+
+% labels
+\node [anchor=south west,align=left] (pnodelabel) at ([yshift=1em,xshift=0.0em]node33.north east) {\small{{\color{blue} 所有神经元}}\\[-3pt]\small{{\color{blue} 均被保留}}};
+\draw [->] ([xshift=2em,yshift=2pt]pnodelabel.south west) .. controls +(south:1.2em) and +(north:1.2em) .. ([xshift=0.3em,yshift=0.3em]node33.center);
+
+\node [anchor=south,align=center,fill=white,inner sep =0pt] (wlabel) at ([yshift=0.5em,xshift=1.8em]node13.north) {\small{{\color{blue} 权重 $\rho W_{32}$}}};
+
+\node [anchor=north] (name) at ([yshift=-0.5em,xshift=2em]node12.south) {\small (b) 使用暂退网络进行测试};
+
+\end{scope}
+
+\end{tikzpicture}
+
+\end{center}

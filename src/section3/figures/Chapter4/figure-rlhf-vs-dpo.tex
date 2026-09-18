@@ -1,47 +1,46 @@
 \begin{center}
-\begin{tikzpicture}
-
-\def\ssep{0.9cm}
-
-\tikzstyle{lnode} = [minimum width=3cm,minimum height=1.0cm,inner sep=2pt,draw,thick,fill=white,rounded corners=1pt];
-
-\begin{scope}
-
-\node [anchor=west,fill=gray!30,inner sep=5pt] (preferencedata) at (0,0) {\Large{$\mathbf{y}_a \succ \mathbf{y}_b$}};
-\node [anchor=south west,align=left] (preferencelabel) at ([yshift=0.1cm]preferencedata.north west) {\scriptsize{Preference}\\[-0.2cm] \scriptsize{Data}};
-
-\node [lnode,anchor=west] (rewardmodel) at ([xshift=2.5cm]preferencedata.east) {Reward Model};
-
-\node [lnode,anchor=south west] (valuefunction) at ([xshift=1.0cm,yshift=0.7cm]rewardmodel.east) {Value Function};
-
-\node [lnode,anchor=north west] (policy) at ([xshift=1.0cm,yshift=-0.7cm]rewardmodel.east) {Policy};
-
-\draw [->,thick] ([xshift=2pt]preferencedata.east)--([xshift=-2pt]rewardmodel.west) node [pos=0.5,above,align=left] {\scriptsize{training with MLE}};
-
-\draw [->,thick] ([xshift=2pt,yshift=0.3cm]rewardmodel.east) -- ([xshift=-2pt,yshift=0.0cm]valuefunction.west);
-\draw [->,thick] ([xshift=2pt,yshift=-0.3cm]rewardmodel.east) -- ([xshift=-2pt,yshift=0.0cm]policy.west);
-
-\draw [->,dotted,very thick] ([xshift=-0.6cm,yshift=-2pt]valuefunction.south) .. controls +(-150:0.5cm) and +(150:0.5cm) .. ([xshift=-0.6cm,yshift=2pt]policy.north);
-\draw [<-,dotted,very thick] ([xshift=0.6cm,yshift=-2pt]valuefunction.south) .. controls +(-30:0.5cm) and +(30:0.5cm) .. ([xshift=0.6cm,yshift=2pt]policy.north) node [pos=0.5,right,xshift=0.2cm,align=left] {\scriptsize{Training}\\[-0.2cm] \scriptsize{with PPO}};
-
-\node [anchor=north] (caption) at ([yshift=-1.3cm]rewardmodel.south) {\small{(a) RLHF (PPO)}};
-
-\end{scope}
-
-\begin{scope}[yshift=-4.5cm]
-
-\node [anchor=west,fill=gray!30,inner sep=5pt] (preferencedata) at (2cm,0) {\Large{$\mathbf{y}_a \succ \mathbf{y}_b$}};
-\node [anchor=south west,align=left] (preferencelabel) at ([yshift=0.1cm]preferencedata.north west) {\scriptsize{Preference}\\[-0.2cm] \scriptsize{Data}};
-
-\node [lnode,anchor=west] (policy) at ([xshift=3.5cm]preferencedata.east) {Policy};
-
-\draw [->,thick] ([xshift=2pt]preferencedata.east)--([xshift=-2pt]policy.west) node [pos=0.5,above,align=left] {\scriptsize{training with MLE}};
-
-
-\node [anchor=north west] (caption) at ([xshift=-2.3cm,yshift=-0.5cm]policy.south west) {\small{(b) DPO}};
-
-\end{scope}
-
-\end{tikzpicture}
-\end{center}
-
+    \begin{tikzpicture}
+    
+    \def\ssep{0.9cm}
+    
+    \tikzstyle{lnode} = [minimum width=3cm,minimum height=1.0cm,inner sep=2pt,draw,thick,fill=white,rounded corners=1pt];
+    
+    \begin{scope}
+    
+    \node [anchor=west,fill=gray!30,inner sep=5pt] (preferencedata) at (0,0) {\Large{$\mathbf{y}_a \succ \mathbf{y}_b$}};
+    \node [anchor=south west,align=left] (preferencelabel) at ([yshift=0.1cm]preferencedata.north west) {\scriptsize{偏好数据}};
+    
+    \node [lnode,anchor=west] (rewardmodel) at ([xshift=2.5cm]preferencedata.east) {奖励模型};
+    
+    \node [lnode,anchor=south west] (valuefunction) at ([xshift=1.0cm,yshift=0.7cm]rewardmodel.east) {价值函数};
+    
+    \node [lnode,anchor=north west] (policy) at ([xshift=1.0cm,yshift=-0.7cm]rewardmodel.east) {策略};
+    
+    \draw [->,thick] ([xshift=2pt]preferencedata.east)--([xshift=-2pt]rewardmodel.west) node [pos=0.5,above,align=left] {\scriptsize{使用 MLE 训练}};
+    
+    \draw [->,thick] ([xshift=2pt,yshift=0.3cm]rewardmodel.east) -- ([xshift=-2pt,yshift=0.0cm]valuefunction.west);
+    \draw [->,thick] ([xshift=2pt,yshift=-0.3cm]rewardmodel.east) -- ([xshift=-2pt,yshift=0.0cm]policy.west);
+    
+    \draw [->,dotted,very thick] ([xshift=-0.6cm,yshift=-2pt]valuefunction.south) .. controls +(-150:0.5cm) and +(150:0.5cm) .. ([xshift=-0.6cm,yshift=2pt]policy.north);
+    \draw [<-,dotted,very thick] ([xshift=0.6cm,yshift=-2pt]valuefunction.south) .. controls +(-30:0.5cm) and +(30:0.5cm) .. ([xshift=0.6cm,yshift=2pt]policy.north) node [pos=0.5,right,xshift=0.2cm,align=left] {\scriptsize{使用 PPO}\\[-0.2cm] \scriptsize{训练}};
+    
+    \node [anchor=north] (caption) at ([yshift=-1.3cm]rewardmodel.south) {\small{(a) RLHF (PPO)}};
+    
+    \end{scope}
+    
+    \begin{scope}[yshift=-4.5cm]
+    
+    \node [anchor=west,fill=gray!30,inner sep=5pt] (preferencedata) at (2cm,0) {\Large{$\mathbf{y}_a \succ \mathbf{y}_b$}};
+    \node [anchor=south west,align=left] (preferencelabel) at ([yshift=0.1cm]preferencedata.north west) {\scriptsize{偏好数据}};
+    
+    \node [lnode,anchor=west] (policy) at ([xshift=3.5cm]preferencedata.east) {策略};
+    
+    \draw [->,thick] ([xshift=2pt]preferencedata.east)--([xshift=-2pt]policy.west) node [pos=0.5,above,align=left] {\scriptsize{使用 MLE 训练}};
+    
+    
+    \node [anchor=north west] (caption) at ([xshift=-2.3cm,yshift=-0.5cm]policy.south west) {\small{(b) DPO}};
+    
+    \end{scope}
+    
+    \end{tikzpicture}
+    \end{center}

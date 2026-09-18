@@ -1,257 +1,3 @@
-% \subsection{微调概述}
-
-% \noindent 一旦我们预训练好一个 LLM，我们就可以应用它来执行各种 NLP 任务。传统上，语言模型被用作其他系统的组件，例如，它们被广泛应用于为统计机器翻译系统中的翻译打分。相比之下，在生成式 AI 中，LLM 被视为完整的系统，并通过利用其生成特性来解决 NLP 问题。一种常见的方法是用文本描述我们想要解决的任务，然后提示 LLM 根据这个描述生成文本。这是一个标准的文本生成任务，我们从给定的上下文中继续或补全文本。
-
-% 更正式地说，设 $\mathbf{x}=x_0...x_m$ 表示用户给出的上下文的 token 序列，$\mathbf{y}=y_1...y_n$ 表示上下文之后的 token 序列。那么，LLM 的推理可以定义为基于 $\mathbf{x}$ 寻找最可能序列 $\mathbf{y}$ 的问题：
-% \begin{eqnarray}
-% \hat{\mathbf{y}} & = & \argmax_{\mathbf{y}} \log \Pr(\mathbf{y} | \mathbf{x}) \nonumber \\
-%                  & = & \argmax_{\mathbf{y}} \sum_{i=1}^{n} \log \Pr(y_i|x_0,...,x_m,y_1,...,y_{i-1})
-% \end{eqnarray}
-
-% \noindent 这里的 $\sum_{i=1}^{n} \log \Pr(y_i|x_0,...,x_m,y_1,...,y_{i-1})$ 实质上与等式 (\ref{eq:lm-basic-form-log}) 的右侧表达的是同一件事。它建模的是从位置 $m+1$ 而不是位置 $0$ 开始预测 token 的对数概率。在本章及后续章节中，我们将使用独立的变量 $\mathbf{x}$ 和 $\mathbf{y}$ 来区分 LLM 的输入和输出，尽管它们可以被看作是同一序列的子序列。采用这种表示法，我们可以看到上述等式的形式与 NLP 中其他文本生成模型（如神经机器翻译模型）中使用的形式非常相似。
-
-% 为了说明 LLM 是如何应用的，考虑确定一个给定句子的语法正确性的问题。我们可以定义一个这样的模板
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \hspace{4em} \{*sentence*\}
-
-% \hspace{4em} Question: Is this sentence grammatically correct?
-
-% \hspace{4em} Answer: \underline{\hspace{2em}}
-% \end{tcolorbox}
-% \vspace{0.5em}
-
-% \noindent 这里的 $\underline{\hspace{1em}}$ 代表我们打算生成的文本。\{*sentence*\} 是一个占位符变量，它将被用户提供的实际句子替换。例如，假设我们有一个句子 ``\textit{John seems happy today.}''。我们可以用这个句子替换模板中的 \{*sentence*\}，从而得到语言模型的输入
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \hspace{4em} John seems happy today.
-
-% \hspace{4em} Question: Is this sentence grammatically correct?
-
-% \hspace{4em} Answer: \underline{\hspace{2em}}
-% \end{tcolorbox}
-% \vspace{0.5em}
-
-
-% 为了执行该任务，语言模型会接收到上下文 $\mathbf{x}=$``John seems happy today .$\backslash$n Question : Is this sentence grammatically correct?$\backslash$n Answer :''\footnote{$\backslash$n 是用于换行的特殊字符。}。然后它会根据该上下文生成以下文本作为答案。例如，如果 ``Yes'' 这个文本是在给定上下文下具有最大预测概率的文本，语言模型就可能输出 ``Yes''（即 $\mathbf{y} = \textrm{``Yes''}$）。
-
-% 同样地，我们可以定义更多的模板来解决其他任务。例如，我们可以使用以下模板将一个英文句子翻译成中文
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \hspace{4em} \{*sentence*\}
-
-% \hspace{4em} Question: What is the Chinese translation of this English sentence?
-
-% \hspace{4em} Answer: \underline{\hspace{2em}}
-% \end{tcolorbox}
-% \vspace{0.5em}
-
-% \noindent 或者使用一个类似指令的模板
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \hspace{4em} \{*sentence*\}
-
-% \hspace{4em} Translate this sentence from English into Chinese.
-
-% \hspace{4em} \underline{\hspace{2em}}
-% \end{tcolorbox}
-% \vspace{0.5em}
-
-% \noindent 或者使用一个类似代码的模板。
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \hspace{4em} [src-lang] = English [tgt-lang] = Chinese [input] = \{*sentence*\}
-
-% \hspace{4em} [output] = \underline{\hspace{2em}}
-% \end{tcolorbox}
-% \vspace{0.5em}
-
-% 上述模板提供了一种简单而有效的方法来``提示''单个 LLM 执行各种任务，而无需调整模型的结构。然而，这种方法要求 LLM 能够识别并遵循指令或问题。一种方法是将包含指令及其相应响应的训练样本整合到预训练数据集中。虽然这种方法很直接，但从头开始构建和训练 LLM 的计算成本非常高。此外，要使指令遵循数据对预训练有效，需要大量此类数据，但为所有感兴趣的任务收集大规模标记数据非常困难。
-
-% 第二种方法是通过微调来适配 LLM，这已成为近期研究中事实上的标准。这样，在预训练阶段学到的 token 预测能力就可以泛化到完成新任务上。微调背后的思想是，在预训练中已经获得了一些通用的语言知识，但我们需要一种机制来激活这些知识，以便将其应用于新任务。为此，我们可以使用指令遵循数据对模型参数进行轻微的微调。这种方法被称为 \mindex{instruction fine-tuning}。
-
-% 一个指令微调样本，由一个 token 序列表示，可以看作是一个由输入和期望输出组成的元组。这里的输入包括指令、系统信息（或系统前缀）以及任何其他用户提供的信息\footnote{系统信息是指在输入开头添加的一系列 token，用于引导 LLM 的行为，例如，\textit{你是一个乐于助人的助手，不应输出有害内容}。}。为了说明这一点，请看以下示例（蓝色文本=输入，下划线文本=输出）。
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \begin{center}
-% \parbox{0.9\textwidth}
-% {
-% {\color{blue} Read the following sentence, and answer whether it is grammatically correct.}
-
-% {\color{blue} LLMs are powerful models but are expensive to build.}
-
-% \vspace{0.3em}
-
-% \underline{Yes}
-% }
-% \end{center}
-% \end{tcolorbox}
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \begin{center}
-% \parbox{0.9\textwidth}
-% {
-% {\color{blue} LLMs are powerful models but are expensive to build.}
-
-% {\color{blue} Does this sentence make sense grammatically?}
-
-% {\color{blue} Answer Option}
-
-% {\color{blue} - Yes}
-
-% {\color{blue} - No}
-
-% \vspace{0.3em}
-
-% \underline{Yes}
-% }
-% \end{center}
-% \end{tcolorbox}
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \begin{center}
-% \parbox{0.9\textwidth}
-% {
-% {\color{blue} Yes or No? Yes = the following sentence is grammatically correct. No = it contains grammatical errors.}
-
-% {\color{blue} LLMs are powerful models but are expensive to build.}
-
-% \vspace{0.3em}
-
-% \underline{Yes}
-% }
-% \end{center}
-% \end{tcolorbox}
-% \vspace{0.5em}
-
-% 所有这些样本都描述了相同的二分类任务，但使用了不同的指令。为了增加微调数据的多样性并使 LLM 具有泛化能力，我们可以使用指令定义更多的任务。
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \begin{center}
-% \parbox{0.9\textwidth}
-% {
-% {\color{blue} Write a short story about three characters.}
-
-% {\color{blue} Character 1: A boy whose name is Andy.}
-
-% {\color{blue} Character 2: Andy's dog.}
-
-% {\color{blue} Character 3: Andy's friend, Jane.}
-
-% \vspace{0.3em}
-
-% \uline{In the heart of a bustling city, Andy, his loyal dog Rocket, and his friend Jane discovered a hidden garden beneath the glow of twilight. Surrounded by ancient trees and whispering winds, they shared dreams and secrets, forging an unbreakable bond. As the night deepened, they made a pact under the stars to always find magic in the mundane. Together, they realized that true adventure lay in the moments spent with friends, and every day was a treasure waiting to be discovered.}
-% }
-% \end{center}
-% \end{tcolorbox}
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \begin{center}
-% \parbox{0.9\textwidth}
-% {
-% {\color{blue} Show me a recipe for making ice cream.}
-
-% \vspace{0.3em}
-
-% \underline{Ingredients:}
-
-% \underline{2 cups heavy cream; 1 cup milk; 3/4 cup sugar; 2 tsp vanilla extract;}
-
-% \underline{Pinch of salt.}
-
-% \underline{Steps:}
-
-% \underline{1. Whisk all ingredients until sugar dissolves.}
-
-% \underline{2. Chill mixture for 2 hours in the fridge.}
-
-% \underline{3. Freeze in a shallow dish, stirring every 30 minutes, 3-4 times.}
-
-% \underline{4. Freeze solid for 2 hours.}
-
-% \underline{5. Serve your homemade ice cream.}
-% }
-% \end{center}
-% \end{tcolorbox}
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \begin{center}
-% \parbox{0.9\textwidth}
-% {
-% {\color{blue} If you buy 5 apples and each apple costs \$1.20, how much do you spend in total? }
-
-% \vspace{0.3em}
-
-% \underline{\$6.00}
-% }
-% \end{center}
-% \end{tcolorbox}
-
-% \vspace{0.5em}
-% \begin{tcolorbox}[frame empty]
-% \begin{center}
-% \parbox{0.9\textwidth}
-% {
-% {\color{blue} Write a Python program to calculate the sum of squares of the following numbers.}
-
-% {\color{blue} 1 , 2 , 10 , -9 , 78}
-
-% \vspace{0.3em}
-
-% \underline{numbers = [1,2,10,-9 ,78]}
-
-% \underline{sum\_of\_squares = sum(x**2 for x in numbers)}
-
-% \underline{print(sum\_of\_squares)}
-% }
-% \end{center}
-% \end{tcolorbox}
-% \vspace{0.5em}
-
-% 要获得指令遵循能力，需要一定量的微调数据。这些数据可能包括多样的指令和可能的响应。研究发现，扩展微调任务的数量有助于提高 LLM 的性能 \cite{chung-etal:2022scaling}。请注意，虽然更多的微调数据是有利的，但其数据量通常比预训练数据小几个数量级。例如，LLM 可以用数万或数十万个样本进行微调，如果这些样本质量很高，甚至可以用更少的样本 \cite{zhou-etal:2023lima,chen-etal:2023alpagasus}，而预训练这类模型可能需要数十亿或数万亿个 token，导致计算需求大得多，训练时间也更长 \cite{touvron-etal:2023llama}。
-
-% 同样值得注意的是，我们不应期望微调数据能覆盖我们打算应用 LLM 的所有下游任务。对于预训练+微调方法如何工作的一个普遍理解是，LLM 在预训练阶段已经获得了理解指令和生成响应的知识。然而，这些能力直到我们引入某种形式的监督后才被完全激活。当我们用相对少量的标记数据对模型进行微调时，通用的指令遵循行为就会出现。结果是，我们可以实现一定程度的 \mindex{zero-shot learning}：经过微调的模型可以处理那些它们没有被明确训练或微调过的新任务 \cite{sanh-etal:2022multitask,wei-etal:2022finetuned}。这种零次学习能力将生成式 LLM 与早期的预训练模型（如 BERT）区分开来，后者主要针对特定任务进行微调。
-
-% 一旦我们准备好了一系列指令描述的数据，微调过程就相对简单了。这个过程可以看作是一个标准的训练过程，与预训练类似，但使用的是一个规模小得多的训练数据集。设 $\mathcal{D}_{\mathrm{tune}}$ 为微调数据集，$\hat{\theta}$ 为通过预训练优化的模型参数。我们可以修改等式 (\ref{eq:llm-training-mle}) 来获得微调的目标
-% \begin{eqnarray}
-% \tilde{\theta} & = & \argmax_{\hat{\theta}^+} \sum_{\mathrm{sample} \in \mathcal{D}_{\mathrm{tune}}} \mathcal{L}_{\hat{\theta}^+}(\mathrm{sample}) \label{eq:llm-fine-tuning-mle}
-% \end{eqnarray}
-
-% \noindent 这里的 $\tilde{\theta}$ 表示最优参数。符号 $\hat{\theta}^+$ 的使用意味着微调是从预训练参数 $\hat{\theta}$ 开始的。
-
-% 对于每个 $\mathrm{sample} \in \mathcal{D}_{\mathrm{tune}}$，我们将其分为一个输入段 $\mathbf{x}_{\mathrm{sample}}$ 和一个输出段 $\mathbf{y}_{\mathrm{sample}}$，即，
-% \begin{eqnarray}
-% \mathrm{sample} & = & [\mathbf{y}_{\mathrm{sample}},\mathbf{x}_{\mathrm{sample}}]
-% \end{eqnarray}
-
-% 然后我们将损失函数定义为
-% \begin{eqnarray}
-% \mathcal{L}_{\hat{\theta}^+}(\mathrm{sample}) & = & -\log \mathrm{Pr}_{\hat{\theta}^+}(\mathbf{y}_{\mathrm{sample}}|\mathbf{x}_{\mathrm{sample}})
-% \end{eqnarray}
-
-% \noindent 换句话说，我们计算的是子序列 $\mathbf{y}_{\mathrm{sample}}$ 上的损失，而不是整个序列的损失。在该等式的反向传播的实际实现中，序列 $[\mathbf{y}_{\mathrm{sample}},\mathbf{x}_{\mathrm{sample}}]$ 像往常一样在前向传播中构建。然而，在反向传播中，误差梯度只通过网络中对应于 $\mathbf{y}_{\mathrm{sample}}$ 的部分进行反向传播，网络的其余部分保持不变。作为一个例子，考虑一个序列
-
-% \begin{equation}
-% \underbrace{\textrm{{\color{blue} $\langle s \rangle$ Square this number .}}\ \textrm{{\color{blue} $2$ .}}}_{\textrm{Context (Input)}}\ \ \underbrace{\textrm{\underline{The result is $4$ .}}}_{\textrm{Prediction (Output)}}\nonumber
-% \end{equation}
-
-% \noindent 损失仅针对 \underline{The result is $4$ .} 计算和反向传播。
-
-% 指令微调也需要大量的工程工作。为了获得满意的结果，可能需要尝试不同的学习率、批量大小、微调步数等设置。这通常需要多次微调运行和评估。微调的成本和实验工作量仍然至关重要，不应被忽视，尽管它们远低于预训练阶段。
-
-% 虽然我们在这里以指令微调作为一个说明性例子，但微调技术在开发各种 LLM 中扮演着重要角色，并且应用更为广泛。例子包括使用对话数据将 LLM 微调为聊天机器人，以及适配这些模型以处理非常长的序列。微调的广泛应用促使研究人员改进这些技术，例如设计更高效的微调算法。虽然关于微调的研究成果丰硕，但在本节中我们只是浅尝辄止地介绍了所涉及的关键步骤。我们将在后续章节中看到关于这个主题的更详细的讨论。
-
 \subsection{微调概述}
 
 \noindent 预训练完成后，大型语言模型（LLM）可被直接用于解决各类 NLP 任务。其工作方式本质上是\textbf{文本补全}：给定一段上下文，模型生成最可能的后续文本。形式化地，设上下文为 token 序列 $\mathbf{x}=x_0...x_m$，待生成序列为 $\mathbf{y}=y_1...y_n$，则推理过程可定义为
@@ -265,9 +11,9 @@
 \begin{tcolorbox}[frame empty]
 \hspace{4em} John seems happy today.
 
-\hspace{4em} Question: Is this sentence grammatically correct?
+\hspace{4em} 问题：这个句子语法正确吗？
 
-\hspace{4em} Answer: \underline{\hspace{2em}}
+\hspace{4em} 答案：\underline{\hspace{2em}}
 \end{tcolorbox}
 \vspace{0.5em}
 
@@ -281,12 +27,12 @@
 \begin{tcolorbox}[frame empty]
 \begin{center}
 \parbox{0.9\textwidth}{
-{\color{blue} Read the following sentence, and answer whether it is grammatically correct.}
+{\color{blue} 阅读以下句子，并回答其语法是否正确。}
 
 {\color{blue} LLMs are powerful models but are expensive to build.}
 
 \vspace{0.3em}
-\underline{Yes}
+\underline{是}
 }
 \end{center}
 \end{tcolorbox}
@@ -295,10 +41,10 @@
 \begin{tcolorbox}[frame empty]
 \begin{center}
 \parbox{0.9\textwidth}{
-{\color{blue} Write a short story about three characters: a boy named Andy, his dog, and his friend Jane.}
+{\color{blue} 写一个关于三个角色的短篇故事：一个叫 Andy 的男孩、他的狗和他的朋友 Jane。}
 
 \vspace{0.3em}
-\uline{In the heart of a bustling city, Andy, his loyal dog Rocket, and his friend Jane discovered a hidden garden beneath the glow of twilight...}
+\uline{在繁华城市的中心，Andy、他忠实的狗 Rocket 和他的朋友 Jane 在暮色中发现了一个隐藏的花园……}
 }
 \end{center}
 \end{tcolorbox}
@@ -307,10 +53,10 @@
 \begin{tcolorbox}[frame empty]
 \begin{center}
 \parbox{0.9\textwidth}{
-{\color{blue} If you buy 5 apples and each apple costs \$1.20, how much do you spend in total?}
+{\color{blue} 如果你买 5 个苹果，每个苹果 1.20 美元，总共花多少钱？}
 
 \vspace{0.3em}
-\underline{\$6.00}
+\underline{6.00 美元}
 }
 \end{center}
 \end{tcolorbox}
@@ -319,7 +65,7 @@
 \begin{tcolorbox}[frame empty]
 \begin{center}
 \parbox{0.9\textwidth}{
-{\color{blue} Write a Python program to calculate the sum of squares of the following numbers: 1, 2, 10, -9, 78.}
+{\color{blue} 写一个 Python 程序来计算以下数字的平方和：1、2、10、-9、78。}
 
 \vspace{0.3em}
 \underline{\texttt{numbers = [1,2,10,-9,78]}}
@@ -338,16 +84,15 @@
 
 \noindent \textbf{微调的数学形式}与预训练高度相似，但目标函数聚焦于输出段。设预训练得到的参数为 $\hat{\theta}$，微调数据集为 $\mathcal{D}_{\text{tune}}$，则最优参数 $\tilde{\theta}$ 为：
 \begin{eqnarray}
-\tilde{\theta} = \argmax_{\hat{\theta}^+} \sum_{\mathrm{sample} \in \mathcal{D}_{\text{tune}}} \mathcal{L}_{\hat{\theta}^+}(\mathrm{sample}) \label{eq:llm-fine-tuning-mle}
+\tilde{\theta} = \argmin_{\hat{\theta}^+} \sum_{\mathrm{sample} \in \mathcal{D}_{\text{tune}}} \mathcal{L}_{\hat{\theta}^+}(\mathrm{sample}) \label{eq:llm-fine-tuning-mle}
 \end{eqnarray}
 对每个样本，我们将其切分为输入段 $\mathbf{x}_{\text{sample}}$ 和输出段 $\mathbf{y}_{\text{sample}}$，损失函数只作用于后者：
 \begin{eqnarray}
-\mathcal{L}_{\hat{\theta}^+}(\mathrm{sample}) = -\log \mathrm{Pr}_{\hat{\theta}^+}(\mathbf{y}_{\text{sample}}|\mathbf{x}_{\text{sample}})
+\mathcal{L}_{\hat{\theta}^+}(\mathrm{sample}) = -\log \Pr_{\hat{\theta}^+}(\mathbf{y}_{\text{sample}}|\mathbf{x}_{\text{sample}})
 \end{eqnarray}
 在具体实现中，前向传播照常对整个拼接序列进行计算，但反向传播时，误差梯度仅流经 $\mathbf{y}_{\text{sample}}$ 对应的位置。考虑这样一个序列：
 \begin{equation}
-\underbrace{\textrm{{\color{blue} $\langle s \rangle$ Square this number .}}\ \textrm{{\color{blue} $2$ .}}}_{\text{Input}}\ \ \underbrace{\textrm{\underline{The result is $4$ .}}}_{\text{Output}}\nonumber
-\end{equation}
-损失仅基于 “The result is 4 .” 这几个 token 计算并回传，输入部分不产生任何梯度。这种方式确保模型专注于学习如何根据指令生成正确的响应，而非重复记忆输入内容。
-
+    \underbrace{\textrm{{\color{blue} $\langle s \rangle$ 计算这个数的平方。}}\ \textrm{{\color{blue} $2$。}}}_{\text{输入}}\ \ \underbrace{\textrm{\underline{结果是 $4$。}}}_{\text{输出}}\nonumber
+    \end{equation}
+    损失仅基于 “结果是 $4$。” 这几个 token 计算并回传，输入部分不产生任何梯度。这种方式确保模型专注于学习如何根据指令生成正确的响应，而非重复记忆输入内容。
 指令微调在实际操作中仍需要一定的工程调参——学习率、批大小、训练步数等超参数需要仔细摸索。不过，由于其数据规模和计算量远不及预训练，多次实验的整体成本是完全可控的。正是这种低成本、高效率的特性，使得微调成为适配 LLM 的通用技术栈核心：除了指令微调，它还被广泛用于将基座模型转化为对话助手、适配超长上下文、进行领域知识注入等。后续章节将深入探讨更高效的微调算法以及在更多场景下的应用。

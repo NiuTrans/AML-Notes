@@ -1,0 +1,86 @@
+\input{figures/figure-theme.tex}
+\begingroup
+\centering
+
+% 每幅子图按当前行宽排版，共用坐标轴样式和同一组样本。
+\pgfplotsset{
+  aml fitting axis/.style={
+    aml axis,
+    width=\linewidth,
+    height=\linewidth,
+    xmin=0,xmax=8,ymin=0,ymax=8,
+    xtick={0,2,4,6,8},ytick={0,2,4,6,8},
+    xlabel={$x_1$},ylabel={$x_2$},
+    tick label style={font=\scriptsize,text=FigureMuted},
+    label style={font=\footnotesize,text=FigureInk},
+    title style={font=\small\bfseries,text=FigureInk,yshift=2pt},
+    axis background/.style={fill=white},
+    grid style={draw=FigureLine!35,line width=.25pt},
+    clip=true
+  }
+}
+\def\amlfittingsamples{%
+  \addplot[only marks,FigureBlue,mark=square*,mark size=1.5pt,
+    samples=12,domain=0.5:7.5] {0.5*x+3+rand};
+  \addplot[only marks,FigureCoral,mark=x,mark size=2pt,line width=.8pt,
+    samples=12,domain=0.5:7.5] {0.5*x+0.6+rand};
+  \addplot[only marks,FigureBlue,mark=square*,mark size=1.5pt,
+    samples=12,domain=1:7] {0.5*x+5+rand};
+  \addplot[only marks,FigureCoral,mark=x,mark size=2pt,line width=.8pt,
+    samples=12,domain=1:7] {0.5*x-1.4+rand};
+  \addplot[only marks,FigureCoral,mark=x,mark size=2pt,line width=.8pt]
+    coordinates {(1.3,1.9) (1.4,3.4) (4.8,5.6) (7.4,5)};
+  \addplot[only marks,FigureBlue,mark=square*,mark size=1.5pt]
+    coordinates {(3.4,2.4)};
+}
+
+\noindent
+\begin{minipage}[t]{0.32\linewidth}
+  \centering
+  \begin{tikzpicture}[aml figure]
+    \pgfmathsetseed{10}
+    \begin{axis}[aml fitting axis,title={(a) 欠拟合}]
+      \amlfittingsamples
+      \addplot[FigureInk,line width=1pt,smooth]
+        coordinates {(0,1.4) (3,1.8) (6,3) (8,7)};
+    \end{axis}
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\linewidth}
+  \centering
+  \begin{tikzpicture}[aml figure]
+    \pgfmathsetseed{10}
+    \begin{axis}[aml fitting axis,title={(b) 拟合恰当}]
+      \amlfittingsamples
+      \addplot[FigureInk,line width=1pt,smooth]
+        coordinates {(0,2.5) (3,3) (5,3.9) (8,6.2)};
+    \end{axis}
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\linewidth}
+  \centering
+  \begin{tikzpicture}[aml figure]
+    \pgfmathsetseed{10}
+    \begin{axis}[aml fitting axis,title={(c) 过拟合}]
+      \amlfittingsamples
+      \addplot[FigureInk,line width=1pt,smooth]
+        coordinates {(0,1.4) (0.8,1.8) (1,3.8) (1.6,4) (3,2)
+          (3.8,2.2) (4,3) (5,3.6) (5.6,4.8) (4.2,5.4) (4.4,6)
+          (5,6) (6,5.2) (7,5.6) (8,6.4)};
+    \end{axis}
+  \end{tikzpicture}
+\end{minipage}
+
+\par\vspace{0.3em}
+% 公共图例，避免在三个小坐标轴内重复占用空间。
+\begin{tikzpicture}[aml figure,font=\scriptsize]
+  \fill[FigureBlue] (0,0) rectangle +(0.10,0.10);
+  \node[anchor=west] at (0.18,0.05) {类别 1};
+  \draw[FigureCoral,line width=.8pt] (1.55,0) -- (1.65,0.10)
+    (1.55,0.10) -- (1.65,0);
+  \node[anchor=west] at (1.73,0.05) {类别 2};
+  \draw[FigureInk,line width=1pt] (3.10,0.05) -- (3.45,0.05);
+  \node[anchor=west] at (3.53,0.05) {决策边界};
+\end{tikzpicture}
+\par
+\endgroup

@@ -32,9 +32,9 @@
 \paragraph{2. 自一致性}
 自一致性绕过显式的评分器，转而利用“多数真理”的直觉：对于复杂推理题，通常有多条不同的推理路径能导向同一个正确答案，而错误路径的答案则较为分散。因此，我们只需从每条路径中抽取出最终答案 $\hat{a}^k = \mathrm{Extract}(\hat{\mathbf{y}}^k)$，然后对 $N$ 个答案进行多数投票：
 \begin{eqnarray}
-\hat{a}_{\mathrm{sc}} = \argmax_{a \in A} \sum_{k=1}^N \mathbbm{1}(\mathrm{Extract}(\hat{\mathbf{y}}^k) = a),
+\hat{a}_{\mathrm{sc}} = \argmax_{a \in A} \sum_{k=1}^N \mathbb{I}(\mathrm{Extract}(\hat{\mathbf{y}}^k) = a),
 \end{eqnarray}
-其中 $\mathbbm{1}(\cdot)$ 是指示函数。这种方法简单且无需额外训练，在答案形式明确的任务中非常有效。
+其中 $\mathbb{I}(\cdot)$ 是指示函数。这种方法简单且无需额外训练，在答案形式明确的任务中非常有效。
 
 在使用以上方法时，一个不可忽视的实践要点是平衡路径的\textbf{多样性与质量}。较高的温度能提升多样性，增加覆盖正确推理的机会，但也可能使单条路径的文本质量下降，甚至出现逻辑混乱。因此，需要根据任务特点仔细调节采样参数（温度 $T$ 以及 $k$ 或 $p$ 的值），在探索的广度与单路输出的可靠性之间找到最优点。
 

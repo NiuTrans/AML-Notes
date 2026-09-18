@@ -1,0 +1,134 @@
+\input{figures/figure-theme.tex}
+\begin{tikzpicture}[aml figure,scale=1.0]
+\amlfigurepalette
+\tikzstyle{circlenode1}=[circle,minimum size=3pt, fill=blue, inner sep=0]
+\tikzstyle{circlenode2}=[circle,minimum size=3pt, fill=red, inner sep=0]
+\tikzstyle{circlenode3}=[circle,minimum size=2pt, fill=black, inner sep=0,black]
+\begin{axis}[aml axis,ymin=0,ymax=14, ytick={0, 2,4,6,8,10,12,14},
+xmin=0,xmax=12, xtick={0, 2,4,6,8,10,12},
+scatter/classes={%
+    a={mark=*,draw=FigureInk,fill=FigureInk}}]
+
+\addplot[scatter,only marks,%
+    scatter src=explicit symbolic]%
+table[meta=label] {
+x y label
+0.6 3.3 a
+2 2.5 a
+4.3 12 a
+4.7 3.3 a
+4.5 1 a
+5 6.8 a
+6 10 a
+8 1 a
+3.6 13.5 a
+1.5 8 a
+7.5 9.8 a
+    };
+
+% \addplot[domain=1.8:2,blue] {x*x};
+% \addplot[domain=2:2.2,blue] {x*x+1};
+% \draw[dotted] (axis cs:2,0) -- (axis cs:2,5);
+% \addplot[holdot] coordinates{(2,4)};
+% \addplot[soldot] coordinates{(2,5)};
+
+% \draw[dotted] (axis cs:0,4.5) -- (axis cs:2,4.5);
+
+% \draw[->] (axis cs:1.9, 1.9*1.9+0.1) -- (axis cs:1.95, 1.95*1.95+0.1);
+
+\draw[->, thick] (axis cs:0, 0) -- (axis cs:5.5, 12.65) ;
+\node[anchor=north west, font=\footnotesize] at (axis cs:6, 13) {方向 1};
+
+\node[circlenode3] (node3) at (axis cs:4.7, 5.7){};
+
+\node[,anchor=north east,font=\footnotesize]  at (axis cs:4.9, 5.7){投影};
+\node[] (node1)at ($(axis cs:1.3, 0)!(axis cs:4.7, 5.7)!(axis cs:6.3, 11.5)$) {};
+\draw[->,thick]  (node3) -- (node1);
+
+\draw[red,dotted] (axis cs:5, 6.8) -- ($(axis cs:0, 0)!(axis cs:5, 6.8)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:5, 6.8)!(axis cs:5, 11.5)$){};
+
+\draw[red,dotted] (axis cs:6, 10) -- ($(axis cs:0, 0)!(axis cs:6, 10)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:6, 10)!(axis cs:5, 11.5)$){};
+
+\draw[red,dotted] (axis cs:7.5, 9.8) -- ($(axis cs:0, 0)!(axis cs:7.5, 9.8)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:7.5, 9.8)!(axis cs:5, 11.5)$){};
+
+\draw[red,dotted] (axis cs:8, 1) -- ($(axis cs:0, 0)!(axis cs:8, 1)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:8, 1)!(axis cs:5, 11.5)$){};
+
+
+\draw[red,dotted] (axis cs:4.5, 1) -- ($(axis cs:0, 0)!(axis cs:4.5, 1)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:4.5, 1)!(axis cs:5, 11.5)$){};
+
+
+\draw[red,dotted] (axis cs:0.6, 3.3 ) -- ($(axis cs:0, 0)!(axis cs:0.6, 3.3)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:0.6, 3.3)!(axis cs:5, 11.5)$){};
+
+\draw[red,dotted] (axis cs:4.7, 3.3 ) -- ($(axis cs:0, 0)!(axis cs:4.7, 3.3)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:4.7, 3.3)!(axis cs:5, 11.5)$){};
+
+\draw[red,dotted] (axis cs:4.3, 12 ) -- ($(axis cs:0, 0)!(axis cs:4.3, 12)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:4.3, 12)!(axis cs:5, 11.5)$){};
+
+\draw[red,dotted] (axis cs:3.6, 13.5 ) -- ($(axis cs:0, 0)!(axis cs:3.6, 13.5)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:3.6, 13.5)!(axis cs:5, 11.5)$){};
+
+\draw[red,dotted] (axis cs:1.5, 8 ) -- ($(axis cs:0, 0)!(axis cs:1.5, 8)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:1.5, 8)!(axis cs:5, 11.5)$){};
+
+\draw[red,dotted] (axis cs:2,2.5 ) -- ($(axis cs:0, 0)!(axis cs:2,2.5)!(axis cs:5, 11.5)$);
+\node[circlenode2] at ($(axis cs:0, 0)!(axis cs:2,2.5)!(axis cs:5, 11.5)$){};
+\draw[->, thick] (axis cs:0, 0) -- (axis cs:11, 6) ;
+
+
+\draw[blue,dotted] (axis cs:2, 2.5) -- ($(axis cs:0, 0)!(axis cs:2, 2.5)!(axis cs:11,6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:2, 2.5)!(axis cs:11, 6)$){};
+
+
+\node[] (node2)at ($(axis cs:-3.5, 0)!(axis cs:4.7, 5.7)!(axis cs:7.5,6)$) {};
+\draw[->,thick]  (node3) -- (node2);
+
+
+%\draw[blue,dotted] (axis cs:3.6, 5.6) -- ($(axis cs:0, 0)!(axis cs:3.6, 5.6)!(axis cs:11, 6)$);
+%\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:3.6, 5.6)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:5, 6.8) -- ($(axis cs:0, 0)!(axis cs:5, 6.8)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:5, 6.8)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:6, 10) -- ($(axis cs:0, 0)!(axis cs:6, 10)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:6, 10)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:7.5, 9.8) -- ($(axis cs:0, 0)!(axis cs:7.5, 9.8)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:7.5, 9.8)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:4.5, 1) -- ($(axis cs:0, 0)!(axis cs:4.5, 1)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:4.5, 1)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:0.6, 3.3 ) -- ($(axis cs:0, 0)!(axis cs:0.6, 3.3)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:0.6, 3.3)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:8, 1 ) -- ($(axis cs:0, 0)!(axis cs:8, 1)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:8, 1)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:4.7, 3.3 ) -- ($(axis cs:0, 0)!(axis cs:4.7, 3.3)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:4.7, 3.3)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:4.3, 12 ) -- ($(axis cs:0, 0)!(axis cs:4.3, 12)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:4.3, 12)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:3.6, 13.5 ) -- ($(axis cs:0, 0)!(axis cs:3.6, 13.5)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:3.6, 13.5)!(axis cs:11, 6)$){};
+
+\draw[blue,dotted] (axis cs:1.5,8 ) -- ($(axis cs:0, 0)!(axis cs:1.5,8)!(axis cs:11, 6)$);
+\node[circlenode1] at ($(axis cs:0, 0)!(axis cs:1.5,8)!(axis cs:11, 6)$){};
+
+\node[anchor=north east,font=\footnotesize] at (axis cs:11.5,7.5) {方向 2};
+% \node[anchor=east] (source) at (axis cs:2.1,5){\text\ F(x)};
+% \node[anchor=east] (source) at (axis cs:1.95,3.5){\text\ F(x)};
+
+% \node[anchor=north](source) at (axis cs:1.8,4.6){$\omega$};
+% \node[anchor=south](source) at (axis cs:2,3.2){$X^{+/-}(\omega)$};
+
+\end{axis}
+\end{tikzpicture}

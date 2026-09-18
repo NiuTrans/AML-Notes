@@ -171,11 +171,11 @@
 
 许多智能任务并不是对一个静态输入给出一次答案，而是连续作出选择。机器人当前的转向会改变下一时刻的位置，调度系统当前分配的资源会影响后续任务的等待时间，推荐系统展示的内容也可能改变用户之后的行为。此类任务中的动作既影响即时结果，也改变未来能够看到的状态和可以采取的动作。强化学习研究的正是这种\keyword{智能体通过与环境交互，依据反馈学习长期决策策略}的问题。
 
-强化学习并非随着大模型才出现。它吸收了行为心理学中的试错学习、动态规划与最优控制等思想，早期主要用于控制、机器人、资源调度和博弈等序列决策问题。与监督学习依赖“输入—标签”样本不同，强化学习通常只得到奖励或代价：智能体必须探索不同动作，判断延迟出现的结果应当归因于此前哪些决策，并在利用已有经验与尝试未知行为之间作出权衡。价值函数、时序差分学习和策略优化等方法，都是围绕这些困难逐步发展起来的。
+强化学习并非随着大模型才出现。它吸收了行为心理学中的试错学习、动态规划与最优控制等思想，早期主要用于控制、机器人、资源调度和博弈等序列决策问题。与监督学习依赖“输入—标签”样本不同，强化学习通常只得到奖励或代价：智能体必须探索不同动作，判断延迟出现的结果应当归因于此前哪些决策，并在利用已有经验与尝试未知行为之间作出权衡。价值函数和策略优化等方法，都是围绕这些困难逐步发展起来的。
 
 深度学习的发展进一步扩大了强化学习能够处理的状态规模。深度神经网络可以直接从图像等高维输入中学习表示，DQN 在一组 Atari 游戏中展示了端到端学习决策策略的能力；随后，深度强化学习与搜索、自我对弈结合，在围棋等复杂博弈中取得重要进展。强化学习的应用也由相对低维的控制问题，扩展到高维感知、复杂策略和大规模函数近似场景。
 
-大模型出现后，强化学习获得了新的角色。预训练通过预测海量语料中的下一个词元学习通用知识和语言能力，但“更像训练语料”并不自动等于更符合用户意图。大模型后训练可以把模型看作策略，把生成过程看作一串动作，再利用人类偏好、奖励模型、规则检查器或可自动验证的任务结果提供反馈。基于人类反馈的强化学习（Reinforcement Learning from Human Feedback, RLHF）已被用于改善指令遵循和人类偏好对齐；在答案能够可靠验证的数学、编程等任务中，强化学习还可用于强化多步推理行为。
+大模型出现后，强化学习获得了新的角色。预训练通过预测海量语料中的下一个 token 学习通用知识和语言能力，但“更像训练语料”并不自动等于更符合用户意图。大模型后训练可以把模型看作策略，把生成过程看作一串动作，再利用人类偏好、奖励模型、规则检查器或可自动验证的任务结果提供反馈。基于人类反馈的强化学习（Reinforcement Learning from Human Feedback, RLHF）已被用于改善指令遵循和人类偏好对齐；在答案能够可靠验证的数学、编程等任务中，强化学习还可用于强化多步推理行为。
 
 因此，在当下的大模型技术体系中，强化学习是连接“已有模型能力”与“目标行为”的重要后训练手段，也是训练可交互智能体和自主决策系统的基础工具。它并不替代预训练、监督微调、搜索或工具调用，也不是所有任务都必须采用的方案：只有当目标能够转化为可信反馈、决策会影响后续过程，并且训练数据与探索成本可以控制时，强化学习的优势才更容易发挥。奖励若不能代表真实目标，策略反而可能更有效地利用奖励漏洞；反馈昂贵或不能在线试错时，也需要离线强化学习、模仿学习或其他方法共同解决。
 
@@ -450,24 +450,24 @@ Q-learning 的示例说明了价值如何从下一状态传回当前动作，并
 
 在五子棋中，策略网络接收棋盘状态，输出各位置的 logits。合法动作掩码排除已经落子的格点，归一化后得到空位上的概率分布。图~\ref{fig:gobang_policy_distribution} 给出一个简化示例。
 
-% \begin{figure}[htbp]
-%   \centering
-%   \IfFileExists{figures/gobang_policy.tex}{
-%     \resizebox{0.94\linewidth}{!}{
-%       \input{figures/gobang_policy.tex}
-%     }
-%   }{
-%     \fbox{
-%       \begin{minipage}[c][6cm][c]{0.94\linewidth}
-%         \centering
-%         策略模型输出的五子棋落子概率分布\\
-%         \texttt{figures/gobang\_policy.tex}
-%       \end{minipage}
-%     }
-%   }
-%   \caption{策略模型输出的五子棋落子概率分布}
-%   \label{fig:gobang_policy_distribution}
-% \end{figure}
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{figures/gobang_policy.tex}{
+    \resizebox{0.94\linewidth}{!}{
+      \input{figures/gobang_policy.tex}
+    }
+  }{
+    \fbox{
+      \begin{minipage}[c][6cm][c]{0.94\linewidth}
+        \centering
+        策略模型输出的五子棋落子概率分布\\
+        \texttt{figures/gobang\_policy.tex}
+      \end{minipage}
+    }
+  }
+  \caption{策略模型输出的五子棋落子概率分布}
+  \label{fig:gobang_policy_distribution}
+\end{figure}
 
 图中四个候选位置的概率分别为 $0.15$、$0.40$、$0.25$ 和 $0.20$。位置 $B=(8,8)$ 最可能被选中，但并非必然被选中：
 \begin{equation}
@@ -569,24 +569,24 @@ G_t-V^{\pi}(s_t)
 
 仍以前文的五子棋局面为例。假设智能体在状态 $s_t$ 下选择了位置 $B=(8,8)$，当前选择概率为 $\pi_{\theta}(B\mid s_t)=0.40$。图~\ref{fig:policy_advantage_update} 展示了该动作在两种不同回报情况下的更新结果。
 
-% \begin{figure}[htbp]
-%   \centering
-%   \IfFileExists{figures/policy_advantage_update.tex}{
-%     \resizebox{0.96\linewidth}{!}{
-%       \input{figures/policy_advantage_update.tex}
-%     }
-%   }{
-%     \fbox{
-%       \begin{minipage}[c][6.2cm][c]{0.96\linewidth}
-%         \centering
-%         回报与基线对落子概率更新的影响\\
-%         \texttt{figures/policy\_advantage\_update.tex}
-%       \end{minipage}
-%     }
-%   }
-%   \caption{回报与基线对落子概率更新的影响}
-%   \label{fig:policy_advantage_update}
-% \end{figure}
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{figures/policy_advantage_update.tex}{
+    \resizebox{0.96\linewidth}{!}{
+      \input{figures/policy_advantage_update.tex}
+    }
+  }{
+    \fbox{
+      \begin{minipage}[c][6.2cm][c]{0.96\linewidth}
+        \centering
+        回报与基线对落子概率更新的影响\\
+        \texttt{figures/policy\_advantage\_update.tex}
+      \end{minipage}
+    }
+  }
+  \caption{回报与基线对落子概率更新的影响}
+  \label{fig:policy_advantage_update}
+\end{figure}
 
 在图~\ref{fig:policy_advantage_update} 的第一种情况下，动作 $B$ 获得的实际回报为 $8$，而当前状态的基线为 $6$，因此优势估计为：
 \begin{equation}
@@ -624,7 +624,8 @@ REINFORCE 用实际采样到的后续回报评价动作。这个评价不依赖�
 \begin{equation}
 \pi_{\theta}(a_t\mid s_t)
 \end{equation}
-并采样 $a_t$。环境执行动作和约定范围内的对手回应，返回 $r_t$、$s_{t+1}$ 与终止标记。Critic 随后用相邻状态的价值构造训练目标。图~\ref{fig:actor_critic_framework} 展示了这条数据流。
+并采样 $a_t$。环境执行动作和约定范围内的对手回应，返回 $r_t$、$s_{t+1}$ 与终止标记。Critic 随后用相邻状态的价值构造训练目标。
+% 图~\ref{fig:actor_critic_framework} 展示了这条数据流。
 
 % \begin{figure}[htbp]
 %   \centering
@@ -872,24 +873,24 @@ L^{\mathrm{CLIP}}(\theta)
 
 裁剪机制对正优势动作和负优势动作的作用可以通过五子棋中的概率变化进行说明。图~\ref{fig:ppo_clipping_mechanism} 给出了旧策略概率为 $0.40$、裁剪阈值为 $\epsilon=0.2$ 时的两种情况。
 
-% \begin{figure}[htbp]
-%   \centering
-%   \IfFileExists{figures/ppo_clipping_mechanism.tex}{
-%     \resizebox{0.96\linewidth}{!}{
-%       \input{figures/ppo_clipping_mechanism.tex}
-%     }
-%   }{
-%     \fbox{
-%       \begin{minipage}[c][6.8cm][c]{0.96\linewidth}
-%         \centering
-%         PPO 裁剪机制对策略概率更新的限制\\
-%         \texttt{figures/ppo\_clipping\_mechanism.tex}
-%       \end{minipage}
-%     }
-%   }
-%   \caption{PPO 裁剪机制对策略概率更新的限制}
-%   \label{fig:ppo_clipping_mechanism}
-% \end{figure}
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{figures/ppo_clipping_mechanism.tex}{
+    \resizebox{0.96\linewidth}{!}{
+      \input{figures/ppo_clipping_mechanism.tex}
+    }
+  }{
+    \fbox{
+      \begin{minipage}[c][6.8cm][c]{0.96\linewidth}
+        \centering
+        PPO 裁剪机制对策略概率更新的限制\\
+        \texttt{figures/ppo\_clipping\_mechanism.tex}
+      \end{minipage}
+    }
+  }
+  \caption{PPO 裁剪机制对策略概率更新的限制}
+  \label{fig:ppo_clipping_mechanism}
+\end{figure}
 
 在图~\ref{fig:ppo_clipping_mechanism} 中，裁剪区间为：
 
@@ -933,14 +934,14 @@ L^{\mathrm{CLIP}}(\theta)
 
 图~\ref{fig:ppo_training_process} 展示了 PPO 一次训练迭代的主要过程。
 
-% \begin{figure}[htbp]
-%   \centering
-%   \resizebox{0.94\linewidth}{!}{
-%     \input{figures/ppo_training_process.tex}
-%   }
-%   \caption{PPO 的一次采样与更新过程}
-%   \label{fig:ppo_training_process}
-% \end{figure}
+\begin{figure}[htbp]
+  \centering
+  \resizebox{0.94\linewidth}{!}{
+    \input{figures/ppo_training_process.tex}
+  }
+  \caption{PPO 的一次采样与更新过程}
+  \label{fig:ppo_training_process}
+\end{figure}
 
 实际实现通常还把策略目标、价值误差和熵正则合并训练。价值损失用于拟合回报或优势计算所需的基线，熵项用于延缓策略过早变得确定。三个分量的尺度不同，因此应分别记录，而不能只观察相加后的总损失。若价值误差持续增大，单靠缩小 PPO 的裁剪范围通常不能解决问题；若近似 KL 很大或大量样本触发裁剪，则说明同一批数据上的更新可能过多。
 

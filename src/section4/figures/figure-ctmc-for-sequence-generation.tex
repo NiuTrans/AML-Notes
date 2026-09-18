@@ -1,7 +1,14 @@
 \documentclass[border=9pt]{standalone}
 \input{figure_preamble.tex}
+
 \begin{document}
+
 \begin{tikzpicture}
+
+% figure_style.tex 会在 background 层绘制整张图的浅色底板。
+% 增加 highlight 层，使右上角的边框和色块位于底板之上、文字之下。
+\pgfdeclarelayer{highlight}
+\pgfsetlayers{background,highlight,main}
 
 \def\sep{0.6}
 \def\stepsize{0.4cm}
@@ -9,91 +16,359 @@
 \def\vectorsize{1cm}
 \def\smallsize{0.13}
 
-\tikzstyle{snode} = [fig/module,minimum width=2.5cm,minimum height=0.6cm]
-\tikzstyle{cnode} = [minimum width=0.3cm,minimum height=\vectorsize]
+\tikzstyle{snode}=[
+  fig/module,
+  minimum width=2.5cm,
+  minimum height=0.6cm
+]
+
+\tikzstyle{cnode}=[
+  minimum width=0.3cm,
+  minimum height=\vectorsize
+]
 
 \begin{scope}
 
-\node [anchor=center] (x1) at (0,0) {\texttt{A}};
-\node [anchor=center] (x2) at ([xshift=\stepsize]x1) {\texttt{D}};
-\node [anchor=center] (x3) at ([xshift=\stepsize]x2) {\texttt{B}};
-\node [anchor=center] (x4) at ([xshift=\stepsize]x3) {\texttt{C}};
-\node [anchor=center] (x5) at ([xshift=\stepsize]x4) {\texttt{C}};
+% =========================================================
+% 当前序列 x
+% =========================================================
 
-\node [anchor=center] (y21) at ([yshift=-2cm]x1) {\texttt{B}};
-\node [anchor=center] (y22) at ([xshift=\stepsize]y21) {\texttt{D}};
-\node [anchor=center] (y23) at ([xshift=\stepsize]y22) {\texttt{B}};
-\node [anchor=center] (y24) at ([xshift=\stepsize]y23) {\texttt{C}};
-\node [anchor=center] (y25) at ([xshift=\stepsize]y24) {\texttt{C}};
+\node[anchor=center] (x1) at (0,0)
+  {\texttt{A}};
 
-\node [anchor=west] (y31) at ([xshift=0.8cm]y25.east) {\texttt{A}};
-\node [anchor=center] (y32) at ([xshift=\stepsize]y31) {\texttt{D}};
-\node [anchor=center] (y33) at ([xshift=\stepsize]y32) {\texttt{B}};
-\node [anchor=center] (y34) at ([xshift=\stepsize]y33) {\texttt{D}};
-\node [anchor=center] (y35) at ([xshift=\stepsize]y34) {\texttt{C}};
+\node[anchor=center] (x2) at ([xshift=\stepsize]x1)
+  {\texttt{D}};
 
-\node [anchor=east] (y15) at ([xshift=-0.8cm]y21.west) {\texttt{C}};
-\node [anchor=center] (y14) at ([xshift=-\stepsize]y15) {\texttt{C}};
-\node [anchor=center] (y13) at ([xshift=-\stepsize]y14) {\texttt{B}};
-\node [anchor=center] (y12) at ([xshift=-\stepsize]y13) {\texttt{C}};
-\node [anchor=center] (y11) at ([xshift=-\stepsize]y12) {\texttt{A}};
+\node[anchor=center] (x3) at ([xshift=\stepsize]x2)
+  {\texttt{B}};
+
+\node[anchor=center] (x4) at ([xshift=\stepsize]x3)
+  {\texttt{C}};
+
+\node[anchor=center] (x5) at ([xshift=\stepsize]x4)
+  {\texttt{C}};
+
+
+% =========================================================
+% 下方中间序列 y_2
+% =========================================================
+
+\node[anchor=center] (y21) at ([yshift=-2cm]x1)
+  {\texttt{B}};
+
+\node[anchor=center] (y22) at ([xshift=\stepsize]y21)
+  {\texttt{D}};
+
+\node[anchor=center] (y23) at ([xshift=\stepsize]y22)
+  {\texttt{B}};
+
+\node[anchor=center] (y24) at ([xshift=\stepsize]y23)
+  {\texttt{C}};
+
+\node[anchor=center] (y25) at ([xshift=\stepsize]y24)
+  {\texttt{C}};
+
+
+% =========================================================
+% 下方右侧序列 y_3
+% =========================================================
+
+\node[anchor=west] (y31) at ([xshift=0.8cm]y25.east)
+  {\texttt{A}};
+
+\node[anchor=center] (y32) at ([xshift=\stepsize]y31)
+  {\texttt{D}};
+
+\node[anchor=center] (y33) at ([xshift=\stepsize]y32)
+  {\texttt{B}};
+
+\node[anchor=center] (y34) at ([xshift=\stepsize]y33)
+  {\texttt{D}};
+
+\node[anchor=center] (y35) at ([xshift=\stepsize]y34)
+  {\texttt{C}};
+
+
+% =========================================================
+% 下方左侧序列 y_1
+% =========================================================
+
+\node[anchor=east] (y15) at ([xshift=-0.8cm]y21.west)
+  {\texttt{C}};
+
+\node[anchor=center] (y14) at ([xshift=-\stepsize]y15)
+  {\texttt{C}};
+
+\node[anchor=center] (y13) at ([xshift=-\stepsize]y14)
+  {\texttt{B}};
+
+\node[anchor=center] (y12) at ([xshift=-\stepsize]y13)
+  {\texttt{C}};
+
+\node[anchor=center] (y11) at ([xshift=-\stepsize]y12)
+  {\texttt{A}};
+
+
+% =========================================================
+% 序列外框和标签
+% =========================================================
 
 \begin{pgfonlayer}{background}
-\node [snode] (xbox) at (x3) {};
-\node [snode] (ybox1) at (y13) {};
-\node [snode] (ybox2) at (y23) {};
-\node [snode] (ybox3) at (y33) {};
-\node [anchor=east] (xlabel) at ([xshift=-0.2cm]xbox.west) {$\mathbf{x}$};
-\node [anchor=north] (y1label) at ([yshift=-0.1cm]ybox1.south) {$\mathbf{y}_1$};
-\node [anchor=north] (y2label) at ([yshift=-0.1cm]ybox2.south) {$\mathbf{y}_2$};
-\node [anchor=north] (y3label) at ([yshift=-0.1cm]ybox3.south) {$\mathbf{y}_3$};
+
+\node[snode] (xbox) at (x3) {};
+
+\node[snode] (ybox1) at (y13) {};
+
+\node[snode] (ybox2) at (y23) {};
+
+\node[snode] (ybox3) at (y33) {};
+
+\node[anchor=east] (xlabel)
+  at ([xshift=-0.2cm]xbox.west)
+  {$\mathbf{x}$};
+
+\node[anchor=north] (y1label)
+  at ([yshift=-0.1cm]ybox1.south)
+  {$\mathbf{y}_1$};
+
+\node[anchor=north] (y2label)
+  at ([yshift=-0.1cm]ybox2.south)
+  {$\mathbf{y}_2$};
+
+\node[anchor=north] (y3label)
+  at ([yshift=-0.1cm]ybox3.south)
+  {$\mathbf{y}_3$};
+
 \end{pgfonlayer}
 
-\node [anchor=east] (y0) at ([xshift=-0.2cm]ybox1.west) {$\cdots$};
-\node [anchor=west] (y4) at ([xshift=0.2cm]ybox3.east) {$\cdots$};
 
-\draw [->] ([yshift=1pt]ybox1.north) -- ([xshift=-0.5cm,yshift=-2pt]xbox.south);
-\draw [->] ([yshift=1pt]ybox2.north) -- ([xshift=0cm,yshift=-1pt]xbox.south);
-\draw [->] ([yshift=1pt]ybox3.north) -- ([xshift=0.5cm,yshift=-2pt]xbox.south);
+% 两侧省略号
 
-\draw [->,thick] ([xshift=-4.5cm,yshift=-3.0cm]x1.west) -- ([xshift=-4.5cm,yshift=1.4cm]x1.west);
-\node [anchor=east] (timelabel) at ([xshift=-4.6cm,yshift=1.2cm]x1.west) {\footnotesize{时间}};
-\node [anchor=center,circle,fill=black,inner sep=0,minimum size=4pt] (tpoint) at ([xshift=-4.5cm]x1.west) {};
-\node [anchor=east] (tlabel) at ([xshift=-0.1cm]tpoint) {\footnotesize{$t$}};
-\draw [-,dotted] ([xshift=2pt]tpoint) -- (xlabel.west);
+\node[anchor=east] (y0)
+  at ([xshift=-0.2cm]ybox1.west)
+  {$\cdots$};
 
-\node [anchor=south] (CTMC) at ([yshift=2pt]xbox.north) {\footnotesize{CTMC: $\frac{d p_t(\mathbf{x})}{dt} = \sum_{\mathbf{y} \in V^n} p_t(\mathbf{y}) {\color{blue} [\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}}$}};
+\node[anchor=west] (y4)
+  at ([xshift=0.2cm]ybox3.east)
+  {$\cdots$};
 
-\node [anchor=center] (sx1) at ([yshift=4cm,xshift=2cm]xbox.north) {\footnotesize{\texttt{A}}};
-\node [anchor=center] (sx2) at ([xshift=1.2*\stepsize]sx1) {\footnotesize{\texttt{D}}};
-\node [anchor=center] (sx3) at ([xshift=1.2*\stepsize]sx2) {\footnotesize{\texttt{B}}};
-\node [anchor=center] (sx4) at ([xshift=1.2*\stepsize]sx3) {\footnotesize{\texttt{C}}};
-\node [anchor=center] (sx5) at ([xshift=1.2*\stepsize]sx4) {\footnotesize{\texttt{C}}};
 
-\node [anchor=center] (sy1) at ([yshift=-1.2cm]sx1.south) {\footnotesize{\texttt{A}}};
-\node [anchor=center] (sy2) at ([xshift=1.2*\stepsize]sy1) {\footnotesize{\texttt{D}}};
-\node [anchor=center] (sy3) at ([xshift=1.2*\stepsize]sy2) {\footnotesize{\texttt{B}}};
-\node [anchor=center] (sy4) at ([xshift=1.2*\stepsize]sy3) {\footnotesize{\texttt{D}}};
-\node [anchor=center] (sy5) at ([xshift=1.2*\stepsize]sy4) {\footnotesize{\texttt{C}}};
+% =========================================================
+% 下方序列指向当前序列
+% =========================================================
 
-\draw [->,thin] (sy1.north) -- (sx1.south);
-\draw [->,thin] (sy2.north) -- (sx2.south);
-\draw [->,thin] (sy3.north) -- (sx3.south);
-\draw [->,thin] (sy4.north) -- (sx4.south);
-\draw [->,thin] (sy5.north) -- (sx5.south);
+\draw[->]
+  ([yshift=1pt]ybox1.north)
+  --
+  ([xshift=-0.5cm,yshift=-2pt]xbox.south);
 
-\node [anchor=north west] (qtokenlabel) at (sy4.south) {\scriptsize{$Q^{\mathrm{tok}}_{\texttt{DC}}(t)$}};
+\draw[->]
+  ([yshift=1pt]ybox2.north)
+  --
+  ([xshift=0cm,yshift=-1pt]xbox.south);
 
-\begin{pgfonlayer}{background}
-\node [draw=blue] [fit = (sx1) (sy5) (qtokenlabel) ] (qbox) {};
-\node [fill=orange!20,inner sep=1pt] [fit = (sx4) (sy4)] (qttokenbox) {};
+\draw[->]
+  ([yshift=1pt]ybox3.north)
+  --
+  ([xshift=0.5cm,yshift=-2pt]xbox.south);
+
+
+% =========================================================
+% 左侧时间轴
+% =========================================================
+
+\draw[->,thick]
+  ([xshift=-4.5cm,yshift=-3.0cm]x1.west)
+  --
+  ([xshift=-4.5cm,yshift=1.4cm]x1.west);
+
+\node[anchor=east] (timelabel)
+  at ([xshift=-4.6cm,yshift=1.2cm]x1.west)
+  {\footnotesize 时间};
+
+\node[
+  anchor=center,
+  circle,
+  fill=black,
+  inner sep=0,
+  minimum size=4pt
+] (tpoint)
+  at ([xshift=-4.5cm]x1.west) {};
+
+\node[anchor=east] (tlabel)
+  at ([xshift=-0.1cm]tpoint)
+  {\footnotesize $t$};
+
+\draw[-,dotted]
+  ([xshift=2pt]tpoint)
+  --
+  (xlabel.west);
+
+
+% =========================================================
+% CTMC 公式
+% =========================================================
+
+\node[anchor=south] (CTMC)
+  at ([yshift=2pt]xbox.north)
+  {
+    \footnotesize
+    CTMC:
+    $
+    \frac{d p_t(\mathbf{x})}{dt}
+    =
+    \sum_{\mathbf{y}\in V^n}
+    p_t(\mathbf{y})
+    {\color{blue}
+      [\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}
+    }
+    $
+  };
+
+
+% =========================================================
+% 右上角：序列 x
+% =========================================================
+
+\node[anchor=center] (sx1)
+  at ([yshift=4cm,xshift=2cm]xbox.north)
+  {\footnotesize\texttt{A}};
+
+\node[anchor=center] (sx2)
+  at ([xshift=1.2*\stepsize]sx1)
+  {\footnotesize\texttt{D}};
+
+\node[anchor=center] (sx3)
+  at ([xshift=1.2*\stepsize]sx2)
+  {\footnotesize\texttt{B}};
+
+\node[anchor=center] (sx4)
+  at ([xshift=1.2*\stepsize]sx3)
+  {\footnotesize\texttt{C}};
+
+\node[anchor=center] (sx5)
+  at ([xshift=1.2*\stepsize]sx4)
+  {\footnotesize\texttt{C}};
+
+
+% =========================================================
+% 右上角：序列 y_3
+% =========================================================
+
+\node[anchor=center] (sy1)
+  at ([yshift=-1.2cm]sx1.south)
+  {\footnotesize\texttt{A}};
+
+\node[anchor=center] (sy2)
+  at ([xshift=1.2*\stepsize]sy1)
+  {\footnotesize\texttt{D}};
+
+\node[anchor=center] (sy3)
+  at ([xshift=1.2*\stepsize]sy2)
+  {\footnotesize\texttt{B}};
+
+\node[anchor=center] (sy4)
+  at ([xshift=1.2*\stepsize]sy3)
+  {\footnotesize\texttt{D}};
+
+\node[anchor=center] (sy5)
+  at ([xshift=1.2*\stepsize]sy4)
+  {\footnotesize\texttt{C}};
+
+
+% =========================================================
+% 右上角逐 token 转移箭头
+% =========================================================
+
+\draw[->,thin] (sy1.north) -- (sx1.south);
+\draw[->,thin] (sy2.north) -- (sx2.south);
+\draw[->,thin] (sy3.north) -- (sx3.south);
+\draw[->,thin] (sy4.north) -- (sx4.south);
+\draw[->,thin] (sy5.north) -- (sx5.south);
+
+
+%  token 级生成矩阵元素
+
+\node[anchor=north west] (qtokenlabel)
+  at (sy4.south)
+  {
+    \scriptsize
+    $Q^{\mathrm{tok}}_{\texttt{DC}}(t)$
+  };
+
+
+% =========================================================
+% 修复部分：
+% 蓝色外框和第四列 C/D 的浅橙色高亮
+% =========================================================
+
+\begin{pgfonlayer}{highlight}
+
+% 右上角整个矩阵的蓝色外框
+\node[
+  draw=blue,
+  rounded corners=1pt,
+  line width=0.7pt,
+  inner sep=3pt,
+  fit=(sx1) (sy5) (qtokenlabel)
+] (qbox) {};
+
+% 第四列 C -> D 的颜色高亮
+\node[
+  fill=orange!20,
+  rounded corners=0.6pt,
+  inner xsep=2pt,
+  inner ysep=1pt,
+  fit=(sx4) (sy4)
+] (qttokenbox) {};
+
 \end{pgfonlayer}
 
-\draw [->,blue] ([yshift=-2pt]qbox.south) .. controls +(south:0.7cm) and +(north:0.7cm) .. ([xshift=-1.0cm,yshift=-1pt]CTMC.north east);
 
-\node [anchor=north east,align=left] (qlabel) at ([yshift=0]qbox.north west) {\footnotesize{生成矩阵中 $(\mathbf{x},\mathbf{y}_3)$ 对应的}\\[-2pt] \footnotesize{矩阵元，记为 $[\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}$}\\[-2pt] \footnotesize{其中}\\[-2pt] \footnotesize{$\mathbf{x} = \texttt{ADBCC}$}\\[-2pt] \footnotesize{$\mathbf{y}_3 = \texttt{ADBDC}$}};
+% =========================================================
+% 右上角蓝色弯曲箭头
+% =========================================================
+
+\draw[->,blue]
+  ([yshift=-2pt]qbox.south)
+  ..
+  controls
+    +(south:0.7cm)
+    and
+    +(north:0.7cm)
+  ..
+  ([xshift=-1.0cm,yshift=-1pt]CTMC.north east);
+
+
+% =========================================================
+% 右上角说明文字
+% =========================================================
+
+\node[
+  anchor=north east,
+  align=left
+] (qlabel)
+  at ([yshift=0]qbox.north west)
+  {
+    \footnotesize
+    生成矩阵中 $(\mathbf{x},\mathbf{y}_3)$ 对应的
+    \\[-2pt]
+    \footnotesize
+    矩阵元，记为
+    $[\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}$
+    \\[-2pt]
+    \footnotesize
+    其中
+    \\[-2pt]
+    \footnotesize
+    $\mathbf{x}=\texttt{ADBCC}$
+    \\[-2pt]
+    \footnotesize
+    $\mathbf{y}_3=\texttt{ADBDC}$
+  };
 
 \end{scope}
 
 \end{tikzpicture}
+
 \end{document}

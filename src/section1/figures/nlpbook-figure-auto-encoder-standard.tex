@@ -1,0 +1,84 @@
+\begin{center}
+
+\begin{tikzpicture}
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\nodesize{1.2em}
+\tikzstyle{nnode} = [circle,minimum size=\nodesize,inner sep=0,fill=ugreen!20]
+
+%----------------------------------------------------------------------------------------
+% code (or representation)
+
+\node [nnode] (code1) at (0,0) {\scriptsize{0}};
+\node [nnode,anchor=north] (code2) at ([yshift=-0.3*\nodesize]code1.south) {\scriptsize{5}};
+\node [nnode,anchor=north] (code3) at ([yshift=-0.3*\nodesize]code2.south) {\scriptsize{-1}};
+\node [nnode,anchor=north] (code4) at ([yshift=-0.3*\nodesize]code3.south) {\scriptsize{.8}};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=3pt,fill=white]  [fit = (code1) (code4)] (codebox) {};
+\end{pgfonlayer}
+
+\node [anchor=south] (codelabel) at ([yshift=1.5em]codebox.north) {编码 $\mathbf{h}$};
+\node [anchor=north] (bottleneck) at ([yshift=2pt]codelabel.south) {（瓶颈层）};
+
+%----------------------------------------------------------------------------------------
+% encoder
+
+\node [nnode,anchor=east,fill=blue!20] (input2) at ([xshift=-7*\nodesize]code1.west) {\scriptsize{3}};
+\node [nnode,anchor=south,fill=blue!20] (input1) at ([yshift=0.3*\nodesize]input2.north) {\scriptsize{7}};
+\node [nnode,anchor=north,fill=blue!20] (input3) at ([yshift=-0.3*\nodesize]input2.south) {\scriptsize{.1}};
+\node [nnode,anchor=north,fill=blue!20] (input4) at ([yshift=-0.3*\nodesize]input3.south) {\scriptsize{2}};
+\node [nnode,anchor=north,fill=blue!20] (input5) at ([yshift=-0.3*\nodesize]input4.south) {\scriptsize{0}};
+\node [nnode,anchor=north,fill=blue!20] (input6) at ([yshift=-0.3*\nodesize]input5.south) {\scriptsize{.1}};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=3pt,fill=white]  [fit = (input1) (input6)] (inputbox) {};
+\end{pgfonlayer}
+
+\node [anchor=south] (inputlabel) at ([yshift=0.5em]inputbox.north) {输入 $\mathbf{x}$};
+
+\filldraw [fill=blue!20,draw=white] ([xshift=-5pt]codebox.south west) -- ([xshift=-5pt]codebox.north west) -- ([xshift=5pt]inputbox.north east) -- ([xshift=5pt]inputbox.south east) -- ([xshift=-5pt]codebox.south west);
+
+\node [anchor=east] (encoderlabel) at ([xshift=-1.8em,yshift=0.5em]codebox.west) {\Large{编码器}};
+\node [anchor=north west] (encodereqn) at ([xshift=0em]encoderlabel.south west) {$\mathbf{h}=\mathrm{Enc}_{\theta}(\mathbf{x})$};
+
+%----------------------------------------------------------------------------------------
+% decoder
+
+\node [nnode,anchor=west,fill=red!20] (output2) at ([xshift=7*\nodesize]code1.east) {\scriptsize{3}};
+\node [nnode,anchor=south,fill=red!20] (output1) at ([yshift=0.3*\nodesize]output2.north) {\scriptsize{7}};
+\node [nnode,anchor=north,fill=red!20] (output3) at ([yshift=-0.3*\nodesize]output2.south) {\scriptsize{.1}};
+\node [nnode,anchor=north,fill=red!20] (output4) at ([yshift=-0.3*\nodesize]output3.south) {\scriptsize{0}};
+\node [nnode,anchor=north,fill=red!20] (output5) at ([yshift=-0.3*\nodesize]output4.south) {\scriptsize{1}};
+\node [nnode,anchor=north,fill=red!20] (output6) at ([yshift=-0.3*\nodesize]output5.south) {\scriptsize{.5}};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=3pt,fill=white]  [fit = (output1) (output6)] (outputbox) {};
+\end{pgfonlayer}
+
+\node [anchor=south] (outputlabel) at ([yshift=0.5em]outputbox.north) {重构 $\widetilde{\mathbf{x}}$};
+
+\filldraw [fill=red!20,draw=white] ([xshift=5pt]codebox.south east) -- ([xshift=5pt]codebox.north east) -- ([xshift=-5pt]outputbox.north west) -- ([xshift=-5pt]outputbox.south west) -- ([xshift=5pt]codebox.south east);
+
+\node [anchor=west] (decoderlabel) at ([xshift=1.2em,yshift=0.5em]codebox.east) {\Large{解码器}};
+\node [anchor=north west] (decodereqn) at ([xshift=0em]decoderlabel.south west) {$\widetilde{\mathbf{x}}=\mathrm{Dec}_{\omega}(\mathbf{h})$};
+
+%----------------------------------------------------------------------------------------
+% the training objective
+
+\node [anchor=south] (objective) at ([yshift=6em,xshift=-2em]codebox.north) {$(\hat{\theta},\hat{\omega}) = \argmin\limits_{(\theta,\omega)} \sum\limits_{i=1}^{m} L ($};
+\node [anchor=west,inner sep=2pt,minimum height=1.5em,fill=blue!20] (obj2) at ([yshift=4pt]objective.east) {$\mathbf{x}^{(i)}$};
+\node [anchor=west,inner sep=3pt,minimum height=1.5em] (obj3) at ([yshift=-4pt]obj2.east) {$,$};
+\node [anchor=west,inner sep=3pt,minimum height=1.5em,fill=red!20] (obj4) at ([yshift=4pt]obj3.east) {$\widetilde{\mathbf{x}}^{(i)}$};
+\node [anchor=west,inner sep=2pt,minimum height=1.5em] (obj5) at ([yshift=-2pt]obj4.east) {$)$};
+
+\draw [<-] (inputlabel.north) .. controls +(north:3em) and +(south:3em) .. (obj2.south);
+\draw [<-] (outputlabel.north) .. controls +(north:3em) and +(south:3em) .. (obj4.south);
+
+\node [anchor=south west] (objlabel) at ([yshift=-0.5em]objective.north west) {训练目标：};
+
+\end{tikzpicture}
+
+\end{center}
+

@@ -223,6 +223,7 @@
 
 
 \chapter{深度学习中的连续动力学机制}
+\chapterinfo[本章内容主要参考 \href{https://www.techrxiv.org/doi/full/10.36227/techrxiv.177160477.75893679/v1}{\textit{Ordinary Differential Equations in Vision and Language}} ，部分内容翻译、整理自该书英文版]{张俊翔、叶凯阳、肖桐}
 
 \begin{learninggoals}
   \begin{itemize}
@@ -230,7 +231,7 @@
     \item 能够从连续深度视角解释残差网络与 Transformer 的表示演化，区分结构类比与严格等价，并理解 Neural ODE 及伴随灵敏度法的基本思想。
     \item 掌握确定性概率输运的核心工具，能够说明连续性方程、连续归一化流与 Flow Matching 的训练目标及其差异。
     \item 理解随机微分方程、反向 SDE、分数函数、去噪分数匹配与概率流 ODE 之间的关系，并能比较确定性与随机性生成轨迹。
-    \item 了解连续时间马尔可夫链和离散扩散的基本机制，能够比较嵌入空间扩散、词元空间扩散以及自回归与非自回归生成方案。
+    \item 了解连续时间马尔可夫链和离散扩散的基本机制，能够比较嵌入空间扩散、 token 空间扩散以及自回归与非自回归生成方案。
     \item 能够结合稳定性、刚性、误差控制和采样效率，对不同连续动力学模型及其数值实现作出分析与选择。
   \end{itemize}
 \end{learninggoals}
@@ -1102,7 +1103,7 @@ x(t)
 设序列长度为 \(n\)，隐藏维数为 \(d\)，第 \(l\) 个残差子层输入的
 隐藏表示记为
 \(\boldsymbol{H}_{l}\in\mathbb{R}^{n\times d}\)。
-矩阵的每一行对应一个词元在当前深度处的上下文表示，而
+矩阵的每一行对应一个 token 在当前深度处的上下文表示，而
 \(\boldsymbol{\theta}_{l}\) 表示该子层的模型参数。对于预归一化
 Transformer，一个自注意力子层或前馈网络子层都可以统一写成
 \begin{equation}
@@ -1166,7 +1167,7 @@ Transformer，一个自注意力子层或前馈网络子层都可以统一写成
     \toprule
     Transformer 中的量 & 连续动力系统中的量 & 作用 \\
     \midrule
-    子层索引 \(l\) & 网格时刻 \(t_l\) & 标记推进位置 \\
+    子层索引 \(l\) & 网格时刻 \(t_l\) & token 推进位置 \\
     隐藏表示 \(\boldsymbol{H}_l\) & 状态 \(\boldsymbol{H}(t_l)\) & 描述当前表示 \\
     子层变换 \(F_l\) & 向量场 \(f\) & 给出局部更新方向 \\
     残差尺度 \(\alpha_l\) & 步长 \(h_l\) & 控制单步更新幅度 \\
@@ -1208,7 +1209,7 @@ ODE 视角为不同层的状态推进提供了共同的数学语言，并允许�
     ).
     \label{eq:repr-transformer-split-update}
 \end{align}
-自注意力在词元维度聚合上下文信息，前馈网络则对各位置的表示施加非线性变换；
+自注意力在 token 维度聚合上下文信息，前馈网络则对各位置的表示施加非线性变换；
 二者直接产生隐藏表示的增量。若连续动力学被形式化为
 \[
     \frac{\mathrm{d}\boldsymbol{H}}{\mathrm{d}t}
@@ -2470,7 +2471,7 @@ d\mathbf{x}(t) & = & \sqrt{\frac{d\sigma^2(t)}{dt}} d\mathbf{w}(t).
 因此，方差爆炸 SDE 描述的是一个连续加噪过程：
 样本没有确定性的漂移趋势，
 而是在不断累积的随机扰动下，
-由具有复杂结构的数据逐渐演化为高方差噪声。（缺图）
+由具有复杂结构的数据逐渐演化为高方差噪声。
 
 \textbf{DDPM}框架采用不同的噪声注入策略。不同于简单地增加方差噪声，它在每一步重新缩放数据以保持方差有界。在离散公式中，前向过程由方差调度 $0 < \beta_1 < \beta_2 < \dots < \beta_N < 1$ 定义，从 $\mathbf{x}_{i-1}$ 到 $\mathbf{x}_i$ 的转移由下式给出：
 \begin{eqnarray}
@@ -2875,67 +2876,76 @@ $v_{\theta}^2$，即 2-修正流。由于 $\hat{\mathbf{x}}_i(0)$ 是通过第�
 前两节讨论的确定性与随机概率动力学都建立在连续状态空间上：
 无论样本由 ODE 还是 SDE 驱动，状态都能够在向量空间中作无穷小变化。
 现在转向另一类情形：时间变量仍然连续，但系统状态取自离散集合。
-对于文本词元、类别标签等对象，两个离散状态之间通常不存在可直接解释为有效样本的连续中间值；
+对于文本 token 、类别标签等对象，两个离散状态之间通常不存在可直接解释为有效样本的连续中间值；
 相应的样本轨迹不再沿光滑曲线移动，而是在连续时间中以随机时刻发生离散跳转。
 连续时间马尔可夫链及其生成器正是刻画这类动力学的基本工具。
 
-语言生成同时提供了连接连续与离散方法的典型场景。一种做法是先把词元映射到连续嵌入空间，
-再沿用连续扩散模型；另一种做法则直接在词元空间定义破坏、去噪和跳转过程。
+语言生成同时提供了连接连续与离散方法的典型场景。一种做法是先把 token 映射到连续嵌入空间，
+再沿用连续扩散模型；另一种做法则直接在 token 空间定义破坏、去噪和跳转过程。
 为说明这两条路线如何与前文的概率动力学相衔接，下面先区分自回归与非自回归序列生成，
 随后依次讨论嵌入空间扩散、连续时间马尔可夫链、离散扩散、掩码扩散以及相关的连续松弛与流方法。
 
 \begin{importantnote}
-\textbf{新概念：}连续时间马尔可夫链的时间变量连续、状态空间离散。生成器矩阵的非对角元素给出状态间的瞬时跳转率，对角元素保证每行和为零；它在离散状态空间中承担了类似连续向量场的角色，并诱导概率分布满足主方程。
+\textbf{新概念：}连续时间马尔可夫链的时间变量连续、状态空间离散。生成矩阵的非对角元素给出状态间的瞬时跳转率，对角元素保证每行和为零；它在离散状态空间中承担了类似连续向量场的角色，并诱导概率分布满足主方程。
 
-\textbf{重难点解析：}嵌入扩散在连续向量空间中加噪，便于复用 SDE 和分数模型，但最终需要舍入为词元，可能出现表示平均化和长度处理问题；离散扩散直接在词元空间定义替换或掩码跳转，语义对象始终合法，却需要设计可处理的转移核与反向过程。扩散式 NAR 可以并行更新位置，但仍需多次去噪，不能把完整生成复杂度简单视为 \(O(1)\)。
+\textbf{重难点解析：}
+嵌入空间扩散在连续向量空间中加噪，便于沿用 SDE 与分数建模方法，
+但生成结束后仍需将连续表示解码为离散 token 。
+受连续回归目标的影响，生成向量可能落在多个 token 嵌入之间，
+从而产生 token 解码歧义；此外，序列长度也需要另行确定。
+离散扩散直接在 token 空间中定义替换或掩码跳转，
+其中间状态始终属于合法的离散状态空间，
+但需要设计能够高效计算的转移核与反向过程。
+扩散式非自回归生成可以并行更新不同位置，
+但通常仍需执行多轮去噪，因此不能将完整生成过程的计算复杂度简单视为 \(O(1)\)。
 \end{importantnote}
 
-\subsection{令牌序列生成}
+\subsection{ token 序列生成}
 
 我们首先介绍\textbf{自回归（AR）生成}和\textbf{非自回归（NAR）生成}的概念，随后说明扩散模型如何采用 NAR 式的并行位置更新。
 \subsubsection{自回归生成与非自回归生成}
 
-\textbf{令牌序列生成}（简称\textbf{序列生成}）是自然语言处理中的基础任务，也是\textbf{大语言模型}（LLMs）的基石\citep{radford-etal:2018improving}。主流方法是自回归（AR）生成\footnote{统计学中，\textit{回归}指估计因变量（$Y$）与自变量（$X$）的关系。前缀\textit{auto}源自希腊语"自我"，因此\textit{自回归}表示用变量自身的滞后值作为自变量进行回归分析。即不通过$X$预测$Y$，而是用$Y_{\text{昨日}}$预测$Y_{\text{今日}}$}。自然语言处理中通常采用从左到右的生成方式，即根据已生成的所有前序令牌逐个预测后续令牌。形式化地，设$\mathbf{x} = \{x_1,...,x_n\}$为令牌序列，其概率通过概率链式法则定义为：
+\textbf{ token 序列生成}（简称\textbf{序列生成}）是自然语言处理中的基础任务，也是\textbf{大语言模型}（LLMs）的基石\citep{radford-etal:2018improving}。主流方法是自回归（AR）生成\footnote{统计学中，\textit{回归}指估计因变量（$Y$）与自变量（$X$）的关系。前缀\textit{auto}源自希腊语"自我"，因此\textit{自回归}表示用变量自身的滞后值作为自变量进行回归分析。即不通过$X$预测$Y$，而是用$Y_{\text{昨日}}$预测$Y_{\text{今日}}$}。自然语言处理中通常采用从左到右的生成方式，即根据已生成的所有前序 token 逐个预测后续 token 。形式化地，设$\mathbf{x} = \{x_1,...,x_n\}$为 token 序列，其概率通过概率链式法则定义为：
 \begin{eqnarray}
 \Pr(\mathbf{x}) & = & \Pr(x_1,...,x_n) \nonumber \\
 & = & \prod_{i=1}^{n} \Pr(x_i|x_{<i}).
 \end{eqnarray}
 
-\noindent 其中$x_i$表示当前步生成的令牌，$x_{<i}$表示所有已生成的前序令牌。$\Pr(x_i|x_{<i})$是下一令牌的条件概率，体现了从左到右生成的本质。实现$\Pr(x_i|x_{<i})$的方式多样，常用方法是使用神经网络建模该概率，例如LSTM和Transformer都是神经语言建模中的经典架构。
+\noindent 其中$x_i$表示当前步生成的 token ，$x_{<i}$表示所有已生成的前序 token 。$\Pr(x_i|x_{<i})$是下一 token 的条件概率，体现了从左到右生成的本质。实现$\Pr(x_i|x_{<i})$的方式多样，常用方法是使用神经网络建模该概率，例如LSTM和Transformer都是神经语言建模中的经典架构。
 
 多数文本生成任务需要基于用户提供的上下文信息进行条件生成。我们将这类上下文信息记为$\mathbf{c}$，可广义视为变量序列$\mathbf{c} = \{c_1,...,c_m\}$。此时生成任务转化为建模给定$\mathbf{c}$时目标序列$\mathbf{x}$的概率：
 \begin{eqnarray}
 \Pr(\mathbf{x}|\mathbf{c}) & = & \prod_{i=1}^{n} \Pr(x_i|x_{<i},\mathbf{c}).
 \end{eqnarray}
 
-\noindent 此处$\mathbf{c}$可以是离散令牌序列（如提示词）或实值向量序列（如神经网络生成的表示）。通常$\mathbf{c}$可根据具体任务定义，例如在翻译中作为源语句，在问答中作为提示词，或作为外部记忆中的历史表示。
+\noindent 此处$\mathbf{c}$可以是离散 token 序列（如提示词）或连续向量序列（如神经网络生成的表示）。通常$\mathbf{c}$可根据具体任务定义，例如在翻译中作为源语句，在问答中作为提示词，或作为外部记忆中的历史表示。
 
-自回归生成的核心优势在于其简洁性，由此衍生出多项优良特性：既符合人类语言产出的认知过程，也适合对话、叙事等任务；还能自然处理变长序列——模型持续生成直至输出序列结束符（EOS），而非填充固定长度模板。但自回归方式长期受学界诟病的缺点包括：生成速度慢，由于第$i$步依赖第$i-1$步，无法并行生成，导致100个令牌的句子需顺序执行100次前向计算，实时应用计算成本高；上下文视野受限，预测$x_i$时仅能观测左侧上下文$x_{<i}$，无法前瞻右侧语义。
+自回归生成的核心优势在于其简洁性，由此衍生出多项优良特性：既符合人类语言产出的认知过程，也适合对话、叙事等任务；还能自然处理变长序列——模型持续生成直至输出序列结束符（EOS），而非填充固定长度模板。但自回归方式长期受学界诟病的缺点包括：生成速度慢，由于第$i$步依赖第$i-1$步，无法并行生成，导致100个 token 的句子需顺序执行100次前向计算，实时应用计算成本高；上下文视野受限，预测$x_i$时仅能看到左侧上下文$x_{<i}$，无法看到右侧语义。
 
-非自回归（NAR）生成通过打破序列依赖链提供替代方案\citep{gu-etal:2018non}。与逐个生成词元不同，非自回归模型并行地生成序列中的所有词元。对于最简单的单步 NAR 模型，通常假设目标词元在给定输入条件下相互独立。此时，序列 $\mathbf{x}$ 的概率可分解为：
+非自回归（NAR）生成通过打破序列间的依赖关系提供替代方案\citep{gu-etal:2018non}。与逐个生成 token 不同，非自回归模型并行地生成序列中的所有 token 。对于最简单的单步 NAR 模型，通常假设目标 token 在给定输入条件下相互独立。此时，序列 $\mathbf{x}$ 的概率可分解为：
 \begin{eqnarray}
 \Pr(\mathbf{x}|\mathbf{c}) & = & \prod_{i=1}^{n} \Pr(x_i|\mathbf{c})
 \end{eqnarray}
 
-在这种形式中，词元 $x_i$ 的预测不依赖于其他目标词元 $x_{j}$（$j \neq i$）。因此，非自回归生成具有高效的推理性能。通过解耦词元之间的依赖关系，模型可以在单次前向传播中预测整个序列，从而将相对于序列长度的串行深度从 $O(n)$ 减少到 $O(1)$。这里的 $O(1)$ 只描述一次并行生成或更新；扩散式 NAR 模型仍需执行多个去噪时间步，其总采样深度并不是关于扩散步数的 $O(1)$。同时，多步模型可以借助不断更新的全序列状态表达位置间依赖，并不等同于始终采用上述一次性乘积分布。这种并行性使得现代 GPU 能够得到更高效的利用，因此对于延迟要求苛刻的实时应用而言，非自回归模型具有很大吸引力。此外，非自回归模型在生成过程中可以充分利用过去和未来位置的信息。图 \ref{fig:ar-vs-nar-generation} 展示了自回归生成与非自回归生成之间的区别。
+在这种形式中， token $x_i$ 的预测不依赖于其他目标 token $x_{j}$（$j \neq i$）。因此，非自回归生成具有高效的推理性能。通过解耦 token 之间的依赖关系，模型可以在单次前向传播中预测整个序列，从而将相对于序列长度的串行深度从 $O(n)$ 减少到 $O(1)$。这里的 $O(1)$ 只描述一次并行生成或更新；扩散式 NAR 模型仍需执行多个去噪时间步，其总采样深度并不是关于扩散步数的 $O(1)$。同时，多步模型可以借助不断更新的全序列状态表达位置间依赖，并不等同于始终采用上述一次性乘积分布。这种并行性使得现代 GPU 能够得到更高效的利用，因此对于延迟要求苛刻的实时应用而言，非自回归模型具有很大吸引力。此外，非自回归模型在生成过程中可以充分利用过去和未来位置的信息。图 \ref{fig:ar-vs-nar-generation} 展示了自回归生成与非自回归生成之间的区别。
 
 \begin{figure}[!t]
 \centering
 \AMLFigure{figure-ar-vs-nar-generation}
-\caption{自回归生成与非自回归生成对比。$\mathbf{c} = {c_1,c_2}$ 表示用户提供的上下文，$\mathbf{x}={x_1,x_2,x_3,x_4}$ 表示目标序列。我们的目标是对给定 $\mathbf{c}$ 条件下 $\mathbf{x}$ 的概率进行建模。(a) 在自回归生成中，词元按序预测，$x_i$ 的预测依赖于历史信息 $\mathbf{x}_{<i}$ 和 $\mathbf{c}$。(b) 在非自回归生成中，序列中的所有词元并行预测。图 (b) 中的虚线表示一个由 4 个掩码词元组成的模板（给定目标长度时）。}
+\caption{自回归生成与非自回归生成对比。$\mathbf{c} = {c_1,c_2}$ 表示用户提供的上下文，$\mathbf{x}={x_1,x_2,x_3,x_4}$ 表示目标序列。我们的目标是对给定 $\mathbf{c}$ 条件下 $\mathbf{x}$ 的概率进行建模。(a) 在自回归生成中， token 按序预测，$x_i$ 的预测依赖于历史信息 $\mathbf{x}_{<i}$ 和 $\mathbf{c}$。(b) 在非自回归生成中，序列中的所有 token 并行预测。图 (b) 中的虚线表示一个由 4 个掩码 token 组成的模板（给定目标长度时）。}
 \label{fig:ar-vs-nar-generation}
 \end{figure}
 
-然而需要指出的是，条件独立性假设也存在局限性。例如，在自然语言中，一个句子往往存在多种有效的补全方式。非自回归模型由于无法知晓其他位置已选择了哪些词元，可能会混合不同的有效模式，从而导致所谓的多峰性问题\footnote{此问题可能导致重复、遗漏或语法不连贯，例如当有效实体为“New York”或“London”时，模型却可能在位置 $i$ 选择“New”，在位置 $i+1$ 选择“London”。}。
+然而需要指出的是，条件独立性假设也存在局限性。例如，在自然语言中，一个句子往往存在多种有效的补全方式。非自回归模型由于无法知晓其他位置已选择了哪些 token ，可能会混合不同的有效模式，从而导致所谓的多峰性问题\footnote{此问题可能导致重复、遗漏或语法不连贯，例如当有效实体为“New York”或“London”时，模型却可能在位置 $i$ 选择“New”，在位置 $i+1$ 选择“London”。}。
 
 \subsubsection{扩散建模作为非自回归生成}
 
-尽管存在上述限制，非自回归生成的并行位置更新仍与扩散模型通常同时处理全部数据维度的方式相适应。因此，自然语言处理中的许多扩散模型采用 NAR 式的生成范式。为了理解这种联系，将非自回归生成的概念推广到单步预测之外是有帮助的。让我们将生成过程重新想象为一个随时间 $t$ 演化的动力系统。我们将 $\mathbf{s}(t)$ 定义为系统在时间 $t$ 的中间状态。这个抽象状态 $\mathbf{s}(t)$ 作为一个统一的表示：它既可以是一系列离散变量（例如，被破坏的标记），也可以是一系列连续向量（例如，标记嵌入）。在生成过程中，系统从 $t=T$ 到 $t=0$ 在时间上反向演化。该系统的状态定义如下
+尽管存在上述限制，非自回归生成的并行位置更新仍与扩散模型通常同时处理全部数据维度的方式相适应。因此，自然语言处理中的许多扩散模型采用 NAR 式的生成范式。为了理解这种联系，将非自回归生成的概念推广到单步预测之外是有帮助的。让我们将生成过程重新想象为一个随时间 $t$ 演化的动力系统。我们将 $\mathbf{s}(t)$ 定义为系统在时间 $t$ 的中间状态。这个抽象状态 $\mathbf{s}(t)$ 作为一个统一的表示：它既可以是一系列离散变量（例如，被破坏的 token ），也可以是一系列连续向量（例如， token 嵌入）。在生成过程中，系统从 $t=T$ 到 $t=0$ 在时间上反向演化。该系统的状态定义如下
 
 \begin{itemize}
-\item 起始点 $\mathbf{s}(T)$。这表示从先验分布（例如高斯噪声向量或完全随机的标记）中抽取的样本。它不包含任何语义信息。
+\item 起始点 $\mathbf{s}(T)$。这表示从先验分布（例如高斯噪声向量或完全随机的 token ）中抽取的样本。它不包含任何语义信息。
 \item 中间状态 $\mathbf{s}(t)$（当 $0 < t < T$ 时）。这些状态表示不断演化的潜在变量。它们可视为目标数据的带噪近似。
-\item 终止点 $\mathbf{s}(0)$。状态 $\mathbf{s}(0)$ 表示完全去噪后的信号。最终，通过确定性或随机性映射（例如取整或 argmax 操作）将 $\mathbf{s}(0)$ 投影回有效的标记序列 $\mathbf{x} = \{x_1, \dots, x_n\}$。
+\item 终止点 $\mathbf{s}(0)$。状态 $\mathbf{s}(0)$ 表示完全去噪后的信号。最终，通过确定性或随机性映射（例如取整或 argmax 操作）将 $\mathbf{s}(0)$ 投影回有效的 token 序列 $\mathbf{x} = \{x_1, \dots, x_n\}$。
 \end{itemize}
 
 在这个过程中，我们需要将条件 $\mathbf{c}$ 合并到每个状态 $\mathbf{s}(t)$ 中，以形成联合状态 $(\mathbf{s}(t), \mathbf{c})$。因此，演化可以描述为
@@ -2943,38 +2953,38 @@ $v_{\theta}^2$，即 2-修正流。由于 $\hat{\mathbf{x}}_i(0)$ 是通过第�
 (\mathbf{s}(T), \mathbf{c}) \to \cdots \to (\mathbf{s}(t), \mathbf{c}) \to \cdots \to (\mathbf{s}(0), \mathbf{c}) \to \mathbf{x}.
 \end{equation}
 
-最终的映射 $(\mathbf{s}(0), \mathbf{c}) \to \mathbf{x}$ 通常通过使用一个单独的系统来执行（例如，将嵌入映射到标记）。步骤 $(\mathbf{s}(T), \mathbf{c}) \to \cdots \to (\mathbf{s}(t), \mathbf{c}) \to \cdots \to (\mathbf{s}(0), \mathbf{c})$ 可以被视为一个动力系统的演化，就像标准扩散模型中那样。这个过程如图 \ref{fig:diffiusion-modeling-as-nar-generation} 所示。
+最终的映射 $(\mathbf{s}(0), \mathbf{c}) \to \mathbf{x}$ 通常通过使用一个单独的系统来执行（例如，将嵌入映射到 token ）。步骤 $(\mathbf{s}(T), \mathbf{c}) \to \cdots \to (\mathbf{s}(t), \mathbf{c}) \to \cdots \to (\mathbf{s}(0), \mathbf{c})$ 可以被视为一个动力系统的演化，就像标准扩散模型中那样。这个过程如图 \ref{fig:diffiusion-modeling-as-nar-generation} 所示。
 
 \begin{figure}[!t]
 \centering
 \AMLFigure{figure-diffiusion-modeling-as-nar-generation}
-\caption{基于扩散模型的非自回归生成示意图。生成过程被建模为状态$\mathbf{s}(t)$随时间$t$的演化过程。其中$\mathbf{s}(T)$表示起始点（先验分布），$\mathbf{s}(0)$表示终点（完全去噪信号）。上下文信息$\mathbf{c}$在生成过程中被注入状态变量。最终输出是从$\mathbf{s}(0)$映射得到的词元序列。}
+\caption{基于扩散模型的非自回归生成示意图。生成过程被建模为状态$\mathbf{s}(t)$随时间$t$的演化过程。其中$\mathbf{s}(T)$表示起始点（先验分布），$\mathbf{s}(0)$表示终点（完全去噪信号）。上下文信息$\mathbf{c}$在生成过程中被注入状态变量。最终输出是从$\mathbf{s}(0)$映射得到的 token 序列。}
 \label{fig:diffiusion-modeling-as-nar-generation}
 \end{figure}
 
-在本节的剩余部分，我们将使用扩散模型作为实现非自回归生成的工具。我们根据它们如何定义动力系统 $\mathbf{s}(t)$ 的状态空间对这些方法进行分类。我们首先介绍嵌入空间扩散，它将标记映射到连续向量以应用连续高斯扩散。然后我们讨论离散扩散，它直接在离散标记上定义破坏和去噪过程。
+在本节的剩余部分，我们将使用扩散模型作为实现非自回归生成的工具。我们根据它们如何定义动力系统 $\mathbf{s}(t)$ 的状态空间对这些方法进行分类。我们首先介绍嵌入空间扩散，它将 token 映射到连续向量以应用连续高斯扩散。然后我们讨论离散扩散，它直接在离散 token 上定义破坏和去噪过程。
 \subsection{连续空间中的扩散：嵌入空间扩散}
 
-在本小节中，我们介绍嵌入空间扩散框架，该框架将连续扩散模型适配于词元序列生成。
+在本小节中，我们介绍嵌入空间扩散框架，该框架将连续扩散模型适配于 token 序列生成。
 
 \subsubsection{通用框架}
 
-将扩散模型应用于文本的一种直观方法是，将离散词元映射到连续嵌入空间 $\mathbb{R}^d$ 中，从而使扩散和生成过程可以在连续域中进行。几项重要工作都基于这种嵌入空间扩散框架 \citep{li-etal:2022diffusion,strudel-etal:2022self,gong-etal:2023diffuseq}。在这些方法中，第一步是将序列中的每个词元转换为一个 $d$ 维实值向量（称为词元嵌入）。形式上，令 $V$ 为一个大小为 $|V|$ 的词表。每个词元 $x \in V$ 通常表示为一个独热向量，并投影为一个稠密向量。然后，一个词元序列 $\mathbf{x} = \{x_1, \dots, x_n\}$ 可以通过一个嵌入函数 $\mathrm{Embed}(\cdot)$ 映射为一个连续向量序列，如下所示：
+将扩散模型应用于文本的一种直观方法是，将离散 token 映射到连续嵌入空间 $\mathbb{R}^d$ 中，从而使扩散和生成过程可以在连续空间中进行。几项重要工作都基于这种嵌入空间扩散框架 \citep{li-etal:2022diffusion,strudel-etal:2022self,gong-etal:2023diffuseq}。在这些方法中，第一步是将序列中的每个 token 转换为一个 $d$ 维实值向量（称为 token 嵌入）。形式上，令 $V$ 为一个大小为 $|V|$ 的词表。每个 token $x \in V$ 通常表示为一个one-hot向量，并投影为一个稠密向量。然后，一个 token 序列 $\mathbf{x} = \{x_1, \dots, x_n\}$ 可以通过一个嵌入函数 $\mathrm{Embed}(\cdot)$ 映射为一个连续向量序列，如下所示：
 \begin{eqnarray}
 \mathrm{Embed}(\mathbf{x}) & = & [\mathbf{e}_1,\dots,\mathbf{e}_n], \nonumber \\
 & = & \mathbf{e}
 \end{eqnarray}
 
-\noindent 其中 $\mathbf{e}_i \in \mathbb{R}^d$ 表示位置 $i$ 处的嵌入，$\mathbf{e} \in \mathbb{R}^{d \times n}$ 表示嵌入序列（堆叠为矩阵）。同样，我们可以将上下文词元序列 $\mathbf{c}$ 转换为嵌入序列 $\mathbf{e}_{c} \in \mathbb{R}^{d \times n_c}$。
+\noindent 其中 $\mathbf{e}_i \in \mathbb{R}^d$ 表示位置 $i$ 处的嵌入，$\mathbf{e} \in \mathbb{R}^{d \times n}$ 表示嵌入序列（堆叠为矩阵）。同样，我们可以将上下文 token 序列 $\mathbf{c}$ 转换为嵌入序列 $\mathbf{e}_{c} \in \mathbb{R}^{d \times n_c}$。
 
-定义 $\mathrm{Embed}(\cdot)$ 的一种简单方法是使用一个静态嵌入矩阵 $\mathbf{E} \in \mathbb{R}^{d \times |V|}$ \citep{mikolov-etal:2013efficient,mikolov-etal:2013distributed}。这种方法虽然简单，但将词元视为独立单元，从而忽略了它们在序列中的上下文依赖关系。或者，可以将整个词元序列映射到一个上下文化表示序列中。例如，可以使用预训练的大语言模型来编码词元及其周围的上下文 \citep{devlin-etal:2019bert,brown-etal:2020language}。请注意，这种变换不限于词元与向量之间的一一对应关系，也不受限于固定的序列长度 $n$。相反，我们可以使用更高层次的抽象将词元序列映射到一个不同长度 $n'$ 的潜在连续序列（其中 $n'$ 不必等于 $n$）。例如，通过使用变分自编码器，可以将离散序列压缩为更稠密、语义更丰富的潜在表示。在这种潜在扩散范式 \citep{rombach-etal:2022high} 中，扩散过程作用于这些压缩后的潜在变量，而不是原始的词元嵌入。
+定义 $\mathrm{Embed}(\cdot)$ 的一种简单方法是使用一个静态嵌入矩阵 $\mathbf{E} \in \mathbb{R}^{d \times |V|}$ \citep{mikolov-etal:2013efficient,mikolov-etal:2013distributed}。这种方法虽然简单，但将 token 视为独立单元，从而忽略了它们在序列中的上下文依赖关系。或者，可以将整个 token 序列映射到一个上下文化表示序列中。例如，可以使用预训练的大语言模型来编码 token 及其周围的上下文 \citep{devlin-etal:2019bert,brown-etal:2020language}。请注意，这种变换不限于 token 与向量之间的一一对应关系，也不受限于固定的序列长度 $n$。相反，我们可以使用更高层次的抽象将 token 序列映射到一个不同长度 $n'$ 的潜在连续序列（其中 $n'$ 不必等于 $n$）。例如，通过使用变分自编码器，可以将离散序列压缩为更稠密、语义更丰富的潜在表示。在这种潜在扩散范式 \citep{rombach-etal:2022high} 中，扩散过程作用于这些压缩后的潜在变量，而不是原始的 token 嵌入。
 
-一旦词元被表示为嵌入，生成问题就可以用标准方式通过扩散模型来形式化。形式上，令 $\mathbf{e}_c$ 为上下文嵌入序列。我们定义 $\bar{\mathbf{s}}(t)$ 为结合了 $\mathbf{e}_c$ 和 $\mathbf{s}(t)$ 的增广状态：
+一旦 token 被表示为嵌入，生成问题就可以用标准方式通过扩散模型来形式化。形式上，令 $\mathbf{e}_c$ 为上下文嵌入序列。我们定义 $\bar{\mathbf{s}}(t)$ 为结合了 $\mathbf{e}_c$ 和 $\mathbf{s}(t)$ 的增广状态：
 \begin{eqnarray}
 \bar{\mathbf{s}}(t) & = & [\mathbf{e}_c, \mathbf{s}(t)].
 \end{eqnarray}
 
-我们将 $\mathbf{e}_c$ 和 $\mathbf{e}$ 的拼接视为连续扩散过程的初始状态 $\bar{\mathbf{s}}(0) = [\mathbf{e}_c,\mathbf{e}] \in \mathbb{R}^{d \times (n_c + n)}$。然后，我们定义一个前向过程，在时间 $t \in [0, T]$ 内逐渐向目标嵌入添加高斯噪声，同时保持上下文嵌入固定。它将有意义的词元嵌入转换为标准高斯噪声 $\mathcal{N}(\mathbf{0}, \mathbf{I})$。
+我们将 $\mathbf{e}_c$ 和 $\mathbf{e}$ 的拼接视为连续扩散过程的初始状态 $\bar{\mathbf{s}}(0) = [\mathbf{e}_c,\mathbf{e}] \in \mathbb{R}^{d \times (n_c + n)}$。然后，我们定义一个前向过程，在时间 $t \in [0, T]$ 内逐渐向目标嵌入添加高斯噪声，同时保持上下文嵌入固定。它将有意义的 token 嵌入转换为标准高斯噪声 $\mathcal{N}(\mathbf{0}, \mathbf{I})$。
 
 如前所述，有几种模型可供选择。例如，可以用随机微分方程描述目标嵌入的扩散过程，而把上下文嵌入作为固定条件：
 \begin{eqnarray}
@@ -2992,95 +3002,105 @@ d \mathbf{s}(t) & = & \left[f(\mathbf{s}(t),\mathbf{e}_c,t)-g(t)^2\nabla_{\mathb
 
 \noindent 其中 $\bar{\mathbf{w}}$ 是反向时间维纳过程，$\nabla_{\mathbf{s}(t)}\log p_t(\mathbf{s}(t)\mid\mathbf{e}_c)$ 是给定上下文嵌入后的条件得分函数。也可以使用流匹配来学习以 $\mathbf{e}_c$ 为条件的向量场，将目标部分的分布从高斯噪声推送到数据分布。这些方法的详细讨论在此省略，相关的连续扩散模型已在前面的随机概率动力学一节中讨论。
 
-与计算机视觉模型的一个关键区别在于，在自然语言处理中，我们通常使用 Transformer 作为学习得分函数或向量场的主干架构。给定增广状态 $\bar{\mathbf{s}}(t) = [\mathbf{e}_c, \mathbf{s}(t)] \in \mathbb{R}^{d \times (n_c + n)}$，Transformer 可以读取上下文块和目标块，但只有与目标序列对应的输出块用于估计条件得分或向量场，上下文块本身不参与扩散更新，如图 \ref{fig:transformer-based-generation-process} 所示。与图像生成（其空间维度通常是固定的）不同，自然语言序列的长度本质上是可变的。因此，我们需要在推理过程中确定目标序列长度 $n$。此外，尽管扩散和生成过程在连续空间中进行以获得 $\mathbf{s}(0)$，但目标是产生离散词元。因此，需要一个额外的模块将生成的连续嵌入解码回离散词元。我们将在下面简要讨论这两个挑战。
+与计算机视觉模型的一个关键区别在于，在自然语言处理中，我们通常使用 Transformer 作为学习得分函数或向量场的主干架构。给定增广状态 $\bar{\mathbf{s}}(t) = [\mathbf{e}_c, \mathbf{s}(t)] \in \mathbb{R}^{d \times (n_c + n)}$，Transformer 可以读取上下文块和目标块，但只有与目标序列对应的输出块用于估计条件得分或向量场，上下文块本身不参与扩散更新，如图 \ref{fig:transformer-based-generation-process} 所示。与图像生成（其空间维度通常是固定的）不同，自然语言序列的长度本质上是可变的。因此，我们需要在推理过程中确定目标序列长度 $n$。此外，尽管扩散和生成过程在连续空间中进行以获得 $\mathbf{s}(0)$，但目标是产生离散 token 。因此，需要一个额外的模块将生成的连续嵌入解码回离散 token 。我们将在下面简要讨论这两个挑战。
 
 \begin{figure}[!t]
 \centering
 \AMLFigure{figure-transformer-based-generation-process}
-\caption{基于Transformer的生成过程示意图。生成（即反向扩散）过程从目标序列的标准高斯噪声初始化状态$\bar{\mathbf{s}}(T)$开始。在每个时间步$t$，状态$\bar{\mathbf{s}}(t)$表示上下文嵌入与含噪目标嵌入的拼接。Transformer模型基于$\bar{\mathbf{s}}(t)$估计得分函数（或向量场），随后用于将状态更新至$\bar{\mathbf{s}}(t-\Delta t)$。该迭代过程持续进行直至达到干净状态$\bar{\mathbf{s}}(0)$，最终被解码为离散标记。注意上下文嵌入$\mathbf{e}_c$在更新过程中保持固定。}
+\caption{基于Transformer的生成过程示意图。生成（即反向扩散）过程从目标序列的标准高斯噪声初始化状态$\bar{\mathbf{s}}(T)$开始。在每个时间步$t$，状态$\bar{\mathbf{s}}(t)$表示上下文嵌入与带噪目标嵌入的拼接。Transformer模型基于$\bar{\mathbf{s}}(t)$估计得分函数（或向量场），随后用于将状态更新至$\bar{\mathbf{s}}(t-\Delta t)$。该迭代过程持续进行直至达到干净状态$\bar{\mathbf{s}}(0)$，随后解码得到离散 token 。上下文嵌入$\mathbf{e}_c$在更新过程中始终保持固定。}
 \label{fig:transformer-based-generation-process}
 \end{figure}
 \subsubsection{长度预测}
 
-长度预测是自然语言处理中一个反复出现的问题，已有悠久的研究历史。一种直接的方法是根据上下文明确预测目标序列的长度。例如，可以通过将源长度乘以特定比率来简单地推导目标长度。这一概念可以追溯到\textbf{统计机器翻译}（SMT）的早期，当时使用繁衍模型来确定与单个源词对应的目标词数量 \citep{brown-etal:1993mathematics}。在非自回归生成模型的发展过程中也采用了类似的机制 \citep{xiao-etal:2023survey}。在早期的非自回归生成模型（通常是编码器-解码器架构）中，编码器中集成了一个繁衍预测器。该预测器估计每个编码器隐藏状态应被复制到解码器的次数，从而在解码之前规划目标序列长度。在这类方法中，长度预测被构建为对概率 $\Pr(n|\mathbf{c})$ 进行建模。预测器通常是一个神经网络，例如\textbf{多层感知机}（MLP），其训练目标是最大化给定上下文条件下真实长度的似然。在推理过程中，通过选择概率最高的长度 $n^*$ 来确定目标长度。
+长度预测是自然语言处理中一个反复出现的问题，已有悠久的研究历史。一种直接的方法是根据上下文明确预测目标序列的长度。例如，可以通过将源长度乘以特定比率来简单地推导目标长度。这一概念可以追溯到\textbf{统计机器翻译}（SMT）的早期，当时使用繁衍模型（fertility
+models）来确定与单个源词对应的目标词数量 \citep{brown-etal:1993mathematics}。在非自回归生成模型的发展过程中也采用了类似的机制 \citep{xiao-etal:2023survey}。在早期的非自回归生成模型（通常是编码器-解码器架构）中，编码器中集成了一个繁衍预测器。该预测器估计每个编码器隐藏状态应被复制到解码器的次数，从而在解码之前规划目标序列长度。在这类方法中，长度预测被构建为对概率 $\Pr(n|\mathbf{c})$ 进行建模。预测器通常是一个神经网络，例如\textbf{多层感知机}（MLP），其训练目标是最大化给定上下文条件下真实长度的似然。在推理过程中，通过选择概率最高的长度 $n^*$ 来确定目标长度。
 
-显式长度预测方法简单，但常常导致重复和幻觉，因为模型会试图用无意义或冗余的令牌来填充预分配窗口中未使用的容量。相反，当前大多数扩散语言模型采用隐式长度确定方法。这种方法与自回归生成的行为一致，允许模型自行发出终止信号。在实践中，生成过程从一个足够长的窗口（例如，最大序列长度）开始。一旦该过程完成，并且连续嵌入已被解码为离散令牌，系统会识别第一个终止标记（如 EOS 令牌）的出现位置。该位置被视为句子的逻辑结尾，其后的所有令牌都将被丢弃。
+显式长度预测方法简单，但常常导致重复和幻觉，因为模型会试图用无意义或冗余的 token 来填充预分配窗口中未使用的容量。相反，当前大多数扩散语言模型采用隐式长度确定方法。这种方法与自回归生成的行为一致，允许模型自行发出终止信号。在实践中，生成过程从一个足够长的窗口（例如，最大序列长度）开始。一旦该过程完成，并且连续嵌入已被解码为离散 token ，系统会识别第一个终止 token （如 EOS token ）的出现位置。该位置被视为句子的逻辑结尾，其后的所有 token 都将被丢弃。
 
-最近的研究也通过引入动态长度适应机制，解决了预分配最大长度窗口带来的计算效率低下的问题 \citep{li-etal:2025fixed,yang-etal:2025diffusion}。这些方法不依赖于仅通过 EOS 令牌进行事后截断，而是将长度调制直接集成到扩散和生成过程中。通过离散的插入和删除操作或灵活的去噪调度，它们可以动态调整序列长度。
+最近的研究也通过引入动态长度适应机制，解决了预分配最大长度窗口带来的计算效率低下的问题 \citep{li-etal:2025fixed,yang-etal:2025diffusion}。这些方法不依赖于仅通过 EOS token 进行事后截断，而是将长度调制直接集成到扩散和生成过程中。通过离散的插入和删除操作或灵活的去噪调度，它们可以动态调整序列长度。
 \subsubsection{舍入}
 
-如上所述，生成过程在 $t=0$ 时终止，产生一个连续向量序列 $\mathbf{s}(0)$。我们将 $\bar{\mathbf{s}}(0)$ 内生成的嵌入序列表示为 $\hat{\mathbf{e}} = [\hat{\mathbf{e}}_1, \dots, \hat{\mathbf{e}}_n]$，其中每个 $\hat{\mathbf{e}}_i \in \mathbb{R}^d$。由于我们的目标是生成文本，必须将这些连续向量映射回词汇表 $V$ 中的离散词元。此操作通常被称为 \textbf{舍入} 或解码。
+如上所述，生成过程在 $t=0$ 时终止，产生一个连续向量序列 $\mathbf{s}(0)$。我们将 $\bar{\mathbf{s}}(0)$ 内生成的嵌入序列表示为 $\hat{\mathbf{e}} = [\hat{\mathbf{e}}_1, \dots, \hat{\mathbf{e}}_n]$，其中每个 $\hat{\mathbf{e}}_i \in \mathbb{R}^d$。由于我们的目标是生成文本，必须将这些连续向量映射回词汇表 $V$ 中的离散 token 。此操作通常被称为 \textbf{舍入（Rounding）} 或解码。
 
-最直接的舍入方法是 \textbf{最近邻搜索}。假设我们使用预训练的嵌入矩阵 $\mathbf{E} \in \mathbb{R}^{d \times |V|}$ 来表示词元嵌入，其中每一列对应一个词元 $v \in V$ 的嵌入。那么，我们可以选择在特定距离度量下，其嵌入与生成的向量 $\hat{\mathbf{e}}_i$ 最接近的词元。由于扩散模型通常使用 MSE 损失进行训练，欧几里得距离是一个自然的选择
+最直接的舍入方法是 \textbf{最近邻搜索}。假设我们使用预训练的嵌入矩阵 $\mathbf{E} \in \mathbb{R}^{d \times |V|}$ 来表示 token 嵌入，其中每一列对应一个 token $v \in V$ 的嵌入。那么，我们可以选择在特定距离度量下，其嵌入与生成的向量 $\hat{\mathbf{e}}_i$ 最接近的 token 。由于扩散模型通常使用 MSE 损失进行训练，欧几里得距离是一个自然的选择
 \begin{eqnarray}
 x_i & = & \underset{v \in V}{\arg\min} \ \|\hat{\mathbf{e}}_i - \mathbf{e}_v\|_2^2,
 \end{eqnarray}
 
-\noindent 其中 $\mathbf{e}_v$ 表示 $\mathbf{E}$ 中对应词元 $v$ 的列。或者，也可以采用可训练的投影层后接 softmax 函数，类似于标准自回归语言模型中的输出层。在这种情况下，词元 $x_i$ 的概率由 Softmax 函数给出。
+\noindent 其中 $\mathbf{e}_v$ 表示 $\mathbf{E}$ 中对应 token $v$ 的列。或者，也可以采用可训练的投影层后接 softmax 函数，类似于标准自回归语言模型中的输出层。在这种情况下， token $x_i$ 的概率由 Softmax 函数给出。
 
-相比之下，对于基于潜在或上下文嵌入的模型（例如使用 VAE 或 LLM 表示的模型），简单的最近邻搜索不适用，因为生成的潜在变量并不直接对应静态的词元嵌入。在这些方法中，需要一个可学习的解码器将连续的潜在序列映射回离散的词元空间。解码过程通常涉及一个神经网络，该网络为每个潜在向量预测词汇表上的概率分布，如同自回归生成模型一样。
+相比之下，对于基于潜在或上下文嵌入的模型（例如使用 VAE 或 LLM 表示的模型），简单的最近邻搜索不适用，因为生成的潜在变量并不直接对应静态的 token 嵌入。在这些方法中，需要一个可学习的解码器将连续的潜在序列映射回离散的 token 空间。解码过程通常涉及一个神经网络，该网络为每个潜在向量预测词汇表上的概率分布，如同自回归生成模型一样。
 
-舍入并非易事，这源于连续扩散潜在空间与词元嵌入的离散性质之间的不匹配。标准的扩散训练目标（如 MSE）鼓励模型预测数据的期望值。在语言的上下文中，如果分布是多模态的（例如，下一个词元可能是“猫”或“狗”），模型可能会预测它们嵌入的平均值：$(\mathbf{e}_{\text{猫}} + \mathbf{e}_{\text{狗}})/2$。这个平均向量位于有效嵌入之间的间隙空间中。简单地将此向量舍入到最近邻，可能会导致一个语义宽泛的词元（例如“动物”），或者如果嵌入空间不是完全平滑的，则可能导致一个完全不相关的词元。这种现象通常表现为生成的向量未能承诺于一个特定的离散模式。
+从连续表示恢复离散 token 并不简单，其根本原因在于连续扩散空间与离散 token 空间之间存在差异。标准扩散模型通常采用均方误差（MSE）作为训练目标，这会使模型倾向于预测候选表示的条件均值。当同一上下文对应多个合理 token 时，例如下一个 token 既可能是“猫”，也可能是“狗”，模型可能生成二者嵌入的平均表示：
+\[
+\frac{\mathbf{e}_{\text{猫}}+\mathbf{e}_{\text{狗}}}{2}.
+\]
+然而，这一平均向量通常不与词表中的任何实际 token 嵌入准确对应。若直接采用最近邻搜索进行解码，模型可能得到语义过于宽泛的 token ，例如“动物”；当嵌入空间的局部结构不够规则时，也可能得到语义无关的 token 。因此，连续空间中的均值预测与离散 token 选择之间可能存在偏差，从而增加 token 解码的难度。。
 
-为了缓解这个问题，研究人员引入了辅助目标和架构修改。\citet{li-etal:2022diffusion} 提出了一个可训练的舍入参数，并向训练目标中添加了一个辅助正则化项。该项明确鼓励模型生成接近 $\mathbf{E}$ 中有效嵌入的向量，从而减少推理过程中的舍入误差。\citet{strudel-etal:2022self} 引入了自条件的概念，即将去噪词元的估计值投影回嵌入空间，并用作下一步的输入。这有效地将中间状态钳制在更接近有效数据流形的位置，并使最终状态 $\mathbf{s}(0)$ 能够可靠地映射到离散词元。
-\subsection{词元空间中的扩散：离散扩散}
+为了缓解这个问题，研究人员引入了辅助目标和架构修改。\citet{li-etal:2022diffusion} 提出了一个可训练的舍入参数，并向训练目标中添加了一个辅助正则化项。该项明确鼓励模型生成接近 $\mathbf{E}$ 中有效嵌入的向量，从而减少推理过程中的舍入误差。\citet{strudel-etal:2022self} 引入了自条件的概念，即将去噪 token 的估计值投影回嵌入空间，并用作下一步的输入。这有效地将中间状态钳制在更接近有效数据流形的位置，并使最终状态 $\mathbf{s}(0)$ 能够可靠地映射到离散 token 。
+\subsection{ token 空间中的扩散：离散扩散}
 
-虽然嵌入空间中的扩散能很好地融入标准扩散模型的框架，但它引入了将连续向量舍入回离散词元的非平凡挑战。为了规避这一问题，并使生成过程更自然地与语言的离散特性对齐，越来越多的研究开始探索离散扩散。在这一范式中，污染过程直接在离散词汇空间 $V$ 上进行操作，从而消除了对嵌入投影和舍入的需求。
+虽然嵌入空间中的扩散能很好地融入标准扩散模型的框架，但它引入了将连续向量舍入回离散 token 的非平凡挑战。为了规避这一问题，并使生成过程更自然地与语言的离散特性对齐，越来越多的研究开始探索离散扩散。在这一范式中，扩散过程直接在离散词汇空间 $V$ 上进行操作，从而消除了对嵌入投影和舍入的需求。
 \subsubsection{CTMC 视角}
 \label{sec:the-ctmc-perspective}
 
-为了直接在离散词汇表 $V$ 上建模扩散和生成过程，我们摒弃了连续空间中常用的高斯噪声和随机微分方程（SDE）。在离散状态空间中，过程在连续时间内演化，但仅通过瞬时跳跃改变状态：它保持恒定一段随机停留时间，然后跳转到一个新状态。自然描述这种概率跳跃的数学框架是连续时间马尔可夫链（CTMC）。正如 SDE 框架将扩散视为步长趋近于零时随机游走的极限，CTMC 框架将离散扩散视为时间步数趋近于无穷时离散时间马尔可夫链的极限。
+为了直接在离散词表 $V$ 上建模扩散和生成过程，我们摒弃了连续空间中常用的高斯噪声和随机微分方程（SDE）。在离散状态空间中，过程在连续时间内演化，但仅通过瞬时跳跃改变状态：它保持恒定一段随机停留时间，然后跳转到一个新状态。自然描述这种概率跳跃的数学框架是连续时间马尔可夫链（CTMC）。正如 SDE 可视为离散时间随机过程在时间步长趋于零时的连续极限一样，CTMC 则可视为离散时间马尔可夫链在时间划分不断细化、步数趋于无穷时得到的连续时间极限限。
 
-由于此处的 CTMC 在离散的 token 上运行，我们使用 $\mathbf{x}(t)$ 而不是 $\mathbf{s}(t)$ 来表示代表 token 序列的状态。令 $\{\mathbf{x}(t)\}_{t \ge 0}$ 为一个随机过程，其中 $\mathbf{x}(t)$ 是时间 $t$ 时由 $n$ 个 token 组成的序列。令 $\mathbf{x}$ 和 $\mathbf{y}$ 表示离散空间 $V^n$ 中的特定状态（即 token 序列）。概率分布 $p_t(\mathbf{x}) = \Pr(\mathbf{x}(t)=\mathbf{x})$ 的演化由 Kolmogorov 前向方程支配
+由于此处的 CTMC 在离散的 token 上运行，我们使用 $\mathbf{x}(t)$ 而不是 $\mathbf{s}(t)$ 来表示代表 token 序列的状态。令 $\{\mathbf{x}(t)\}_{t \ge 0}$ 为一个随机过程，其中 $\mathbf{x}(t)$ 是时间 $t$ 时由 $n$ 个 token 组成的序列。令 $\mathbf{x}$ 和 $\mathbf{y}$ 表示离散空间 $V^n$ 中的特定状态（即 token 序列）。概率分布 $p_t(\mathbf{x}) = \Pr(\mathbf{x}(t)=\mathbf{x})$ 的演化由 Kolmogorov 前向方程决定
 \begin{eqnarray}
 \frac{d p_t(\mathbf{x})}{dt} & = & \sum_{\mathbf{y} \in V^n} p_t(\mathbf{y}) [\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}, \label{eq:ctmc-equation}
 \end{eqnarray}
 
-\noindent 其中 $\mathbf{Q}^{\mathrm{seq}}(t)$ 是整个序列的（时间相关的）生成器矩阵。项 $[\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}$ 表示从状态 $\mathbf{y}$ 到状态 $\mathbf{x}$ 的瞬时转移率，它是大矩阵 $\mathbf{Q}^{\mathrm{seq}}(t)$ 中的一个元素。
+\noindent 其中 $\mathbf{Q}^{\mathrm{seq}}(t)$ 是整个序列的生成矩阵； $[\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}$ 表示从状态 $\mathbf{y}$ 到状态 $\mathbf{x}$ 的瞬时转移率，它是矩阵 $\mathbf{Q}^{\mathrm{seq}}(t)$ 中的一个元素。
 
-然而，状态空间大小 $|V|^n$ 是指数级大的，使得完整的矩阵 $\mathbf{Q}^{\mathrm{seq}}(t)$ 在计算上不可行。为了解决这个问题，我们通常在前向过程中假设 token 位置之间相互独立。在此假设下，转移在每个位置上独立发生。因此，我们可以使用一个更小的单 token 生成器矩阵 $\mathbf{Q}^{\mathrm{tok}}(t) \in \mathbb{R}^{|V| \times |V|}$ 来建模该过程，该矩阵作用于单个 token。因此，$\mathbf{Q}^{\mathrm{seq}}(t)$ 的复杂高维动力学可以分解为 $n$ 个并行的过程，每个过程都由相同的单 token 生成器 $\mathbf{Q}^{\mathrm{tok}}(t)$ 支配。图 \ref{fig:ctmc-for-sequence-generation} 展示了方程 (\ref{eq:ctmc-equation}) 的示意图。
+然而，状态空间大小 $|V|^n$ 是指数级的，导致完整的矩阵 $\mathbf{Q}^{\mathrm{seq}}(t)$ 在计算上不可行。为了解决这个问题，我们通常在前向过程中假设 token 位置之间相互独立，即转移在每个位置上独立发生。因此，我们可以使用一个更小的生成矩阵 $\mathbf{Q}^{\mathrm{tok}}(t) \in \mathbb{R}^{|V| \times |V|}$ 来建模该过程，该矩阵只作用于单个 token 。因此，$\mathbf{Q}^{\mathrm{seq}}(t)$ 的复杂高维动力学可以分解为 $n$ 个并行的过程，每个过程都由相同的单 token 生成器 $\mathbf{Q}^{\mathrm{tok}}(t)$ 决定。图 \ref{fig:ctmc-for-sequence-generation} 展示了方程 (\ref{eq:ctmc-equation}) 的示意图。
 
 \begin{figure}[!t]
 \centering
 \AMLFigure{figure-ctmc-for-sequence-generation}
-\caption{连续时间马尔可夫链在标记序列生成中的示意图。该连续时间马尔可夫链在时间 $t$ 的动力学方程为 $\frac{d p_t(\mathbf{x})}{dt} = \sum_{\mathbf{y} \in V^n} p_t(\mathbf{y}) [\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}$。该方程表明，观测到目标序列 $\mathbf{x}$（例如 \texttt{ADBCC}）的概率变化率，是所有可能源序列（例如 $\mathbf{y}_1$、$\mathbf{y}_2$、$\mathbf{y}_3$）的概率之和，并以序列级转移速率 $[\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}$ 加权。全局转移速率由底层的标记级动力学决定。例如，从序列 $\mathbf{y}_3$ 到 $\mathbf{x}$ 的转移涉及单个标记的变化，例如第四个标记从 \texttt{D} 变为 \texttt{C} 的速率 $Q^{\mathrm{tok}}_{\mathrm{DC}}(t)$。请注意，虽然连续时间马尔可夫链在连续时间中建模动力学，但状态转移本身是离散的跳跃，而非连续变化。}
+\caption{连续时间马尔可夫链在 token 序列生成中的示意图。连续时间马尔可夫链在时间 $t$ 的演化由 $\frac{d p_t(\mathbf{x})}{dt} = \sum_{\mathbf{y} \in V^n} p_t(\mathbf{y}) [\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}$ 描述。该方程表明，目标序列 $\mathbf{x}$（例如 \texttt{ADBCC}）的概率随时间的变化，由所有可能源序列（例如 $\mathbf{y}_1$、$\mathbf{y}_2$、$\mathbf{y}_3$）共同决定，其中每个源序列的贡献由其当前概率与对应的序列级转移速率 $[\mathbf{Q}^{\mathrm{seq}}(t)]_{\mathbf{y}\mathbf{x}}$ 共同确定。序列级转移速率进一步由底层的 token 级动力学决定。例如，从序列 $\mathbf{y}_3$ 到 $\mathbf{x}$ 的转移仅涉及单个 token 的变化，即第四个 token 从 \texttt{D} 变为 \texttt{C}，其对应速率为 $Q^{\mathrm{tok}}_{\mathrm{DC}}(t)$。需要注意的是，虽然连续时间马尔可夫链在连续时间中描述系统动力学，但状态之间的转移仍以离散跳跃的形式发生，而非连续变化。}
 \label{fig:ctmc-for-sequence-generation}
 \end{figure}
 
-需要注意的是，虽然 CTMC 通过方程 (\ref{eq:ctmc-equation}) 中的前向方程提供了连续时间的视角，但 NLP 中实用的离散扩散模型通常运行在离散的时间网格 $t \in \{0,1,\dots,T\}$ 上。在这种情况下，过程通过相邻时间步之间的转移核（或矩阵）来实现，而 CTMC 表达式可以理解为这些离散化动力学的连续时间极限。
+需要注意的是，虽然 CTMC 通过方程 (\ref{eq:ctmc-equation}) 中的前向方程提供了连续时间的视角，但实用的离散扩散模型通常运行在离散的时间网格 $t \in \{0,1,\dots,T\}$ 上。在这种情况下，过程通过相邻时间步之间的转移核（或矩阵）来实现，而 CTMC 表达式可以理解为这些离散化动力学的连续时间极限。
 
-使用 CTMC，我们将前向和后向过程描述如下：
+使用 CTMC，我们将前向和反向过程描述如下：
 
 \begin{itemize}
-\item \textbf{前向过程}。在连续时间马尔可夫链（CTMCs）中，我们并非通过添加高斯噪声，而是通过随机标记替换来破坏文本。这一过程由预定义的生成器矩阵$\mathbf{Q}^{\mathrm{tok}}(t)$决定。常用的破坏方案包括：
+\item \textbf{前向过程}。连续时间马尔可夫链通过随机 token 替换来对文本进行加噪。这一过程由预定义的生成矩阵$\mathbf{Q}^{\mathrm{tok}}(t)$决定。常用的加噪方案包括：
     \begin{itemize}
-    \item \textbf{均匀扩散}：标记以均匀速率跳转到词汇表中的任意其他标记。这类似于连续空间中的高斯噪声，后者将数据分布推向标准正态分布。在此情况下，分布会收敛为词汇表$V$上的均匀分布。
-    \item \textbf{掩码扩散（吸收态）}：标记以特定速率转移至特殊的\texttt{[MASK]}标记且不可逆，这对应于马尔可夫链中的吸收态。
+    \item \textbf{均匀扩散}： token 以均匀速率跳转到词汇表中的任意其他 token 。这类似于连续空间中的高斯噪声，后者将数据分布推向标准正态分布。在此情况下，分布会收敛为词表$V$上的均匀分布。
+    \item \textbf{掩码扩散（吸收态）}： token 以特定速率转移至特殊的\texttt{[MASK]} token ，且这个过程不可逆。这对应于马尔可夫链中的吸收态。
     \end{itemize}
-\item \textbf{反向过程}。随机过程中的一个标准结果表明，如果前向过程是一个具有生成器 $\mathbf{Q}^{\mathrm{tok}}(t)$ 的 CTMC，那么从 $T$ 到 $0$ 反向运行的后向过程也是一个 CTMC \citep{anderson:1982reverse}。其生成速率矩阵 $\tilde{\mathbf{Q}}^{\mathrm{tok}}(t)$ 由下式给出：
+\item \textbf{反向过程}。随机过程中的一个标准结果表明，如果前向过程是一个具有生成元 $\mathbf{Q}^{\mathrm{tok}}(t)$ 的连续时间马尔可夫链，那么从终止时刻 $T$ 到 $0$ 时刻的反向过程也是一个连续时间马尔可夫链 \citep{anderson:1982reverse}。其生成速率矩阵 $\tilde{\mathbf{Q}}^{\mathrm{tok}}(t)$ 由下式给出：
 \begin{eqnarray}
 \tilde{Q}^{\mathrm{tok}}_{vu}(t) & = & Q^{\mathrm{tok}}_{uv}(t) \frac{p_t(u)}{p_t(v)}, \label{eq:reverse-ctmc}
 \end{eqnarray}
-\noindent 其中 $u, v \in V$ 代表词汇表中的特定 token 值，且上述非对角速率在
-$p_t(v)>0$ 时定义。这里，$\tilde{Q}^{\mathrm{tok}}_{vu}(t)$ 表示反向过程中
+\noindent 其中 $u, v \in V$ 代表词汇表中的两个 token 取值。上式在$p_t(v)>0$ 时定义。这里，$\tilde{Q}^{\mathrm{tok}}_{vu}(t)$ 表示反向过程中
 从值 $v$ 转移到值 $u$ 的速率，$p_t(v)$ 是 token 在时间 $t$ 取值为 $v$
-的边缘概率；反向生成器的对角元由每一行元素之和为零的条件确定。
+的边缘概率；反向生成器的对角元仍由每一行元素之和为零的条件确定。
 \end{itemize}
 
-上述方程建立了 CTMC 与离散扩散模型之间的基本联系。它是反向时间 SDE 公式的离散类比，该公式将反向漂移与得分函数 $\nabla \log p_t(\mathbf{x})$ 联系起来。在离散情况下，概率比 $p_t(u)/p_t(v)$ 充当“离散得分”，引导生成过程朝向高概率的 token。需要强调的是，方程 (\ref{eq:reverse-ctmc}) 首先描述单词元的边缘 CTMC；当完整序列的各位置存在相关性时，精确反向过程应定义在序列状态空间 $V^n$ 上，并使用联合序列概率之比。因此，仅依赖单词元边缘比的逐位置参数化一般并不足够。实践中，Transformer 通过读取完整的损坏序列来条件化各位置的跳转速率，从而表达跨位置依赖；在前向生成元只允许单位置跳转的设定下，这种全序列条件化的速率参数化在结构上可以表示相应的精确反向生成元。
+上述方程建立了 CTMC 与离散扩散模型之间的基本联系，可视为反向时间 SDE 公式在离散状态空间中的对应形式。在连续扩散中，反向漂移由得分函数 $\nabla \log p_t(\mathbf{x})$ 所刻画；相应地，在离散情形下，概率比 $p_t(u)/p_t(v)$ 扮演类似“离散得分”的角色，用于调节不同状态之间的反向跳转速率，使生成过程更倾向于转移到高概率 token 。
 
-方程 (\ref{eq:reverse-ctmc}) 是时间反转 CTMC 的理论刻画，其中反向速率依赖于真实的边缘分布 $p_t(\cdot)$。在用于文本的离散扩散模型中，我们通常不显式地估计 $p_t(\cdot)$。相反，反向动力学是通过反向后验 $\Pr(\mathbf{x}(t-\Delta t)\mid \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})$ 的贝叶斯分解来构建的。因此，方程 (\ref{eq:reverse-ctmc}) 主要用于提供直觉，说明为什么概率比或后验重加权会引导反向过程朝向高概率的 token。在实践中，我们使用神经网络（通常是 Transformer）对反向动力学进行参数化，该网络预测一个去噪分布，例如 $p_\theta(\mathbf{x}(0)| \mathbf{x}(t),\mathbf{c})$ \footnote{在大多数设置中，前向破坏过程被选择为独立于 $\mathbf{c}$。我们在符号中保留 $\mathbf{c}$ 是为了匹配条件生成的设定，并允许更一般的情况，即噪声过程可能依赖于 $\mathbf{c}$。}。
+需要注意的是，方程 (\ref{eq:reverse-ctmc}) 首先描述的是单个 token 上的边缘 CTMC。当完整序列的不同位置之间存在统计依赖时，精确的反向过程应定义在序列状态空间 $V^n$ 上，并相应使用联合序列概率之比。因此，仅依赖单 token 边缘概率比进行逐位置参数化，通常不足以充分刻画序列中的跨位置依赖。
 
-基于 CTMC 的扩散建模中的一个代表性例子是 \citet{austin-etal:2021structured} 提出的 \textbf{结构化去噪扩散概率模型}（D3PM）。虽然早期尝试离散扩散通常依赖于简单的均匀转移概率，但 D3PM 通过结构化转移矩阵将该框架推广到支持任意噪声过程。重要的是，\citet{austin-etal:2021structured} 证明了破坏过程的选择会显著影响样本质量。他们引入了几种超越标准均匀扩散的结构化转移方案。在模型参数化方面，D3PM 不同于噪声预测范式。由于噪声在离散空间中不是加性的，D3PM 被训练为直接从噪声输入中预测干净的数据分布 $p_\theta(\mathbf{x}(0) | \mathbf{x}(t), \mathbf{c})$。
+在实际模型中，这一问题通常通过全序列条件化来处理。Transformer 以完整的受扰动序列作为输入，并据此预测各位置的跳转速率，从而能够利用不同 token 位置之间的依赖关系。在前向生成元仅允许单个位置发生跳转的设定下，这种基于全序列上下文的速率参数化在结构上能够表示相应的精确反向生成元。
 
-需要注意的是，由于在训练期间可以获得真实值 $\mathbf{x}(0)$，我们可以直接计算真实的反向后验 $q(\mathbf{x}(t - \Delta t) | \mathbf{x}(t), \mathbf{x}(0), \mathbf{c})$。因此，这个真实后验作为模型转移概率的监督信号。
 
-形式上，这个反向后验对应于前一个时间步的分布。遵循扩散模型中的常见符号，我们用 $q$ 表示前向条件分布。那么，反向后验可以使用贝叶斯规则推导：
+方程 (\ref{eq:reverse-ctmc}) 是时间反转 CTMC 的理论刻画，其中反向速率依赖于真实的边缘分布 $p_t(\cdot)$。在用于文本的离散扩散模型中，我们通常不显式地估计 $p_t(\cdot)$。相反，反向动力学是通过反向后验 $\Pr(\mathbf{x}(t-\Delta t)\mid \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})$ 的贝叶斯分解来构建的。因此，方程 (\ref{eq:reverse-ctmc}) 主要用于提供直觉，说明为什么概率比或后验重加权会引导反向过程朝向高概率的 token 。在实践中，我们使用神经网络（通常是 Transformer）对反向动力学进行参数化，该网络预测一个去噪分布，例如 $p_\theta(\mathbf{x}(0)| \mathbf{x}(t),\mathbf{c})$ \footnote{在大多数设置中，前向破坏过程被选择为独立于 $\mathbf{c}$。我们在符号中保留 $\mathbf{c}$ 是为了匹配条件生成的设定，并允许更一般的情况，即噪声过程可能依赖于 $\mathbf{c}$。}。
+
+基于 CTMC 的离散扩散建模中，一个具有代表性的工作是 \citet{austin-etal:2021structured} 提出的 \textbf{结构化去噪扩散概率模型}（D3PM）。早期离散扩散方法通常采用较为简单的均匀转移机制，而 D3PM 通过引入结构化转移矩阵，将离散扩散推广到更加灵活的前向扰动过程。值得注意的是，\citet{austin-etal:2021structured} 表明，前向破坏过程的具体设计会显著影响最终的生成质量，并进一步提出了多种超越标准均匀转移的结构化噪声方案。
+
+在模型参数化方面，D3PM 与连续扩散中常见的噪声预测范式有所不同。由于离散状态空间中的噪声并不具有加性形式，模型通常不直接预测噪声，而是根据受扰动样本预测对应的干净数据分布，即
+$p_\theta(\mathbf{x}(0) | \mathbf{x}(t), \mathbf{c})$。
+
+需要注意的是，由于在训练期间可以获得真实值 $\mathbf{x}(0)$，我们可以直接计算真实的反向后验 $q(\mathbf{x}(t - \Delta t) | \mathbf{x}(t), \mathbf{x}(0), \mathbf{c})$ 作为模型转移概率的监督信号。形式上，这个反向后验对应于前一个时间步的分布。遵循扩散模型中的常见符号，我们用 $q$ 表示前向条件分布。那么，反向后验可以使用贝叶斯规则推导：
 \begin{eqnarray}
 q(\mathbf{x}(t - \Delta t) | \mathbf{x}(t), \mathbf{x}(0), \mathbf{c}) & = & \frac{q(\mathbf{x}(t) | \mathbf{x}(t - \Delta t), \mathbf{c}) \, q(\mathbf{x}(t - \Delta t) | \mathbf{x}(0), \mathbf{c})}{q(\mathbf{x}(t) | \mathbf{x}(0), \mathbf{c})}.
 \end{eqnarray}
 
-\noindent 这里，序列上的概率分布分解为独立的 per-token 转移，例如：
+\noindent 这里，序列上的概率分布分解为独立的逐 token 转移，例如：
 \begin{eqnarray}
 q(\mathbf{x}(t)|\mathbf{x}(0), \mathbf{c}) & = & \prod_{i=1}^{n} q(x_i(t)|x_i(0), \mathbf{c}),
 \end{eqnarray}
@@ -3095,17 +3115,17 @@ $\mathbf{P}^{\mathrm{tok}}(0,t) = \mathbf{P}^{\mathrm{tok}}(t_{k-1},t_k)\times\d
 q(x(t) | x(0), \mathbf{c}) & = & \alpha_t \cdot \mathbb{I}(x(t) = x(0)) + (1 - \alpha_t) \cdot \frac{1}{|V|},
 \end{eqnarray}
 
-\noindent 其中 $\alpha_t$ 是一个依赖于时间的标量调度参数，控制信号保留率。类似地，对于吸收态（掩码）扩散，概率质量被导向一个特殊的 \texttt{[MASK]} token。相应的闭式转移概率由下式给出：
+\noindent 其中 $\alpha_t$ 是一个依赖于时间的标量调度参数，控制信号保留率。类似地，对于掩码扩散，概率质量被导向一个特殊的 \texttt{[MASK]} token 。相应的闭式转移概率由下式给出：
 \begin{eqnarray}
 q(x(t) | x(0), \mathbf{c}) & = & \begin{cases} \alpha_t, & \text{if } x(t) = x(0), \\ 1 - \alpha_t, & \text{if } x(t) = \texttt{[MASK]}, \\ 0, & \text{otherwise.} \end{cases}
 \end{eqnarray}
 
-这些解析解使我们能够绕过前向过程中计算昂贵的矩阵运算。有了这些易于处理的前向概率，后向过程通过将神经网络对原始 token 序列的预测 $p_\theta(\mathbf{x}(0) | \mathbf{x}(t), \mathbf{c})$ 代入上述推导的贝叶斯分解来实现。这产生了一个反向转移分布 $p_\theta(\mathbf{x}(t - 1) | \mathbf{x}(t), \mathbf{c})$，我们可以从中采样。图 \ref{fig:d3pm-forward-and-reverse-processes} 展示了在假设 $\Delta t = 1$ 的情况下，D3PM 中均匀扩散的前向和后向过程。
+这些解析解使我们能够绕过前向过程中计算昂贵的矩阵运算。有了这些易于处理的前向概率，反向过程通过将神经网络对原始 token 序列的预测 $p_\theta(\mathbf{x}(0) | \mathbf{x}(t), \mathbf{c})$ 代入上述推导的贝叶斯分解来实现。这产生了一个反向转移分布 $p_\theta(\mathbf{x}(t - 1) | \mathbf{x}(t), \mathbf{c})$，我们可以从中采样。图 \ref{fig:d3pm-forward-and-reverse-processes} 展示了在假设 $\Delta t = 1$ 的情况下，D3PM 中均匀扩散的前向和反向过程。
 
 \begin{figure}[!t]
 \centering
 \AMLFigure{figure-d3pm-forward-and-reverse-processes}
-\caption{D3PM 均匀扩散中前向与后向过程的示意图。在前向过程中，状态在每个 $\Delta t = 1$ 的时间步跳转到一个新状态，初始状态为 $(\mathbf{x}(0), \mathbf{c})$，最终状态为 $(\mathbf{x}(T), \mathbf{c})$。在前向步骤中，我们计算前向转移概率 $q(\mathbf{x}(t) | \mathbf{x}(t - 1), \mathbf{c})$，然后可用其计算反向后验 $q(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})$ 以训练后向模型。在后向过程中，模型沿时间反向演化。在每个后向步骤中，我们使用网络 $p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$ 预测词元序列 $\mathbf{x}(t-1)$，然后继续处理 $t - 1$。网络的训练目标是，在 $q$ 的期望下，最小化 $q(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})$ 与 $p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$ 之间的 KL 散度。}
+\caption{D3PM 均匀扩散中前向与反向过程的示意图。在前向过程中，状态在每个 $\Delta t = 1$ 的时间步跳转到一个新状态，初始状态为 $(\mathbf{x}(0), \mathbf{c})$，最终状态为 $(\mathbf{x}(T), \mathbf{c})$。在前向步骤中，我们计算前向转移概率 $q(\mathbf{x}(t) | \mathbf{x}(t - 1), \mathbf{c})$，然后可用其计算反向后验 $q(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})$ 来训练反向模型。在反向过程中，模型沿时间反向演化。在每个反向步骤中，我们使用网络 $p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$ 预测 token 序列 $\mathbf{x}(t-1)$，然后继续处理 $t - 1$。网络的训练目标是，在 $q$ 的期望下，最小化 $q(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})$ 与 $p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$ 之间的 KL 散度。}
 \label{fig:d3pm-forward-and-reverse-processes}
 \end{figure}
 
@@ -3120,38 +3140,48 @@ q(x(t) | x(0), \mathbf{c}) & = & \begin{cases} \alpha_t, & \text{if } x(t) = x(0
 \log p_\theta(\mathbf{x}(0) | \mathbf{c}) & \ge & \mathbb{E}_{q(\mathbf{x}(1{:}T) | \mathbf{x}(0), \mathbf{c})} \left[ \log \frac{p_\theta(\mathbf{x}(0{:}T) | \mathbf{c})}{q(\mathbf{x}(1{:}T) | \mathbf{x}(0), \mathbf{c})} \right].
 \end{eqnarray}
 
-通过将联合分布 $p_\theta(\mathbf{x}(0{:}T) | \mathbf{c})$ 和前向轨迹 $q(\mathbf{x}(1{:}T) | \mathbf{x}(0), \mathbf{c})$ 展开为各自条件分布的乘积，然后重新排列项，负 ELBO 可以分解为每步 KL 散度项的和（关于离散设置下的完整推导，请参见 \citep{austin-etal:2021structured})。模型最小化的最终训练目标由下式给出：
-\begin{eqnarray}
-\mathcal{L}_{\mathrm{ELBO}} & = & \mathbb{E}_{q(\mathbf{x}(1{:}T)| \mathbf{x}(0),\mathbf{c})}
+通过将联合分布 $p_\theta(\mathbf{x}(0{:}T) | \mathbf{c})$ 与前向轨迹分布 $q(\mathbf{x}(1{:}T) | \mathbf{x}(0), \mathbf{c})$ 分别展开为一系列条件分布的乘积，并对各项进行重新整理，可以将负 ELBO 分解为逐时间步 KL 散度项之和（关于离散情形下的完整推导，请参见 \citep{austin-etal:2021structured}）。模型最终最小化的训练目标为：
+\begin{equation}
+\hspace*{-1.5cm}
+\begin{aligned}
+\mathcal{L}_{\mathrm{ELBO}}
+&=
+\mathbb{E}_{q(\mathbf{x}(1{:}T)\mid\mathbf{x}(0),\mathbf{c})}
 \Bigg[
 -\log p(\mathbf{x}(T))
-+ \nonumber \\
-& & \hspace{2.7cm} \sum_{t=1}^{T}
-\mathrm{KL}\!\Big(
-q(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})
-\,\Vert\,
-p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})
-\Big)
-\Bigg],
+\\[-2pt]
+&\qquad+
+\sum_{t=1}^{T}
+\mathrm{KL}\!\left(
+q(\mathbf{x}(t-1)\mid\mathbf{x}(t),\mathbf{x}(0),\mathbf{c})
+\middle\Vert
+p_{\theta}(\mathbf{x}(t-1)\mid\mathbf{x}(t),\mathbf{c})
+\right)
+\Bigg].
+\end{aligned}
 \label{eq:discrete-elbo}
-\end{eqnarray}
+\end{equation}
 
-\noindent 在这个目标中，项 $q(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})$ 表示反向转移的真实后验。这里的一个关键优势是，对于结构化的前向过程（如均匀噪声或掩码），这个后验分布可以使用贝叶斯规则高效地以闭式计算。关于第一项，由于先验 $p(\mathbf{x}(T))$ 通常是一个没有可学习参数的固定分布（例如均匀分布或确定性的掩码状态），$-\log p(\mathbf{x}(T))$ 相对于 $\theta$ 是常数，可以省略。因此，核心的学习信号驱使模型 $p_\theta$ 将其反向转移概率与前向动力学所决定的理想反向路径对齐。
+\noindent
+在上述目标函数中，$q(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{x}(0),\mathbf{c})$ 表示由前向过程所确定的真实反向后验分布。对于具有特定结构的前向扰动过程，例如均匀噪声或掩码噪声，该后验可以利用贝叶斯规则高效地获得闭式表达。
+
+对于第一项，由于先验分布 $p(\mathbf{x}(T))$ 通常被设定为不含可学习参数的固定分布，例如均匀分布或确定性的掩码状态，因此 $-\log p(\mathbf{x}(T))$ 相对于模型参数 $\theta$ 为常数，在优化过程中可以忽略。由此，主要的学习信号来自逐时间步的 KL 散度项，它促使模型 $p_\theta$ 的反向转移分布逼近由前向动力学所确定的真实反向后验，从而学习从受扰动状态逐步恢复数据的反向生成过程。
+
 \subsubsection{掩码扩散模型}
 
-\textbf{掩码扩散模型}（Masked Diffusion Models, MDMs）是离散扩散的一种专门实现，其转移速率矩阵 $\mathbf{Q}^{\mathrm{tok}}(t)$ 被设计为将概率质量移向一个特殊的吸收态，记作 \texttt{[MASK]} 标记 \citep{sahoo-etal:2024simple,nie-etal:2025large}。这种方法提供了一个独特的实践优势：一旦一个标记在前向过程中转移到掩码状态，它就会停留在那里，从而创建了一条通向完全损坏状态的单向路径。
+\textbf{掩码扩散模型}（Masked Diffusion Models, MDMs）是离散扩散的一种典型形式，其转移速率矩阵 $\mathbf{Q}^{\mathrm{tok}}(t)$ 被设计为将概率质量逐步转移到一个特殊的吸收态，即 \texttt{[MASK]}  token \citep{sahoo-etal:2024simple,nie-etal:2025large}。这种设计具有一个重要的实践优势：一旦某个 token 在前向过程中转移到掩码状态，它就会保持在该状态，从而形成一条通向完全加噪状态的单向演化路径。
 
-前向过程逐步将原始序列中的标记替换为 \texttt{[MASK]}。它从一个完全观测到的序列开始，逐渐破坏信息，直到整个序列变为仅包含掩码的序列。在实践中，我们将时间离散化，并在离散时间步 $\{0,1,\dots,T\}$ 上实现该过程为一个离散时间马尔可夫链。令 $\mathbf{x}(t)$ 为时间 $t \in \{0,1,\dots,T\}$ 的损坏序列，其中 $\mathbf{x}(0)$ 是干净数据，$\mathbf{x}(T) = \texttt{[MASK]}^n$，$x_i(t)$ 是 $\mathbf{x}(t)$ 的第 $i$ 个标记。在前向过程中，假设各位置之间独立，掩码扩散可以写为每个标记的吸收转移：
+前向过程逐步将原始序列中的 token 替换为 \texttt{[MASK]}。该过程从一个完全可观测的序列出发，随着时间推进逐渐丢失信息，直至整个序列最终变为仅由掩码 token 组成的序列。在实践中，我们将时间离散化，并在离散时间步 $\{0,1,\dots,T\}$ 上将该过程实现为一个离散时间马尔可夫链。令 $\mathbf{x}(t)$ 为时间 $t \in \{0,1,\dots,T\}$ 的加噪序列，其中 $\mathbf{x}(0)$ 是干净数据，$\mathbf{x}(T) = \texttt{[MASK]}^n$，$x_i(t)$ 是 $\mathbf{x}(t)$ 的第 $i$ 个 token 。在前向过程中，假设各位置之间相互独立，则掩码扩散可以写为各 token 吸收转移的乘积：
 \begin{eqnarray}
 q(\mathbf{x}(t) | \mathbf{x}(0), \mathbf{c}) & = & \prod_{i=1}^n q(x_i(t) | x_i(0), \mathbf{c}), \label{eq:mdm-forward-factorize}
 \end{eqnarray}
 
-\noindent 其中单标记前向核为：
+\noindent 其中，单 token 的前向转移核为：
 \begin{eqnarray}
 q(x_i(t) | x_i(0), \mathbf{c}) & = &\alpha_t \cdot \mathbb{I}(x_i(t)=x_i(0)) + (1-\alpha_t)\cdot \mathbb{I}(x_i(t)=\texttt{[MASK]}). \label{eq:mdm-forward-absorbing}
 \end{eqnarray}
 
-\noindent 这里 $\alpha_t \in [0,1]$ 是一个单调递减的调度函数，控制着在时间 $t$ 保留多少信号。等价地，我们可以将 $\mathbf{x}(t)$ 视为通过采样一个二元掩码指示向量 $\mathbf{m}_t\in\{0,1\}^n$ 生成，其中：
+\noindent 这里，$\alpha_t \in [0,1]$ 是一个单调递减的调度函数，用于控制时间 $t$ 时原始信号的保留程度。等价地，我们也可以将 $\mathbf{x}(t)$ 看作通过采样一个二元掩码指示向量 $\mathbf{m}_t\in\{0,1\}^n$ 得到，其中：
 \begin{eqnarray}
 m_{t,i} \sim \mathrm{Bernoulli}(1-\alpha_t), \\
 x_i(t) = \begin{cases}
@@ -3161,35 +3191,35 @@ x_i(0), & m_{t,i}=0.
 \label{eq:mdm-forward-maskvar}
 \end{eqnarray}
 
-\noindent 因此，扩散轨迹可以解释为重复增加掩码位置的集合，直到最终所有位置都被掩码，如图 \ref{fig:mdm-diffusion-process} 所示。
+\noindent 因此，整个扩散轨迹可以理解为掩码位置集合不断扩大的过程，直至最终所有位置都被掩码，如图 \ref{fig:mdm-diffusion-process} 所示。
 
 \begin{figure}[!t]
 \centering
 \AMLFigure{figure-mdm-diffusion-process}
-\caption{MDM 前向过程示意图，其中原始标记序列被迭代地转换为完全掩码序列。在此过程中，标记被替换为 \texttt{[MASK]} 符号，直至整个序列被掩码。注意，上下文 $\mathbf{c}$ 在整个过程中始终保持未掩码状态。为训练 MDM，模型学习在固定上下文 $\mathbf{c}$ 和部分损坏序列的条件下，恢复被掩码的标记。}
+\caption{MDM 前向过程示意图，其中原始 token 序列被逐步转换为完全掩码序列。在这一过程中，原始 token 不断被 \texttt{[MASK]} 符号替换，直至整个序列均被掩码。需要注意的是，上下文 $\mathbf{c}$ 在整个过程中始终保持未掩码状态。训练 MDM 时，模型学习在给定固定上下文 $\mathbf{c}$ 和部分受扰动序列的条件下，恢复被掩码的 token 。}
 \label{fig:mdm-diffusion-process}
 \end{figure}
 
-后向过程从 $t=T$ 运行到 $t=0$。给定上下文 $\mathbf{c}$ 和一个初始的完全掩码序列 $\mathbf{x}(T)=\texttt{[MASK]}^n$，MDM 迭代地将 \texttt{[MASK]} 标记替换为真实标记，直到在 $V^n$ 中获得一个完全实例化的序列。形式上，我们定义一个参数化的逆向马尔可夫链：
+反向过程从 $t=T$ 逐步演化至 $t=0$。给定上下文 $\mathbf{c}$ 和初始的完全掩码序列 $\mathbf{x}(T)=\texttt{[MASK]}^n$，MDM 逐步将 \texttt{[MASK]}  token 恢复为具体 token ，直至在 $V^n$ 中生成一个完整的 token 序列。形式上，我们定义一个参数化的逆向马尔可夫链：
 \begin{eqnarray}
 p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t), \mathbf{c}), \quad t=T,T-1,\dots,1,
 \label{eq:mdm-reverse-kernel}
 \end{eqnarray}
 
-\noindent 这里 $p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$ 是逆向条件分布 $\mathrm{Pr}_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$ 的记法，下标 $\theta$ 强调逆向时间动力学是由 $\theta$ 参数化的。
+\noindent 其中，$p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$ 表示逆向条件分布 $\mathrm{Pr}_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$，下标 $\theta$ 表明逆向时间动力学由参数 $\theta$ 所刻画。
 
-一种简单的参数化方法是让网络预测干净标记的去噪分布：
+一种较为直接的参数化方式是让网络预测干净 token 的去噪分布：
 \begin{eqnarray}
 p_\theta(\mathbf{x}(0)| \mathbf{x}(t), \mathbf{c}) = \prod_{i=1}^{n} p_\theta(x_i(0)| \mathbf{x}(t), \mathbf{c}).
 \label{eq:mdm-denoise-factorize}
 \end{eqnarray}
 
-\noindent 然后，通过仅更新掩码位置来构建逆向转移，同时保持未掩码的标记不变。为了与前向调度 $\alpha_t$ 一致，令
+\noindent 随后，仅对当前处于掩码状态的位置进行更新，而保持未被掩码的 token 不变，由此构造逆向转移。为与前向调度 $\alpha_t$ 保持一致，令
 \begin{eqnarray}
 \rho_t=\frac{\alpha_{t-1}-\alpha_t}{1-\alpha_t},
 \label{eq:mdm-unmask-probability}
 \end{eqnarray}
-其中 $\rho_t$ 表示在已知位置于时刻 $t$ 被掩码的条件下，该位置在反向步骤 $t\to t-1$ 中恢复为词元的概率。对于 $v\in V\cup\{\texttt{[MASK]}\}$，每个位置的逆向核可以写为：
+其中，$\rho_t$ 表示在某一位置于时刻 $t$ 处于掩码状态的条件下，该位置在反向步骤 $t\to t-1$ 中被恢复为普通 token 的概率。对于 $v\in V\cup\{\texttt{[MASK]}\}$，每个位置对应的逆向转移核可以写为：
 \begin{eqnarray}
 p_\theta(x_i(t-1)=v| \mathbf{x}(t), \mathbf{c})
 =
@@ -3201,21 +3231,21 @@ p_\theta(x_i(t-1)=v| \mathbf{x}(t), \mathbf{c})
 \end{cases}
 \label{eq:mdm-reverse-keep-or-sample}
 \end{eqnarray}
-其中 $\pi_{\theta,t,i}(\cdot | \mathbf{x}(t),\mathbf{c})$ 是由模型产生的在 $V$ 上的分类分布。一个常见的选择是：
+其中，$\pi_{\theta,t,i}(\cdot | \mathbf{x}(t),\mathbf{c})$ 表示模型在词表 $V$ 上预测得到的分类分布。一种常见的设定是：
 \begin{eqnarray}
 \pi_{\theta,t,i}\!\left(v | \mathbf{x}(t),\mathbf{c}\right)=p_\theta\!\left(x_i(0)=v | \mathbf{x}(t),\mathbf{c}\right), \quad v\in V,
 \label{eq:mdm-pi-as-denoise}
 \end{eqnarray}
-即，直接从预测的干净标记分布中采样缺失的标记。
+即直接从模型预测的干净 token 分布中采样，以恢复被掩码的位置。
 
 给定一个示例数据集 $(\mathbf{x}(0),\mathbf{c})\sim p_{\text{data}}$，MDMs 通过最大化干净序列的条件似然（或等价地最小化其负对数似然）来学习逆向模型 $p_\theta$。与其他扩散模型类似，我们可以使用 ELBO 来训练 MDMs（另见第 \ref{sec:the-ctmc-perspective} 节中的 D3PM）。
 
-尽管上述训练目标看起来有些繁琐，但在实践中，一个更简单且广泛使用的方法是训练模型以恢复掩码位置处的原始标记。我们采样一个时间步 $t\sim U\{1,\dots,T\}$，然后采样一个损坏序列 $\mathbf{x}(t)\sim q(\mathbf{x}(t)| \mathbf{x}(0),\mathbf{c})$。我们定义掩码索引集为：
+尽管上述训练目标在形式上较为复杂，但在实际应用中，一种更简单且被广泛采用的方法是直接训练模型恢复被掩码位置上的原始 token 。具体而言，我们首先采样一个时间步 $t\sim U\{1,\dots,T\}$，然后采样一个带噪（部分掩码）序列 $\mathbf{x}(t)\sim q(\mathbf{x}(t)| \mathbf{x}(0),\mathbf{c})$。定义掩码位置的索引集合为：
 \begin{eqnarray}
 \mathcal{M}(t) & = & \{i\in\{1,\dots,n\} : x_i(t)=\texttt{[MASK]}\}.
 \end{eqnarray}
 
-\noindent 损失函数则定义为掩码位置上的条件负对数似然，如下所示：
+\noindent 损失函数定义为掩码位置上的条件负对数似然：
 \begin{eqnarray}
 & & \mathcal{L}_{\text{denoise}}(\theta) \nonumber \\
 &=&
@@ -3230,7 +3260,7 @@ p_\theta(x_i(t-1)=v| \mathbf{x}(t), \mathbf{c})
 \label{eq:mdm-denoise-ce}
 \end{eqnarray}
 
-\noindent 可选地，可以对时间步进行重新加权以强调某些噪声水平：
+\noindent 此外，还可以对不同时间步进行重新加权，以突出特定噪声水平下的学习：
 \begin{eqnarray}
 \mathcal{L}_{\text{denoise}}(\theta)
 & = &
@@ -3240,19 +3270,19 @@ p_\theta(x_i(t-1)=v| \mathbf{x}(t), \mathbf{c})
 \Bigg],
 \label{eq:mdm-denoise-ce-weighted}
 \end{eqnarray}
-其中 $\gamma_t\ge 0$ 是一个预定义的调度函数。直观上，类似于课程学习，小的 $t$ 对应轻度损坏（即较容易的去噪），而大的 $t$ 对应重度损坏（即较难的去噪）。权重 $\gamma_t$ 可以用来平衡这些状态。
+其中 $\gamma_t\ge 0$ 是一个预定义的调度函数。直观地看，这与课程学习的思想类似：较小的 $t$ 对应对原始序列较轻程度的加噪，即较容易的去噪任务；较大的 $t$ 则对应较严重的破坏，即更困难的去噪任务。权重 $\gamma_t$ 可用于平衡不同噪声水平下的训练信号。
 
-训练完成后，我们使用学习到的逆向核 $p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$ 通过从完全掩码状态向后运行马尔可夫链来生成文本。推理过程从以下开始：
+训练完成后，我们利用学习得到的逆向核 $p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c})$，从完全掩码状态出发沿反向马尔可夫链逐步生成文本。推理过程从以下状态开始：
 \begin{eqnarray}
 \mathbf{x}(T) = \texttt{[MASK]}^n,
 \end{eqnarray}
 
-\noindent 并迭代地采样：
+\noindent 并按照以下方式迭代采样：
 \begin{eqnarray}
 \mathbf{x}(t-1) \sim p_\theta(\mathbf{x}(t-1)| \mathbf{x}(t),\mathbf{c}), \quad t=T,T-1,\dots,1.
 \label{eq:mdm-sampling-chain}
 \end{eqnarray}
-在方程 (\ref{eq:mdm-reverse-keep-or-sample}) 的每标记因式分解下，逆向步骤仅可能更新掩码位置。对于每个满足 $x_i(t)=\texttt{[MASK]}$ 的位置，先采样
+在方程 (\ref{eq:mdm-reverse-keep-or-sample}) 所给出的逐 token 因式分解下，每个逆向步骤只会更新当前处于掩码状态的位置。对于每个满足 $x_i(t)=\texttt{[MASK]}$ 的位置，首先采样
 \begin{eqnarray}
 b_{t,i}\sim\mathrm{Bernoulli}(\rho_t),
 \end{eqnarray}
@@ -3267,9 +3297,9 @@ x_i(t), & x_i(t)\neq \texttt{[MASK]},\\
 \end{cases}
 \end{eqnarray}
 
-\noindent 其中 $\mathrm{Cat}(\cdot)$ 表示从其参数指定的分类分布中采样一个离散标记。于是，并非所有掩码位置都在同一步被填充；模型在已填充上下文的条件下逐步恢复缺失标记，直到所有位置都变为未掩码。
+\noindent 其中，$\mathrm{Cat}(\cdot)$ 表示从其参数所指定的分类分布中采样一个离散 token 。因此，并非所有掩码位置都会在同一个步骤中被同时填充；模型会利用已经恢复的上下文逐步预测其余缺失 token ，直至所有位置均恢复为未掩码状态。
 
-除了按 $\rho_t$ 独立采样各位置，也可以在实践中采用显式的去掩码数量调度。令 $k_t$ 为从 $t$ 到 $t-1$ 时要新变为未掩码的标记数量，并令 $\mathcal{U}(t)\subseteq \mathcal{M}(t)$ 为要更新的掩码位置的选定子集，且 $|\mathcal{U}(t)| = k_t$。那么一个常见的实现是：
+除了按照 $\rho_t$ 对各位置进行独立采样外，实际应用中还可以显式控制每一步的去掩码 token 数量。令 $k_t$ 表示从 $t$ 到 $t-1$ 的过程中新增恢复的 token 数量，并令 $\mathcal{U}(t)\subseteq \mathcal{M}(t)$ 表示本步选中进行更新的掩码位置子集，且 $|\mathcal{U}(t)| = k_t$。一种常见的实现方式为：
 \begin{eqnarray}
 x_i(t-1) =
 \begin{cases}
@@ -3279,32 +3309,35 @@ x_i(t), & i\notin \mathcal{U}(t),\\
 \label{eq:mdm-partial-update}
 \end{eqnarray}
 
-\noindent 调度函数 $\{k_t\}_{t=1}^T$ 在速度与准确性之间进行权衡：较大的 $k_t$ 导致更少的迭代次数，但要求模型在高不确定性下填充许多标记；而较小的 $k_t$ 产生更多的细化步骤，但增加了计算量。
+\noindent 调度函数 $\{k_t\}_{t=1}^T$ 控制着生成速度与生成质量之间的权衡：较大的 $k_t$ 可以减少所需的迭代次数，但要求模型在上下文信息较少、不确定性较高的情况下同时恢复更多 token ；较小的 $k_t$ 则允许通过更多步骤逐步细化生成结果，但相应地会增加计算开销。
 
-一个简单的选择是确定性调度，即每步揭示固定的比例（例如，在 $t$ 上呈线性或余弦变化），使得掩码标记的期望数量从 $n$ 减少到 $0$。另一种常见策略是基于模型置信度选择 $\mathcal{U}(t)$。给定 $\pi_{\theta,t,i}$，我们可以定义一个置信度分数为：
+一种简单的选择是采用确定性调度，即在每一步按照预先设定的比例进行去掩码（例如随 $t$ 线性变化或按余弦调度变化），使掩码 token 的期望数量从 $n$ 逐步减少到 $0$。另一种常见策略是根据模型置信度选择 $\mathcal{U}(t)$。给定 $\pi_{\theta,t,i}$，可以将位置 $i$ 的置信度分数定义为：
 \begin{eqnarray}
 s_{t,i} = \max_{v\in V}\ \pi_{\theta,t,i}\!\left(v| \mathbf{x}(t),\mathbf{c}\right),
 \end{eqnarray}
 
-\noindent 然后我们可以首先对置信度最高的位置进行去掩码。这种“先易后难”的启发式方法倾向于通过用可靠的标记锚定序列来稳定生成，然后再填充更模糊的标记。
-\subsection{离散扩散的评注}
+\noindent 随后，优先对置信度较高的位置进行去掩码。这种“先易后难”的启发式策略首先恢复模型较为确定的 token ，并利用这些已恢复 token 为后续生成提供更可靠的上下文，从而逐步填充不确定性更高的位置。
 
-在本小节中，我们讨论在词元空间进行离散扩散时的若干建模考量。
+\subsection{离散扩散的思考与讨论}
+
+在本小节中，我们进一步讨论在 token 空间中进行离散扩散建模时需要考虑的若干问题。
 
 \subsubsection{对非吸收式替换扩散的再思考}
 \label{sec:rethink-non-absorbing}
 
-吸收式的 \texttt{[MASK]} 构造具有一种吸引人的信息单调性：前向过程仅移除信息，而反向过程则仅将其填充回来。这种设计与 Transformer 的去噪过程非常契合，并且最近在大规模扩散语言模型的预训练中展现了强大的可扩展性 \citep{sahoo-etal:2024simple,nie-etal:2025large}。尽管如此，重新审视非吸收式替换扩散方法（例如均匀扩散）仍然是有价值的，在这些方法中，词元可能在整条轨迹中被反复替换。
+吸收式的 \texttt{[MASK]} 构造具有一种吸引人的信息单调性：前向过程仅移除信息，而反向过程则仅将其填充回来。这种设计与 Transformer 的去噪过程非常契合，并且最近在大规模扩散语言模型的预训练中展现了强大的可扩展性 \citep{sahoo-etal:2024simple,nie-etal:2025large}。尽管如此，重新审视非吸收式替换扩散方法（例如均匀扩散）仍然是有价值的，在这些方法中， token 可能在整条轨迹中被反复替换。
 
-首先，均匀替换是一个简单且行为良好的基线。D3PM 中使用的均匀替换核就是一个典型例子。在每一步中，一个词元要么被保留，要么被一个从词汇表中均匀采样的元素所替换。这种策略能得到闭式转移概率，从而保持训练的可处理性。此外，由于这种破坏在原则上是可逆的，反向过程不受不可逆吸收汇的约束。从概念上讲，均匀替换是添加各向同性高斯噪声的离散类比。它驱使分布趋向于一个简单的先验，同时保持对前向边缘分布的分析控制。
+首先，均匀替换是一个简单且行为良好的基线。D3PM 中使用的均匀替换核就是一个典型例子。在每一步中，一个 token 要么被保留，要么被一个从词汇表中均匀采样的元素所替换。这种策略能得到闭式转移概率，从而保持训练的可处理性。此外，由于这种破坏在原则上是可逆的，反向过程不受不可逆吸收汇的约束。从概念上讲，均匀替换是添加各向同性高斯噪声的离散类比。它驱使分布趋向于一个简单的先验，同时保持对前向边缘分布的分析控制。
 
-其次，在非吸收式替换扩散中，反向更新是密集的。在掩码扩散中，未掩码的词元通常被保留，只有被掩码的位置会被更新。而在非吸收式替换扩散中，每个位置都保持随机性，因此一个自然的反向核可以在每一步更新所有词元。这类似于连续时间扩散模型的结构，其中所有维度在整个轨迹中都被精炼。动态过程可以修正任何组成部分以提高全局一致性，而不是将可见坐标视为固定。
+其次，非吸收式替换扩散允许反向过程在每一步调整所有位置。在掩码扩散中，未被掩码的 token 通常保持不变，模型主要负责恢复被掩码的位置。而在非吸收式替换扩散中，各个位置在整个过程中都可能发生变化，因此反向转移核可以在每一步重新预测或替换所有 token 。这样，模型不仅能够补全尚未确定的位置，还能修正此前生成的不合适 token ，从而提高序列的整体一致性。这与连续时间扩散模型相似：所有状态维度都可以在整个生成过程中持续更新，而不会在某一次预测后被固定下来。
 
-第三，非吸收式替换在语言中可能较为困难。如果词元可以被多次破坏，那么噪声序列 $\mathbf{x}(t)$ 可能包含局部流畅但全局不一致的片段，而反向模型必须同时推断缺失的语义并纠正错误的词元。这与掩码扩散形成对比，在掩码扩散中生成的词元通常是干净的。从连续时间马尔可夫链的视角看，非吸收式替换对应于一个生成器 $\mathbf{Q}^{\mathrm{tok}}(t)$，其所有词元对之间具有非零的非对角速率，因此概率质量在 $V$ 上持续循环，而不是流入单一的汇。随着 $t$ 的增加，信噪比可能比吸收式扩散下降得更快，因为即使是被观测到的词元也是不可靠的。
+第三，非吸收式替换扩散的去噪任务通常更加复杂。由于同一位置的 token 可能在前向过程中被多次替换，中间序列可能在局部上看似通顺，但整体语义并不一致。此时，反向模型不仅需要恢复缺失的信息，还需要判断当前可见的 token 是否正确，并对错误 token 进行修正。
+相比之下，在掩码扩散中，\texttt{[MASK]} 明确标出了信息缺失的位置，模型可以集中预测这些位置；而在非吸收式替换扩散中，每个可见 token 都可能由噪声替换得到，因此不能被直接视为可靠信息。
 
-最近的研究探索了将吸收式掩码与额外的替换噪声相结合的方法，以诱导一种纠正行为。通过这种方式，模型可以检测并修复损坏的词元，而不仅仅是填充被掩码的位置 \citep{zhang-etal:2025corrective,rutte-etal:2025generalized}。这种混合视角表明，非吸收式噪声不仅仅是掩码扩散的竞争者，还可以作为一种互补机制来增强鲁棒性和自校正能力。
+从连续时间马尔可夫链的角度看，非吸收式替换允许概率质量在多个普通 token 状态之间转移，而不是只向一个吸收状态移动。随着前向加噪程度增加，当前可见 token 与原始 token 一致的可能性逐渐降低，因而反向模型需要同时完成 token 识别、错误修正和整体语义恢复。
+最近的研究探索了将吸收式掩码与额外的替换噪声相结合的方法，以诱导一种纠正行为。通过这种方式，模型可以检测并修复加噪的 token ，而不仅仅是填充被掩码的位置 \citep{zhang-etal:2025corrective,rutte-etal:2025generalized}。这种混合视角表明，非吸收式噪声不仅仅是掩码扩散的竞争者，还可以作为一种互补机制来增强鲁棒性和自校正能力。
 
-一个简单的想法是考虑结构化的替换策略。在自然语言处理中，一种自然的方法是使用依赖于词元或结构感知的转移速率来偏置替换，例如：
+一个简单的想法是考虑结构化的替换策略。在自然语言处理中，一种自然的方法是使用依赖于 token 或结构感知的转移速率来偏置替换，例如：
 \begin{eqnarray}
 Q^{\mathrm{tok}}_{uv}(t) & = & w_{uv}(t),
 \end{eqnarray}
@@ -3316,36 +3349,37 @@ Q^{\mathrm{tok}}_{uv}(t) & = & w_{uv}(t),
 \mathbf{Q}^{\mathrm{tok}}(t) = \lambda_t \cdot \mathbf{Q}_{\text{mask}}^{\mathrm{tok}}(t) + (1-\lambda_t) \cdot \mathbf{Q}_{\text{unif}}^{\mathrm{tok}}(t),
 \end{equation}
 
-\noindent 其中模型在某些噪声水平下表现得像掩码扩散，而在其他水平下则保留在未掩码词元之间分配概率质量的能力。最近的研究已经探索了这种组合，以同时获得两种机制的优势（来自吸收式破坏的稳定性和来自替换式破坏的灵活性）。
+\noindent 其中模型在某些噪声水平下表现得像掩码扩散，而在其他水平下则保留在未掩码 token 之间分配概率质量的能力。最近的研究已经探索了这种组合，以同时获得两种机制的优势（来自吸收式破坏的稳定性和来自替换式破坏的灵活性）。
 \subsubsection{掩码扩散建模与掩码语言建模}
 
-在一般的“损坏-去噪”框架下，掩码扩散模型的训练目标与\textbf{掩码语言建模}（MLM）非常接近。例如，在类BERT模型中，我们采样一个掩码模式，并训练一个双向Transformer，使其能够根据部分观察到的上下文来预测掩码位置处的原始词元\citep{devlin-etal:2019bert}。如果我们将式~(\ref{eq:mdm-forward-maskvar})解释为以掩码率$(1-\alpha_t)$采样一个掩码指示符$\mathbf{m}_t$，那么式~(\ref{eq:mdm-denoise-ce})中的去噪损失本质上就是一个MLM交叉熵损失，区别仅在于损坏程度通过$\alpha_t$被时间明确索引，并且网络以扩散步数$t$为条件。因此，主要的概念差异不在于监督信号，而在于去噪器的部署方式。BERT的MLM主要是一种用于表示学习的预训练目标，而掩码扩散模型则将相同的去噪基本操作解释为一个逆时间转移核，并从一个完全掩码的状态开始迭代应用它，以生成一个自然的词元序列。从这个意义上说，现代的掩码扩散模型在架构上通常看起来像BERT，但它们将MLM从一个预训练任务转变为一个序列生成的过程。
+在一般的“加噪-去噪”框架下，掩码扩散模型的训练目标与\textbf{掩码语言建模}（MLM）非常接近。例如，在类BERT模型中，我们采样一个掩码模式，并训练一个双向Transformer，使其能够根据部分观察到的上下文来预测掩码位置处的原始 token \citep{devlin-etal:2019bert}。如果我们将式~(\ref{eq:mdm-forward-maskvar})解释为以掩码率$(1-\alpha_t)$采样一个掩码指示符$\mathbf{m}_t$，那么式~(\ref{eq:mdm-denoise-ce})中的去噪损失本质上就是一个MLM交叉熵损失，区别仅在于加噪程度通过$\alpha_t$被时间明确索引，并且网络以扩散步数$t$为条件。因此，主要的概念差异不在于监督信号，而在于去噪器的部署方式。BERT的MLM主要是一种用于表示学习的预训练目标，而掩码扩散模型则将相同的去噪基本操作解释为一个逆时间转移核，并从一个完全掩码的状态开始迭代应用它，以生成一个自然的 token 序列。从这个意义上说，现代的掩码扩散模型在架构上通常看起来像BERT，但它们将MLM从一个预训练任务转变为一个序列生成的过程。
 
-掩码扩散模型与MLM之间的联系揭示了一个有趣的方向：由于掩码扩散中的前向过程是一种特定的损坏选择，许多为NLP预训练开发的加噪策略可以被重新解释为离散扩散的替代前向核。也就是说，除了独立的词元掩码之外，我们还可以改变被损坏的对象（词元与文本片段）、损坏的方式（掩码、替换或置换）以及损坏程度随时间演变的方式（手动设计或学习得到的调度方案）。以下是在设计掩码扩散模型时可以考虑的一些常见加噪策略。
+掩码扩散模型与MLM之间的联系揭示了一个有趣的方向：由于掩码扩散中的前向过程是一种特定的加噪选择，许多为NLP预训练开发的加噪策略可以被重新解释为离散扩散的替代前向核。也就是说，除了独立的 token 掩码之外，我们还可以改变被加噪的对象（ token 与文本片段）、加噪的方式（掩码、替换或置换）以及加噪程度随时间演变的方式（手动设计或学习得到的调度方案）。以下是在设计掩码扩散模型时可以考虑的一些常见加噪策略。
 
 \begin{itemize}
-\item \textbf{非均匀分布的标记替换。}
-与均匀替换标记不同，可以从频率调整的分布中采样替换项，或从学习到的提议分布中采样。例如 ELECTRA 模型，其中一个小型生成器提出合理的替换项，判别器则被训练来检测它们 \citep{clark-etal:2019electra}。从扩散的角度看，这种更困难的非均匀替换可视为注入了比随机标记更具语义混淆性的噪声，这可能会鼓励更强的条件去噪器，并缩小训练时使用的损坏与推理时的不确定性之间的差距。
-\item \textbf{片段损坏。}
-T5 系列模型将连续的片段替换为单个哨兵标记，并学习重建缺失的内容 \citep{raffel-etal:2020exploring}。对于扩散式生成，片段损坏是自然的：逆向过程可被解释为逐步将粗糙的缺失区域细化为详细的文本。这与在结构化槽位上迭代去噪而非在独立标记空白处去噪的直觉相符。然而，这种方法的一个挑战在于，将多个标记替换为单个哨兵标记会改变序列长度，这违反了标准扩散模型的固定维度假设。为解决此问题，我们可以采用类似于 SpanBERT 的就地片段掩码 \citep{joshi-etal:2020spanbert}，即连续标记被掩码但序列长度保持不变。或者，可以扩展前向核以显式建模插入和删除操作，从而处理可变长度的轨迹 \citep{gu-etal:2019levenshtein,reid-etal:2022diffuser}。
-\item \textbf{标记重排与置换噪声。}
-BART 引入了带有标记删除和句子置换等损坏的去噪预训练。该方法要求模型不仅学习内容恢复，还要学习重新排序 \citep{lewis-etal:2020bart}。将其重新定义为扩散前向核，则意味着存在一类更广泛的离散动态过程，它们同时扰动身份信息和位置信息。这种方法可以导致逆向过程执行联合的“编辑 + 重排序”细化，而非纯粹的填充。
+\item \textbf{非均匀分布的 token 替换。}
+与均匀替换 token 不同，可以从频率调整的分布中采样替换项，或从学习到的提议分布中采样。例如 ELECTRA 模型，其中一个小型生成器提出合理的替换项，判别器则被训练来检测它们 \citep{clark-etal:2019electra}。从扩散的角度看，这种更困难的非均匀替换可视为注入了比随机 token 更具语义混淆性的噪声，这可能会鼓励更强的条件去噪器，并缩小训练时使用的加噪与推理时的不确定性之间的差距。
+\item \textbf{片段级加噪。}
+T5 系列模型采用片段遮蔽策略：将每个连续的文本片段替换为一个特殊占位 token （sentinel token，例如 \texttt{<extra\_id\_0>}），并训练模型恢复被遮蔽的内容
+\citep{raffel-etal:2020exploring}。这一策略也可以用于扩散式文本生成。与分别预测相互独立的掩码位置相比，片段级加噪要求模型以短语或句子片段为单位恢复信息，有助于学习局部 token 之间的结构关系。但该方法会带来序列长度变化的问题：当一个包含多个 token 的片段被压缩成一个占位 token 时，加噪前后的序列长度不再相同，而标准扩散模型通常要求各时刻的状态维度保持一致。为避免这一问题，可以采用类似 SpanBERT 的原位片段掩码\citep{joshi-etal:2020spanbert}，即将选定片段中的 token 逐一替换为掩码 token ，从而保持序列长度不变。另一种方案是在前向过程中显式定义插入和删除操作，使模型能够处理长度随时间变化的序列\citep{gu-etal:2019levenshtein,reid-etal:2022diffuser}。
+\item \textbf{ token 重排与置换噪声。}
+BART 引入了带有 token 删除和句子置换等加噪的去噪预训练。该方法要求模型不仅学习内容恢复，还要学习重新排序 \citep{lewis-etal:2020bart}。将其重新定义为扩散前向核，则意味着存在一类更广泛的离散动态过程，它们同时扰动身份信息和位置信息。这种方法可以导致逆向过程执行联合的“编辑 + 重排序”细化，而非纯粹的填充。
 \item \textbf{对抗性加噪。}
-另一个方向是利用模型引导的扰动或辅助网络生成更具挑战性的损坏。用于 NLP 的对抗性训练方法（例如，嵌入级扰动）表明，更强、结构化的噪声可以提高鲁棒性 \citep{zhu-etal:2020freelb}。虽然许多对抗性方法是在连续嵌入空间中定义的，但其核心思想适用于扩散建模。我们可以选择在每个噪声级别上对去噪器施加最大压力的损坏方式，这原则上可以使学习到的逆向动态在迭代采样下更加稳定。
+另一个方向是利用模型引导的扰动或辅助网络生成更具挑战性的加噪。用于 NLP 的对抗性训练方法（例如，嵌入级扰动）表明，更强、结构化的噪声可以提高鲁棒性 \citep{zhu-etal:2020freelb}。虽然许多对抗性方法是在连续嵌入空间中定义的，但其核心思想适用于扩散建模。我们可以选择在每个噪声级别上对去噪器施加最大压力的加噪方式，这原则上可以使学习到的逆向动态在迭代采样下更加稳定。
 \item \textbf{学习到的加噪调度。}
-与其手动固定调度 $\alpha_t$，不如尝试学习在每个步骤中应用多少以及何种类型的噪声，例如，通过优化目标组合或选择最能服务于下游用途的损坏机制 \citep{tay-etal:2023ul2}。在扩散建模中，这促使学习时间非齐次的损坏策略，以塑造轨迹，从而获得更好的样本质量或更少的生成步骤。
+与其手动固定调度 $\alpha_t$，不如尝试学习在每个步骤中应用多少以及何种类型的噪声，例如，通过优化目标组合或选择最能服务于下游用途的加噪机制 \citep{tay-etal:2023ul2}。在扩散建模中，这促使学习时间非齐次的加噪策略，以塑造轨迹，从而获得更好的样本质量或更少的生成步骤。
 \end{itemize}
 \subsubsection{单纯形与Logit动态作为连续松弛方法}
 
-我们已经看到，连续时间马尔可夫链（CTMC）的表述将离散扩散过程建模为分布动态。尽管样本路径$\mathbf{x}(t)\in V^n$在分类状态间跳跃，但通过式(\ref{eq:ctmc-equation})中的Kolmogorov方程，边缘分布$p_t(\cdot)$会随时间$t$平滑演化。这一观察启发了我们对语言建模的有用松弛方法：不再将中间状态视为硬标记序列，而是用单纯形上的概率列向量表示每个位置：
+我们已经看到，连续时间马尔可夫链（CTMC）的表述将离散扩散过程建模为分布动态。尽管样本路径$\mathbf{x}(t)\in V^n$在分类状态间跳跃，但通过式(\ref{eq:ctmc-equation})中的Kolmogorov方程，边缘分布$p_t(\cdot)$会随时间$t$平滑演化。这一观察启发了我们对语言建模的有用松弛方法：不再将中间状态视为硬 token 序列，而是用单纯形上的概率列向量表示每个位置：
 \begin{eqnarray}
 \mathbf{p}_i(t) & \in & \Delta^{|V|-1}, \\
 \mathbf{p}_i(t)[v] & = & \Pr(x_i(t)=v \mid \mathbf{c}).
 \end{eqnarray}
 
-\noindent 我们将这些向量聚合为矩阵$\mathbf{P}(t) = [\mathbf{p}_1(t), \dots, \mathbf{p}_n(t)] \in \mathbb{R}^{|V| \times n}$，其中每列位于单纯形上。这将离散轨迹转换为单纯形积空间上的连续曲线，从而可以应用ODE/SDE工具的同时保持标记的分类特性。
+\noindent 我们将这些向量聚合为矩阵$\mathbf{P}(t) = [\mathbf{p}_1(t), \dots, \mathbf{p}_n(t)] \in \mathbb{R}^{|V| \times n}$，其中每列位于单纯形上。这将离散轨迹转换为单纯形积空间上的连续曲线，从而可以应用ODE/SDE工具的同时保持 token 的分类特性。
 
-对于生成器为$\mathbf{Q}^{\mathrm{tok}}(t) \in \mathbb{R}^{|V| \times |V|}$的标记级CTMC，单个位置的边缘分布满足Kolmogorov正向方程：
+对于生成器为$\mathbf{Q}^{\mathrm{tok}}(t) \in \mathbb{R}^{|V| \times |V|}$的 token 级CTMC，单个位置的边缘分布满足Kolmogorov正向方程：
 \begin{eqnarray}
 \frac{d \mathbf{p}_i(t)}{dt} & = & \left[ \mathbf{Q}^{\mathrm{tok}}(t) \right]^\top \mathbf{p}_i(t),
 \label{eq:simplex-forward-ode}
@@ -3364,7 +3398,7 @@ BART 引入了带有标记删除和句子置换等损坏的去噪预训练。该
 \label{eq:logit-ode}
 \end{eqnarray}
 
-\noindent 其中$\mathbf{v}_{\theta}$是由Transformer定义的向量场（各位置共享）。直观上，$\mathbf{z}_i(t)$如同连续细化的"软标记"，终端解码$\mathbf{z}_i(0)\mapsto x_i$可通过$\mathrm{Softmax}(\mathbf{z}_i(0))$的$\arg\max$实现。当需要可微采样时，也可使用Gumbel-Softmax分布等分类采样的松弛方法\citep{jang-etal:2017categorical,maddison-etal:2017the}。
+\noindent 其中$\mathbf{v}_{\theta}$是由Transformer定义的向量场（各位置共享）。直观上，$\mathbf{z}_i(t)$如同连续细化的"软 token "，终端解码$\mathbf{z}_i(0)\mapsto x_i$可通过$\mathrm{Softmax}(\mathbf{z}_i(0))$的$\arg\max$实现。当需要可微采样时，也可使用Gumbel-Softmax分布等分类采样的松弛方法\citep{jang-etal:2017categorical,maddison-etal:2017the}。
 
 这种logit视角阐明了为何连续松弛常与嵌入空间扩散相似，却更接近离散建模：状态保持词汇对齐（每位置维度$|V|$）而非任意嵌入空间$\mathbb{R}^d$。它还直接关联到式(\ref{eq:simplex-forward-ode})的CTMC边缘ODE：选择的$\mathbf{Q}^{\mathrm{tok}}(t)$决定了$\mathbf{p}_i(t)$的特定演化，可通过Softmax映射重新表达为$\mathbf{z}_i(t)$的演化。
 
@@ -3373,12 +3407,12 @@ BART 引入了带有标记删除和句子置换等损坏的去噪预训练。该
 总结而言，我们概述单纯形与logit松弛的实践优势如下：
 \begin{itemize}
 \item \textbf{更高效的ODE求解器与更少的步数。}一旦将逆向动力学表达为如式~(\ref{eq:logit-ode})所示的ODE，我们就可以使用自适应ODE求解器或粗粒度离散化来减少采样步数，这与连续扩散和流模型中使用的加速策略相呼应（参见前面的数值采样与高效生成小节）。
-\item \textbf{与流匹配的兼容性。}在单纯形上，流匹配自然地对应于学习将软标记分布向尖锐的、类似数据的分类分布传输的$\mathbf{v}_\theta$，而无需在训练时依赖显式的基于似然的ELBO。
-\item \textbf{离散与连续之间的谱系。}掩码扩散（硬\texttt{[MASK]}状态）与嵌入扩散（连续嵌入）可被视为两个端点。单纯形/逻辑动态占据了一个中间地带。状态是连续的，但仍可直接解释为标记概率，并且到文本的最终投影是定义良好的。
+\item \textbf{与流匹配的兼容性。}在单纯形上，流匹配自然地对应于学习将软 token 分布向尖锐的、类似数据的分类分布传输的$\mathbf{v}_\theta$，而无需在训练时依赖显式的基于似然的ELBO。
+\item \textbf{离散与连续之间的谱系。}掩码扩散（硬\texttt{[MASK]}状态）与嵌入扩散（连续嵌入）可被视为两个端点。单纯形/逻辑动态占据了一个中间地带。状态是连续的，但仍可直接解释为 token 概率，并且到文本的最终投影是定义良好的。
 \end{itemize}
 \subsubsection{与迭代优化的关联}
 
-离散扩散的逆向过程与一系列关于非自回归生成中\textbf{迭代优化}的研究密切相关\citep{lee-etal:2018deterministic}。在迭代优化中，模型并非一次性获得最终序列，而是通过多轮优化迭代，反复生成完整序列并逐步修正其部分内容。例如条件掩码语言模型中的掩码预测方法，该方法从全\texttt{[MASK]}模板出发，交替执行并行词元预测与不确定位置子集的重新掩码操作，直至收敛或达到固定迭代次数\citep{ghazvininejad-etal:2019mask}。
+离散扩散的逆向过程与一系列关于非自回归生成中\textbf{迭代优化}的研究密切相关\citep{lee-etal:2018deterministic}。在迭代优化中，模型并非一次性获得最终序列，而是通过多轮优化迭代，反复生成完整序列并逐步修正其部分内容。例如条件掩码语言模型中的掩码预测方法，该方法从全\texttt{[MASK]}模板出发，交替执行并行 token 预测与不确定位置子集的重新掩码操作，直至收敛或达到固定迭代次数\citep{ghazvininejad-etal:2019mask}。
 
 该方法可表述为与式~(\ref{eq:mdm-partial-update})相似的形式。设$\mathbf{x}^{(r)}$表示第$r$轮优化后的序列，$\pi_{\theta,i}^{(r)}(v | \mathbf{x}^{(r)},\mathbf{c})=p_{\theta}(x_i^{(r+1)} = v | \mathbf{x}^{(r)},\mathbf{c})$为第$r$轮位置$i$的预测分布，则优化步骤可表示为：
 \begin{eqnarray}
@@ -3390,21 +3424,21 @@ x_i^{(r)}, & i\notin \mathcal{U}^{(r)},\\
 \label{eq:iterref-update}
 \end{eqnarray}
 
-\noindent 其中$\mathcal{U}^{(r)}$为第$r$轮待更新位置集合。典型情况下$\mathcal{U}^{(r)}$由低置信度定义，而简单扩散实现中常采用时间调度策略。换言之，掩码扩散采样可视为一种结构化优化过程——其掩码模式随时间$t$（即迭代优化中的迭代次数）单调演化，而经典优化方法允许基于模型不确定性的非单调决策（如对已填充词元重新掩码）。这一差异至关重要：单调解掩过程稳定但可能固化早期错误，而非单调优化虽可修正错误却可能因选择规则不明确导致振荡。
+\noindent 其中$\mathcal{U}^{(r)}$为第$r$轮待更新位置集合。典型情况下$\mathcal{U}^{(r)}$由低置信度定义，而简单扩散实现中常采用时间调度策略。换言之，掩码扩散采样可视为一种结构化优化过程——其掩码模式随时间$t$（即迭代优化中的迭代次数）单调演化，而经典优化方法允许基于模型不确定性的非单调决策（如对已填充 token 重新掩码）。这一差异至关重要：单调解掩过程稳定但可能固化早期错误，而非单调优化虽可修正错误却可能因选择规则不明确导致振荡。
 
-近期扩散语言模型已开始显式融合迭代优化中标准的非单调修正行为。一种方法是在推理阶段重新掩码低置信度词元，将扩散采样与类掩码预测的复查机制结合\citep{koh-etal:2025conditional,zhang-etal:2025corrective}；另一种方法是通过修改前向破坏过程，使逆向模型不仅学习填充空白还需修正可见错误词元。这可通过混合吸收掩码噪声与替换噪声（如均匀替换）实现，从而产生天然支持修正与编辑的逆向过程\citep{rutte-etal:2025generalized}。这些方法与第\ref{sec:rethink-non-absorbing}节所述方案存在交集，也呼应了我们关于组合不同扩散策略的讨论。
+近期扩散语言模型已开始显式融合迭代优化中标准的非单调修正行为。一种方法是在推理阶段重新掩码低置信度 token ，将扩散采样与类掩码预测的复查机制结合\citep{koh-etal:2025conditional,zhang-etal:2025corrective}；另一种方法是通过修改前向破坏过程，使逆向模型不仅学习填充空白还需修正可见错误 token 。这可通过混合吸收掩码噪声与替换噪声（如均匀替换）实现，从而产生天然支持修正与编辑的逆向过程\citep{rutte-etal:2025generalized}。这些方法与第\ref{sec:rethink-non-absorbing}节所述方案存在交集，也呼应了我们关于组合不同扩散策略的讨论。
 
-从扩散模型视角亦可解读迭代优化。式~(\ref{eq:simplex-forward-ode})--(\ref{eq:logit-ode})中的单纯形与逻辑松弛为迭代优化提供了微分方程视角。若将每次优化步骤视为软词元状态的微小更新，则迭代优化即成为朝向尖锐近单点分布的连续时间传输的显式数值离散化。这与近期离散流匹配 formulations 相连接——后者旨在学习可用较少优化步骤采样同时保持质量的连续时间流\citep{gat-etal:2024discrete,monsefi-etal:2025fs}。由此观之，扩散建模、基于流的建模与经典迭代优化可视为同一主题的变体，其主要差异在于：中间状态表示方式（硬词元 vs. 软分布）、更新集$\mathcal{U}$选择策略（调度 vs. 置信度）、以及动态过程框架（马尔可夫过程 vs. 通用学习优化算子）。
+从扩散模型视角亦可解读迭代优化。式~(\ref{eq:simplex-forward-ode})--(\ref{eq:logit-ode})中的单纯形与逻辑松弛为迭代优化提供了微分方程视角。若将每次优化步骤视为软 token 状态的微小更新，则迭代优化即成为朝向尖锐近单点分布的连续时间传输的显式数值离散化。这与近期离散流匹配 formulations 相连接——后者旨在学习可用较少优化步骤采样同时保持质量的连续时间流\citep{gat-etal:2024discrete,monsefi-etal:2025fs}。由此观之，扩散建模、基于流的建模与经典迭代优化可视为同一主题的变体，其主要差异在于：中间状态表示方式（硬 token vs. 软分布）、更新集$\mathcal{U}$选择策略（调度 vs. 置信度）、以及动态过程框架（马尔可夫过程 vs. 通用学习优化算子）。
 \subsubsection{扩散变换器}
 
 离散扩散在自然语言处理领域变得具有竞争力的一个实际原因是其逆向动力学可以通过变换器进行参数化。该架构是当前最具可扩展性的骨干网络，在语言建模领域占据主导地位。术语 \textit{扩散变换器}（DiT）在视觉领域应用最为广泛，其中用变换器骨干网络替换 U-Net 能够产生强大的缩放行为 \citep{peebles-and-xie:2023scalable}。详细介绍变换器超出了本文的范围。我们建议感兴趣的读者参阅相关论文 \citep{vaswani-etal:2017attention,xiao-and-zhu:2023introduction}。
 
-在自然语言处理中，变换器提供了一种强大的机制，可以将一个词元序列编码为等长的实值表示序列。根据这些表示的定义和解释方式，此类模型可用于学习从输入词元序列到任意目标的映射。在扩散建模中，变换器必须被条件化于扩散时间 $t$（或离散索引）。这通常通过将学习到的时间嵌入注入到每一层来实现，例如，通过加性偏置，或与一个时间词元进行交叉注意力。网络的输出可以有多种解释方式，这取决于所选择的参数化方法。在连续空间扩散中，常见的选择包括预测得分 $\nabla_{\mathbf{s}} \log p_t(\mathbf{s})$、加性噪声 $\boldsymbol{\epsilon}$、去噪数据 $\mathbf{s}(0)$，或是线性组合上述变量的速度变量 \citep{ho-eatl:2020denoising,salimans-and-ho:2022progressive}。这些参数化方法会导致不同的离散化方案和稳定性特性，但本质上都可以视为学习一个时间索引的向量场，该向量场将概率质量从一个简单的基础分布输送到数据分布。
+在自然语言处理中，变换器提供了一种强大的机制，可以将一个 token 序列编码为等长的实值表示序列。根据这些表示的定义和解释方式，此类模型可用于学习从输入 token 序列到任意目标的映射。在扩散建模中，变换器必须被条件化于扩散时间 $t$（或离散索引）。这通常通过将学习到的时间嵌入注入到每一层来实现，例如，通过加性偏置，或与一个时间 token 进行交叉注意力。网络的输出可以有多种解释方式，这取决于所选择的参数化方法。在连续空间扩散中，常见的选择包括预测得分 $\nabla_{\mathbf{s}} \log p_t(\mathbf{s})$、加性噪声 $\boldsymbol{\epsilon}$、去噪数据 $\mathbf{s}(0)$，或是线性组合上述变量的速度变量 \citep{ho-eatl:2020denoising,salimans-and-ho:2022progressive}。这些参数化方法会导致不同的离散化方案和稳定性特性，但本质上都可以视为学习一个时间索引的向量场，该向量场将概率质量从一个简单的基础分布输送到数据分布。
 \subsubsection{基于流的视角}
 
-鉴于 Transformer 提供的建模灵活性，我们无需局限于使用显式的基于似然的 ELBO（见公式~(\ref{eq:discrete-elbo})）来训练扩散模型。一个自然的替代方案是流匹配。在连续设定下，流匹配学习一个时间依赖的向量场，其常微分方程将一个简单的基分布输送到数据分布。对于语言而言，关键困难在于状态定义在离散的乘积空间 $V^n$ 上，因此流必须定义为要么是词元上概率质量的动态（离散状态视角），要么是定义在连续松弛（如概率单纯形或 logit 空间）上的常微分方程（连续状态视角）。最近的\textbf{离散流匹配}方法提供了这两种视角，并使它们在现代语言建模的规模下变得实用 \citep{gat-etal:2024discrete,campbell-etal:2024generative,shaul-etal:2025flow}。
+鉴于 Transformer 提供的建模灵活性，我们无需局限于使用显式的基于似然的 ELBO（见公式~(\ref{eq:discrete-elbo})）来训练扩散模型。一个自然的替代方案是流匹配。在连续设定下，流匹配学习一个时间依赖的向量场，其常微分方程将一个简单的基分布输送到数据分布。对于语言而言，关键困难在于状态定义在离散的乘积空间 $V^n$ 上，因此流必须定义为要么是 token 上概率质量的动态（离散状态视角），要么是定义在连续松弛（如概率单纯形或 logit 空间）上的常微分方程（连续状态视角）。最近的\textbf{离散流匹配}方法提供了这两种视角，并使它们在现代语言建模的规模下变得实用 \citep{gat-etal:2024discrete,campbell-etal:2024generative,shaul-etal:2025flow}。
 
-一个有用的起点是公式~(\ref{eq:simplex-forward-ode}) 中已经引入的单纯形表示。我们不将 $\mathbf{x}(t)$ 视为离散的词元序列，而是将中间状态视为每个位置的分类概率
+一个有用的起点是公式~(\ref{eq:simplex-forward-ode}) 中已经引入的单纯形表示。我们不将 $\mathbf{x}(t)$ 视为离散的 token 序列，而是将中间状态视为每个位置的分类概率
 \begin{eqnarray}
 \mathbf{P}(t) & = & [\mathbf{p}_1(t), \dots, \mathbf{p}_n(t)]
 \in \mathbb{R}^{|V|\times n},
@@ -3421,9 +3455,9 @@ x_i^{(r)}, & i\notin \mathcal{U}^{(r)},\\
 \sum_{v\in V}\mathbf{v}_{\theta}(\mathbf{p}_i(t),t,\mathbf{c})[v] & = & 0,
 \label{eq:dfm-simplex-ode}
 \end{eqnarray}
-其中切向约束确保了概率守恒。采样因此成为一个常微分方程积分问题，这与视觉领域类似：给定来自基分布的 $\mathbf{p}(T)$，反向积分公式~(\ref{eq:dfm-simplex-ode}) 以获得 $\mathbf{p}(0)$，并通过 $\arg\max$ 或分类采样解码出词元。
+其中切向约束确保了概率守恒。采样因此成为一个常微分方程积分问题，这与视觉领域类似：给定来自基分布的 $\mathbf{p}(T)$，反向积分公式~(\ref{eq:dfm-simplex-ode}) 以获得 $\mathbf{p}(0)$，并通过 $\arg\max$ 或分类采样解码出 token 。
 
-剩下的任务是指定 $\mathbf{v}_\theta$ 的训练目标。离散流匹配通过定义一族在源分布和数据分布之间插值的概率路径来实现这一点，然后使模型向量场与这些路径诱导的瞬时概率速度相匹配。更具体地说，对于每个训练样本 $\mathbf{x}(0)$，定义 $V^n$ 上或每个词元边缘分布上的条件路径 $q_t(\cdot | \mathbf{x}(0), \mathbf{c})$，并抽取一个带噪样本 $\mathbf{x}(t)\sim q_t(\cdot | \mathbf{x}(0), \mathbf{c})$。流匹配的回归目标是沿着该路径的条件速度，
+剩下的任务是指定 $\mathbf{v}_\theta$ 的训练目标。离散流匹配通过定义一族在源分布和数据分布之间插值的概率路径来实现这一点，然后使模型向量场与这些路径诱导的瞬时概率速度相匹配。更具体地说，对于每个训练样本 $\mathbf{x}(0)$，定义 $V^n$ 上或每个 token 边缘分布上的条件路径 $q_t(\cdot | \mathbf{x}(0), \mathbf{c})$，并抽取一个带噪样本 $\mathbf{x}(t)\sim q_t(\cdot | \mathbf{x}(0), \mathbf{c})$。流匹配的回归目标是沿着该路径的条件速度，
 \begin{eqnarray}
 \mathbf{v}^\star(\mathbf{x}(t),t,\mathbf{x}(0),\mathbf{c})
 & = &
@@ -3452,7 +3486,7 @@ q_t(x_i | x_i(0), \mathbf{c})
 \label{eq:dfm-analytic-velocity}
 \end{eqnarray}
 
-\noindent 其中 $\dot{\alpha}_t = d\alpha_t/dt$ 表示调度的时间导数。由于 $\alpha_t$ 随前向时间从 $1$ 递减到 $0$，故 $\dot{\alpha}_t\leq 0$。因此，该条件速度在前向加噪方向把概率质量从目标词元 $x_i(0)$ 移向基分布 $\bar{p}_i$；生成时则沿相反时间方向把概率质量移回目标词元。
+\noindent 其中 $\dot{\alpha}_t = d\alpha_t/dt$ 表示调度的时间导数。由于 $\alpha_t$ 随前向时间从 $1$ 递减到 $0$，故 $\dot{\alpha}_t\leq 0$。因此，该条件速度在前向加噪方向把概率质量从目标 token $x_i(0)$ 移向基分布 $\bar{p}_i$；生成时则沿相反时间方向把概率质量移回目标 token 。
 
 为了训练模型，我们需要一个仅依赖于时间 $t$ 时可用信息的条件速度。与标准流匹配一样，训练目标定义为
 \begin{eqnarray}
@@ -3462,12 +3496,12 @@ q_t(x_i | x_i(0), \mathbf{c})
 \label{eq:dfm-objective}
 \end{eqnarray}
 
-上述单纯形常微分方程视角描述了一条连续的边缘分布曲线，但它没有指定在生成过程中离散样本应如何演化。一个互补的视角是通过一个由时间依赖的生成器矩阵 $\mathbf{Q}^{\mathrm{tok}}(t) \in \mathbb{R}^{|V| \times |V|}$ 参数化的连续时间马尔可夫链来表示离散流。边缘速度 $\mathbf{v}(t)$ 与生成器之间的联系由 Kolmogorov 前向方程给出
+上述单纯形常微分方程视角描述了一条连续的边缘分布曲线，但它没有指定在生成过程中离散样本应如何演化。一个互补的视角是通过一个由时间依赖的生成矩阵 $\mathbf{Q}^{\mathrm{tok}}(t) \in \mathbb{R}^{|V| \times |V|}$ 参数化的连续时间马尔可夫链来表示离散流。边缘速度 $\mathbf{v}(t)$ 与生成器之间的联系由 Kolmogorov 前向方程给出
 \begin{eqnarray}
 \frac{d\mathbf{p}_i(t)}{dt} & = & \left[ \mathbf{Q}^{\mathrm{tok}}(t) \right]^\top \mathbf{p}_i(t),
 \label{eq:kolmogorov-forward}
 \end{eqnarray}
-其中 $\mathbf{p}_i(t)$ 是表示词元上概率分布的向量。通过为特定目标词元 $z$ 展开这个矩阵乘法，我们可以将速度解释为一个通量平衡方程
+其中 $\mathbf{p}_i(t)$ 是表示 token 上概率分布的向量。通过为特定目标 token $z$ 展开这个矩阵乘法，我们可以将速度解释为一个通量平衡方程
 \begin{eqnarray}
 \mathbf{v}_i(t)[z]
 & = &
@@ -3477,9 +3511,9 @@ q_t(x_i | x_i(0), \mathbf{c})
 \label{eq:master-equation-Q}
 \end{eqnarray}
 
-\noindent 这里，$Q^{\mathrm{tok}}_{yz}(t)$ 表示从词元 $y$ 跳转到 $z$ 的瞬时速率。注意，对角线元素满足 $Q^{\mathrm{tok}}_{yy}(t) = - \sum_{z \neq y} Q^{\mathrm{tok}}_{yz}(t)$ 以确保概率守恒。
+\noindent 这里，$Q^{\mathrm{tok}}_{yz}(t)$ 表示从 token $y$ 跳转到 $z$ 的瞬时速率。注意，对角线元素满足 $Q^{\mathrm{tok}}_{yy}(t) = - \sum_{z \neq y} Q^{\mathrm{tok}}_{yz}(t)$ 以确保概率守恒。
 
-虽然公式~(\ref{eq:dfm-analytic-velocity}) 导出的边缘速度 $\mathbf{v}^\star$ 固定了概率的净变化，但它并未唯一确定转移速率 $\mathbf{Q}^{\mathrm{tok}}$。为了描述从基分布返回目标词元的生成过程，引入反向时间 $\tau=T-t$，并令 $\alpha^\leftarrow_\tau=\alpha_{T-\tau}$。此时 $d\alpha^\leftarrow_\tau/d\tau=-\dot{\alpha}_{T-\tau}\geq0$。近期工作中一个常见选择是只允许非目标词元跳向目标样本 $x_i(0)$ \citep{campbell-etal:2024generative}，其条件目标速率为
+虽然公式~(\ref{eq:dfm-analytic-velocity}) 导出的边缘速度 $\mathbf{v}^\star$ 固定了概率的净变化，但它并未唯一确定转移速率 $\mathbf{Q}^{\mathrm{tok}}$。为了描述从基分布返回目标 token 的生成过程，引入反向时间 $\tau=T-t$，并令 $\alpha^\leftarrow_\tau=\alpha_{T-\tau}$。此时 $d\alpha^\leftarrow_\tau/d\tau=-\dot{\alpha}_{T-\tau}\geq0$。近期工作中一个常见选择是只允许非目标 token 跳向目标样本 $x_i(0)$ \citep{campbell-etal:2024generative}，其条件目标速率为
 \begin{eqnarray}
 \widetilde Q^{\star,\mathrm{tok}}_{yz}(\tau\mid x_i(0))
 &=&
@@ -3489,9 +3523,9 @@ q_t(x_i | x_i(0), \mathbf{c})
 \label{eq:target-Q}
 \end{eqnarray}
 
-\noindent 该式的非对角速率非负，因此定义了合法的生成器；其对角元取为对应行其余速率之和的负值，从而保证概率守恒。这个生成器驱动任何非目标词元 $y$ 直接跳转到目标 $x_i(0)$，并产生所需的反向边缘演化。
+\noindent 该式的非对角速率非负，因此定义了合法的生成器；其对角元取为对应行其余速率之和的负值，从而保证概率守恒。这个生成器驱动任何非目标 token $y$ 直接跳转到目标 $x_i(0)$，并产生所需的反向边缘演化。
 
-因此，模型被参数化以预测这个生成器矩阵，训练目标也变成了速率匹配损失，而非公式~(\ref{eq:dfm-objective}) 中的向量回归。在生成过程中，可以使用 Gillespie 方法 \citep{gillespie:1977exact} 或 Tau-Leaping \citep{gillespie:2001approximate} 等算法模拟该过程，并执行离散跳转 $x(\tau) \to x(\tau+\Delta \tau)$，这些跳转在统计上遵循学习到的概率流。
+因此，模型被参数化以预测这个生成矩阵，训练目标也变成了速率匹配损失，而非公式~(\ref{eq:dfm-objective}) 中的向量回归。在生成过程中，可以使用 Gillespie 方法 \citep{gillespie:1977exact} 或 Tau-Leaping \citep{gillespie:2001approximate} 等算法模拟该过程，并执行离散跳转 $x(\tau) \to x(\tau+\Delta \tau)$，这些跳转在统计上遵循学习到的概率流。
 
 至此可以看到，连续时间并不要求状态本身连续：在连续状态空间中，
 ODE 以向量场规定局部速度，SDE 进一步加入随机扩散；在离散状态空间中，
@@ -3502,12 +3536,23 @@ CTMC 则以生成器规定瞬时跳转速率。三类模型都通过局部动力
   \begin{enumerate}
     \item 写出条件自回归模型和单步非自回归模型的概率分解，并比较二者关于序列长度的串行深度。为什么扩散式 NAR 的完整生成复杂度不能简单写成 \(O(1)\)？
     \item 比较嵌入空间扩散中的显式长度预测、EOS 截断和动态长度适应。最近邻舍入为什么可能产生语义平均化问题？请给出两种缓解思路。
-    \item 连续时间马尔可夫链的生成器矩阵需要满足哪些条件？对二状态生成器 \(\boldsymbol Q=\bigl(\begin{smallmatrix}-2&2\\1&-1\end{smallmatrix}\bigr)\)，说明每个非对角元素和对角元素的含义。
-    \item 词表大小为 \(|V|=4\)，信号保留率为 \(\alpha_t=0.7\)。分别计算均匀扩散中原词元与任一其他词元的概率，以及吸收式掩码扩散中原词元与 \texttt{[MASK]} 的概率。
-    \item 从状态表示、局部动力学、训练目标和采样方法四个方面，比较嵌入空间扩散与词元空间离散扩散。若任务要求中间状态始终是合法词元，应优先选择哪条路线？为什么？
+    \item 连续时间马尔可夫链的生成矩阵需要满足哪些条件？对二状态生成器 \(\boldsymbol Q=\bigl(\begin{smallmatrix}-2&2\\1&-1\end{smallmatrix}\bigr)\)，说明每个非对角元素和对角元素的含义。
+    \item 词表大小为 \(|V|=4\)，信号保留率为 \(\alpha_t=0.7\)。分别计算均匀扩散中原 token 与任一其他 token 的概率，以及吸收式掩码扩散中原 token 与 \texttt{[MASK]} 的概率。
+    \item 从状态表示、局部动力学、训练目标和采样方法四个方面，比较嵌入空间扩散与 token 空间离散扩散。若任务要求中间状态始终是合法 token ，应优先选择哪条路线？为什么？
   \end{enumerate}
 \end{exercisebox}
 
+\section{本章小结}
+
+本章围绕深度学习中的连续时间动力学建模展开，系统介绍了从离散状态更新到连续时间演化、从确定性动力系统到随机生成过程，以及从连续状态空间到离散状态空间的相关理论与方法，建立了理解现代深度学习模型，特别是生成模型的统一动力学视角。
+
+首先，本章从常微分方程及其数值求解方法出发，介绍了连续时间动力系统的基本概念，并讨论了离散迭代与连续演化之间的联系。在此基础上，通过连续深度视角重新理解深度神经网络的状态更新过程，进一步分析了 Transformer 的表示演化机制，以及神经常微分方程如何利用连续时间动力学刻画特征变换。这一视角将网络层间的信息传递与动力系统中的状态演化联系起来，为理解网络结构、计算深度和数值求解之间的关系提供了理论基础。
+
+随后，本章将研究对象由单个状态的演化扩展至概率分布的演化，介绍了连续性方程、连续归一化流和流匹配等方法，说明如何通过确定性速度场实现复杂概率分布之间的连续输运。其中，连续归一化流建立了动力系统与概率密度变化之间的联系，而流匹配则通过直接学习目标速度场，为连续生成模型提供了更加灵活的训练方式。在确定性概率输运的基础上，本章进一步引入随机微分方程，讨论随机扰动下的状态演化、分数匹配以及概率流 ODE，揭示了扩散模型中随机过程与确定性概率演化之间的内在联系，从而将基于流的生成方法与基于扩散的生成方法纳入统一的连续时间框架。
+
+最后，考虑到语言等数据具有离散状态空间的特点，本章进一步介绍了连续时间马尔可夫链的基本原理，并讨论了嵌入空间扩散与 token 空间扩散等离散数据生成方法。通过比较连续空间与离散空间中的动力学描述方式，可以看到，不同生成方法虽然在状态表示、演化机制和训练目标上存在差异，但其核心思想都是构建随时间变化的状态转移过程，使简单的初始分布逐步演化为目标数据分布。
+
+综上所述，本章以连续时间动力学为主线，将深度网络的表示演化、确定性概率输运、随机扩散过程和离散状态生成联系起来。常微分方程、随机微分方程与连续时间马尔可夫链分别提供了适用于不同状态空间和演化机制的数学工具，共同构成了理解连续时间生成模型的重要理论基础。这一统一视角不仅有助于认识不同模型之间的联系与差异，也为后续研究生成模型的训练目标、采样算法及结构设计奠定了基础。
 \appendix
 \chapter{附录}
 

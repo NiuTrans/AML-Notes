@@ -1,129 +1,128 @@
-
 \begin{center}
-\begin{tikzpicture}
-
-\def\ssep{1.0cm}
-
-\tikzstyle{snode} = [circle,minimum size=0.2cm,inner sep=0,draw=white,line width=0.02cm,fill=black];
-
-\begin{scope}
-
-\node [snode,anchor=west] (s01) at (0,0) {};
-\node [snode,anchor=west] (s02) at ([xshift=\ssep]s01.east) {};
-\node [snode,anchor=west] (s03) at ([xshift=\ssep]s02.east) {};
-\node [snode,anchor=west] (s04) at ([xshift=\ssep]s03.east) {};
-\node [snode,anchor=west] (s05) at ([xshift=\ssep]s04.east) {};
-
-\node [snode,anchor=south] (s11) at ([yshift=0.8*\ssep]s01.north) {};
-\node [snode,anchor=west] (s12) at ([xshift=\ssep]s11.east) {};
-\node [snode,anchor=west] (s13) at ([xshift=\ssep]s12.east) {};
-\node [snode,anchor=west] (s14) at ([xshift=\ssep]s13.east) {};
-\node [snode,anchor=west] (s15) at ([xshift=\ssep]s14.east) {};
-
-\draw [-{Stealth[length=1.3mm]}] (s01.90) -- (s11.-90);
-\draw [-{Stealth[length=1.3mm]}] (s01.75) -- (s12.-110);
-\draw [-{Stealth[length=1.3mm]}] (s01.60) -- (s13.-130);
-\draw [-{Stealth[length=1.3mm]}] (s01.45) -- (s14.-150);
-\draw [-{Stealth[length=1.3mm]}] (s01.30) -- (s15.-170);
-
-\draw [-{Stealth[length=1.3mm]}] (s02.90) -- (s12.-90);
-\draw [-{Stealth[length=1.3mm]}] (s02.75) -- (s13.-110);
-\draw [-{Stealth[length=1.3mm]}] (s02.60) -- (s14.-130);
-\draw [-{Stealth[length=1.3mm]}] (s02.45) -- (s15.-150);
-
-\draw [-{Stealth[length=1.3mm]}] (s03.90) -- (s13.-90);
-\draw [-{Stealth[length=1.3mm]}] (s03.75) -- (s14.-110);
-\draw [-{Stealth[length=1.3mm]}] (s03.60) -- (s15.-130);
-
-\draw [-{Stealth[length=1.3mm]}] (s04.90) -- (s14.-90);
-\draw [-{Stealth[length=1.3mm]}] (s04.75) -- (s15.-110);
-
-\draw [-{Stealth[length=1.3mm]}] (s05.90) -- (s15.-90);
-
-\node [anchor=north] (w1) at ([yshift=-0.2cm]s01.south) {\footnotesize{$x_0$}};
-\node [anchor=north] (w2) at ([yshift=-0.2cm]s02.south) {\footnotesize{$x_1$}};
-\node [anchor=north] (w3) at ([yshift=-0.2cm]s03.south) {\footnotesize{$x_2$}};
-\node [anchor=north] (w4) at ([yshift=-0.2cm]s04.south) {\footnotesize{$x_3$}};
-\node [anchor=north] (w5) at ([yshift=-0.2cm]s05.south) {\footnotesize{$y_1$}};
-
-\node [anchor=south] (o1) at ([yshift=0.2cm]s11.north) {\footnotesize{$x_1$}};
-\node [anchor=south] (o2) at ([yshift=0.2cm]s12.north) {\footnotesize{$x_2$}};
-\node [anchor=south] (o3) at ([yshift=0.2cm]s13.north) {\footnotesize{$x_3$}};
-\node [anchor=south] (o4) at ([yshift=0.2cm]s14.north) {\footnotesize{$y_1$}};
-\node [anchor=south] (o5) at ([yshift=0.2cm]s15.north) {\footnotesize{$y_2$}};
-
-\begin{pgfonlayer}{background}
-\node [anchor=west,fill=gray!40,minimum width=3.2cm,minimum height=0.5cm] (xbox) at ([xshift=-0.1cm]o1.west) {};
-\node [anchor=west,fill=blue!30,minimum width=2.0cm,minimum height=0.5cm] (ybox) at ([xshift=-0.1cm]o4.west) {};
-\end{pgfonlayer}
-
-\node [anchor=south] (xlabel) at (xbox.north) {\small{Input}};
-\node [anchor=south] (ylabel) at (ybox.north) {\small{Output}};
-
-\node [anchor=north] (caption) at ([yshift=-0.2cm]w3.south) {\small{(a) Forward Pass}};
-
-\end{scope}
-
-\begin{scope}[xshift=7cm]
-
-\node [snode,anchor=west] (s01) at (0,0) {};
-\node [snode,anchor=west] (s02) at ([xshift=\ssep]s01.east) {};
-\node [snode,anchor=west] (s03) at ([xshift=\ssep]s02.east) {};
-\node [snode,anchor=west] (s04) at ([xshift=\ssep]s03.east) {};
-\node [snode,anchor=west] (s05) at ([xshift=\ssep]s04.east) {};
-
-\node [snode,anchor=south,fill=gray!50] (s11) at ([yshift=0.8*\ssep]s01.north) {};
-\node [snode,anchor=west,fill=gray!50] (s12) at ([xshift=\ssep]s11.east) {};
-\node [snode,anchor=west,fill=gray!50] (s13) at ([xshift=\ssep]s12.east) {};
-\node [snode,anchor=west,fill=blue] (s14) at ([xshift=\ssep]s13.east) {};
-\node [snode,anchor=west,fill=blue] (s15) at ([xshift=\ssep]s14.east) {};
-
-\draw [{Stealth[length=1.3mm]}-,gray!30] (s01.90) -- (s11.-90);
-\draw [{Stealth[length=1.3mm]}-,gray!30] (s01.75) -- (s12.-110);
-\draw [{Stealth[length=1.3mm]}-,gray!30] (s01.60) -- (s13.-130);
-
-\draw [{Stealth[length=1.3mm]}-,gray!30] (s02.90) -- (s12.-90);
-\draw [{Stealth[length=1.3mm]}-,gray!30] (s02.75) -- (s13.-110);
-
-\draw [{Stealth[length=1.3mm]}-,gray!30] (s03.90) -- (s13.-90);
-
-\draw [{Stealth[length=1.3mm]}-,blue] (s01.45) -- (s14.-150);
-\draw [{Stealth[length=1.3mm]}-,blue] (s01.30) -- (s15.-170);
-
-\draw [{Stealth[length=1.3mm]}-,blue] (s02.60) -- (s14.-130);
-\draw [{Stealth[length=1.3mm]}-,blue] (s02.45) -- (s15.-150);
-
-\draw [{Stealth[length=1.3mm]}-,blue] (s03.75) -- (s14.-110);
-\draw [{Stealth[length=1.3mm]}-,blue] (s03.60) -- (s15.-130);
-
-\draw [{Stealth[length=1.3mm]}-,blue] (s04.90) -- (s14.-90);
-\draw [{Stealth[length=1.3mm]}-,blue] (s04.75) -- (s15.-110);
-
-\draw [{Stealth[length=1.3mm]}-,blue] (s05.90) -- (s15.-90);
-
-\node [anchor=north] (w1) at ([yshift=-0.2cm]s01.south) {\footnotesize{$x_0$}};
-\node [anchor=north] (w2) at ([yshift=-0.2cm]s02.south) {\footnotesize{$x_1$}};
-\node [anchor=north] (w3) at ([yshift=-0.2cm]s03.south) {\footnotesize{$x_2$}};
-\node [anchor=north] (w4) at ([yshift=-0.2cm]s04.south) {\footnotesize{$x_3$}};
-\node [anchor=north] (w5) at ([yshift=-0.2cm]s05.south) {\footnotesize{$y_1$}};
-
-\node [anchor=south] (o1) at ([yshift=0.2cm]s11.north) {\footnotesize{$x_1$}};
-\node [anchor=south] (o2) at ([yshift=0.2cm]s12.north) {\footnotesize{$x_2$}};
-\node [anchor=south] (o3) at ([yshift=0.2cm]s13.north) {\footnotesize{$x_3$}};
-\node [anchor=south] (o4) at ([yshift=0.2cm]s14.north) {\footnotesize{$y_1$}};
-\node [anchor=south] (o5) at ([yshift=0.2cm]s15.north) {\footnotesize{$y_2$}};
-
-\begin{pgfonlayer}{background}
-\node [anchor=west,fill=gray!40,minimum width=3.2cm,minimum height=0.5cm] (xbox) at ([xshift=-0.1cm]o1.west) {};
-\node [anchor=west,fill=blue!30,minimum width=2.0cm,minimum height=0.5cm] (ybox) at ([xshift=-0.1cm]o4.west) {};
-\end{pgfonlayer}
-
-\node [anchor=south] (xlabel) at ([yshift=0.08cm]xbox.north) {\small{$\mathrm{Loss} = 0$}};
-\node [anchor=south] (ylabel) at (ybox.north) {\small{$\mathrm{Loss} \ne 0$}};
-
-\node [anchor=north] (caption) at ([yshift=-0.2cm]w3.south) {\small{(b) Backward Pass}};
-
-\end{scope}
-
-\end{tikzpicture}
-\end{center}
+    \begin{tikzpicture}
+    
+    \def\ssep{1.0cm}
+    
+    \tikzstyle{snode} = [circle,minimum size=0.2cm,inner sep=0,draw=white,line width=0.02cm,fill=black];
+    
+    \begin{scope}
+    
+    \node [snode,anchor=west] (s01) at (0,0) {};
+    \node [snode,anchor=west] (s02) at ([xshift=\ssep]s01.east) {};
+    \node [snode,anchor=west] (s03) at ([xshift=\ssep]s02.east) {};
+    \node [snode,anchor=west] (s04) at ([xshift=\ssep]s03.east) {};
+    \node [snode,anchor=west] (s05) at ([xshift=\ssep]s04.east) {};
+    
+    \node [snode,anchor=south] (s11) at ([yshift=0.8*\ssep]s01.north) {};
+    \node [snode,anchor=west] (s12) at ([xshift=\ssep]s11.east) {};
+    \node [snode,anchor=west] (s13) at ([xshift=\ssep]s12.east) {};
+    \node [snode,anchor=west] (s14) at ([xshift=\ssep]s13.east) {};
+    \node [snode,anchor=west] (s15) at ([xshift=\ssep]s14.east) {};
+    
+    \draw [-{Stealth[length=1.3mm]}] (s01.90) -- (s11.-90);
+    \draw [-{Stealth[length=1.3mm]}] (s01.75) -- (s12.-110);
+    \draw [-{Stealth[length=1.3mm]}] (s01.60) -- (s13.-130);
+    \draw [-{Stealth[length=1.3mm]}] (s01.45) -- (s14.-150);
+    \draw [-{Stealth[length=1.3mm]}] (s01.30) -- (s15.-170);
+    
+    \draw [-{Stealth[length=1.3mm]}] (s02.90) -- (s12.-90);
+    \draw [-{Stealth[length=1.3mm]}] (s02.75) -- (s13.-110);
+    \draw [-{Stealth[length=1.3mm]}] (s02.60) -- (s14.-130);
+    \draw [-{Stealth[length=1.3mm]}] (s02.45) -- (s15.-150);
+    
+    \draw [-{Stealth[length=1.3mm]}] (s03.90) -- (s13.-90);
+    \draw [-{Stealth[length=1.3mm]}] (s03.75) -- (s14.-110);
+    \draw [-{Stealth[length=1.3mm]}] (s03.60) -- (s15.-130);
+    
+    \draw [-{Stealth[length=1.3mm]}] (s04.90) -- (s14.-90);
+    \draw [-{Stealth[length=1.3mm]}] (s04.75) -- (s15.-110);
+    
+    \draw [-{Stealth[length=1.3mm]}] (s05.90) -- (s15.-90);
+    
+    \node [anchor=north] (w1) at ([yshift=-0.2cm]s01.south) {\footnotesize{$x_0$}};
+    \node [anchor=north] (w2) at ([yshift=-0.2cm]s02.south) {\footnotesize{$x_1$}};
+    \node [anchor=north] (w3) at ([yshift=-0.2cm]s03.south) {\footnotesize{$x_2$}};
+    \node [anchor=north] (w4) at ([yshift=-0.2cm]s04.south) {\footnotesize{$x_3$}};
+    \node [anchor=north] (w5) at ([yshift=-0.2cm]s05.south) {\footnotesize{$y_1$}};
+    
+    \node [anchor=south] (o1) at ([yshift=0.2cm]s11.north) {\footnotesize{$x_1$}};
+    \node [anchor=south] (o2) at ([yshift=0.2cm]s12.north) {\footnotesize{$x_2$}};
+    \node [anchor=south] (o3) at ([yshift=0.2cm]s13.north) {\footnotesize{$x_3$}};
+    \node [anchor=south] (o4) at ([yshift=0.2cm]s14.north) {\footnotesize{$y_1$}};
+    \node [anchor=south] (o5) at ([yshift=0.2cm]s15.north) {\footnotesize{$y_2$}};
+    
+    \begin{pgfonlayer}{background}
+    \node [anchor=west,fill=gray!40,minimum width=3.2cm,minimum height=0.5cm] (xbox) at ([xshift=-0.1cm]o1.west) {};
+    \node [anchor=west,fill=blue!30,minimum width=2.0cm,minimum height=0.5cm] (ybox) at ([xshift=-0.1cm]o4.west) {};
+    \end{pgfonlayer}
+    
+    \node [anchor=south] (xlabel) at (xbox.north) {\small{输入}};
+    \node [anchor=south] (ylabel) at (ybox.north) {\small{输出}};
+    
+    \node [anchor=north] (caption) at ([yshift=-0.2cm]w3.south) {\small{(a) 前向传播}};
+    
+    \end{scope}
+    
+    \begin{scope}[xshift=7cm]
+    
+    \node [snode,anchor=west] (s01) at (0,0) {};
+    \node [snode,anchor=west] (s02) at ([xshift=\ssep]s01.east) {};
+    \node [snode,anchor=west] (s03) at ([xshift=\ssep]s02.east) {};
+    \node [snode,anchor=west] (s04) at ([xshift=\ssep]s03.east) {};
+    \node [snode,anchor=west] (s05) at ([xshift=\ssep]s04.east) {};
+    
+    \node [snode,anchor=south,fill=gray!50] (s11) at ([yshift=0.8*\ssep]s01.north) {};
+    \node [snode,anchor=west,fill=gray!50] (s12) at ([xshift=\ssep]s11.east) {};
+    \node [snode,anchor=west,fill=gray!50] (s13) at ([xshift=\ssep]s12.east) {};
+    \node [snode,anchor=west,fill=blue] (s14) at ([xshift=\ssep]s13.east) {};
+    \node [snode,anchor=west,fill=blue] (s15) at ([xshift=\ssep]s14.east) {};
+    
+    \draw [{Stealth[length=1.3mm]}-,gray!30] (s01.90) -- (s11.-90);
+    \draw [{Stealth[length=1.3mm]}-,gray!30] (s01.75) -- (s12.-110);
+    \draw [{Stealth[length=1.3mm]}-,gray!30] (s01.60) -- (s13.-130);
+    
+    \draw [{Stealth[length=1.3mm]}-,gray!30] (s02.90) -- (s12.-90);
+    \draw [{Stealth[length=1.3mm]}-,gray!30] (s02.75) -- (s13.-110);
+    
+    \draw [{Stealth[length=1.3mm]}-,gray!30] (s03.90) -- (s13.-90);
+    
+    \draw [{Stealth[length=1.3mm]}-,blue] (s01.45) -- (s14.-150);
+    \draw [{Stealth[length=1.3mm]}-,blue] (s01.30) -- (s15.-170);
+    
+    \draw [{Stealth[length=1.3mm]}-,blue] (s02.60) -- (s14.-130);
+    \draw [{Stealth[length=1.3mm]}-,blue] (s02.45) -- (s15.-150);
+    
+    \draw [{Stealth[length=1.3mm]}-,blue] (s03.75) -- (s14.-110);
+    \draw [{Stealth[length=1.3mm]}-,blue] (s03.60) -- (s15.-130);
+    
+    \draw [{Stealth[length=1.3mm]}-,blue] (s04.90) -- (s14.-90);
+    \draw [{Stealth[length=1.3mm]}-,blue] (s04.75) -- (s15.-110);
+    
+    \draw [{Stealth[length=1.3mm]}-,blue] (s05.90) -- (s15.-90);
+    
+    \node [anchor=north] (w1) at ([yshift=-0.2cm]s01.south) {\footnotesize{$x_0$}};
+    \node [anchor=north] (w2) at ([yshift=-0.2cm]s02.south) {\footnotesize{$x_1$}};
+    \node [anchor=north] (w3) at ([yshift=-0.2cm]s03.south) {\footnotesize{$x_2$}};
+    \node [anchor=north] (w4) at ([yshift=-0.2cm]s04.south) {\footnotesize{$x_3$}};
+    \node [anchor=north] (w5) at ([yshift=-0.2cm]s05.south) {\footnotesize{$y_1$}};
+    
+    \node [anchor=south] (o1) at ([yshift=0.2cm]s11.north) {\footnotesize{$x_1$}};
+    \node [anchor=south] (o2) at ([yshift=0.2cm]s12.north) {\footnotesize{$x_2$}};
+    \node [anchor=south] (o3) at ([yshift=0.2cm]s13.north) {\footnotesize{$x_3$}};
+    \node [anchor=south] (o4) at ([yshift=0.2cm]s14.north) {\footnotesize{$y_1$}};
+    \node [anchor=south] (o5) at ([yshift=0.2cm]s15.north) {\footnotesize{$y_2$}};
+    
+    \begin{pgfonlayer}{background}
+    \node [anchor=west,fill=gray!40,minimum width=3.2cm,minimum height=0.5cm] (xbox) at ([xshift=-0.1cm]o1.west) {};
+    \node [anchor=west,fill=blue!30,minimum width=2.0cm,minimum height=0.5cm] (ybox) at ([xshift=-0.1cm]o4.west) {};
+    \end{pgfonlayer}
+    
+    \node [anchor=south] (xlabel) at ([yshift=0.08cm]xbox.north) {\small{$\mathrm{Loss} = 0$}};
+    \node [anchor=south] (ylabel) at (ybox.north) {\small{$\mathrm{Loss} \ne 0$}};
+    
+    \node [anchor=north] (caption) at ([yshift=-0.2cm]w3.south) {\small{(b) 反向传播}};
+    
+    \end{scope}
+    
+    \end{tikzpicture}
+    \end{center}

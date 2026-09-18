@@ -1,0 +1,105 @@
+\input{figures/figure-theme.tex}
+\begin{center}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\nodesep{2.5em}
+\def\noderowsep{5em}
+\tikzstyle{nnode} = [rectangle,minimum size=2em,inner sep=0,draw=FigureInk!70,line width=.7pt,rounded corners=2pt]
+\tikzstyle{dnode} = [circle,minimum size=2em,inner sep=0,draw=FigureInk!70,line width=.7pt]
+\tikzstyle{lnode} = [circle,minimum size=0.5em,inner sep=1pt,fill=blue]
+
+%----------------------------------------------------------------------------------------
+% forward pass
+
+\begin{scope}[every path/.append style={draw=FigureBlue}]
+
+% nodes
+\node [anchor=center,nnode,fill=white] (node7) at (0,0) {$\mathbf{x}$};
+\node [anchor=west,nnode,fill=white] (node8) at ([xshift=\nodesep]node7.east) {$\mathbf{w}_1$};
+\node [anchor=south,nnode,fill=white] (node5) at ([xshift= 0.5*\nodesep,yshift=\noderowsep]node7.east) {$\cdot$};
+\node [anchor=west,nnode,fill=white] (node6) at ([xshift=\nodesep]node5.east) {$\mathbf{b}_1$};
+\node [anchor=south,nnode,fill=white] (node4) at ([xshift= 0.5*\nodesep,yshift=\noderowsep]node5.east) {$+$};
+\node [anchor=south,nnode,fill=white] (node2) at ([yshift=\noderowsep]node4.north) {$\psi(\cdot)$};
+\node [anchor=west,nnode,fill=white] (node3) at ([xshift=\nodesep]node2.east) {$\mathbf{w}_2$};
+\node [anchor=south,nnode,fill=white] (node1) at ([xshift= 0.5*\nodesep,yshift=\noderowsep]node2.east) {$\cdot$};
+
+\node [anchor=south] (nodeoutput) at ([yshift=0.5*\noderowsep]node1.north) {\footnotesize{$\mathbf{y}$ （输出）}};
+
+\foreach \x in {1,...,8}{
+    \node [anchor=center,lnode] (label\x) at ([xshift=2pt,yshift=-2pt]node\x.north west) {\tiny{\color{white} $\x$}};
+}
+
+\node [anchor=east] (node5math) at (node5.west) {\small{$\mathbf{h}_3 = \mathbf{x} \cdot \mathbf{w}_1$}};
+\node [anchor=east] (node4math) at (node4.west) {\small{$\mathbf{h}_2 = \mathbf{h}_3 + \mathbf{b}_1$}};
+\node [anchor=east] (node2math) at (node2.west) {\small{$\mathbf{h}_1 = \psi(\mathbf{h}_2)$}};
+\node [anchor=east] (node1math) at (node1.west) {\small{$\mathbf{y} = \mathbf{h}_1 \cdot \mathbf{w}_2$}};
+
+% connections
+\draw [->,very thick] ([yshift=2pt]node7.north) -- ([yshift=-2pt,xshift=-0.3em]node5.south);
+\draw [->,very thick] ([yshift=2pt]node8.north) -- ([yshift=-2pt,xshift=+0.3em]node5.south);
+\draw [->,very thick] ([yshift=2pt]node5.north) -- ([yshift=-2pt,xshift=-0.3em]node4.south);
+\draw [->,very thick] ([yshift=2pt]node6.north) -- ([yshift=-2pt,xshift=+0.3em]node4.south);
+\draw [->,very thick] ([yshift=2pt]node4.north) -- ([yshift=-2pt,xshift=+0.0em]node2.south);
+\draw [->,very thick] ([yshift=2pt]node2.north) -- ([yshift=-2pt,xshift=-0.3em]node1.south);
+\draw [->,very thick] ([yshift=2pt]node3.north) -- ([yshift=-2pt,xshift=+0.3em]node1.south);
+\draw [->,very thick] ([yshift=2pt]node1.north) -- ([yshift=-0pt,xshift=+0.0em]nodeoutput.south);
+
+% label
+\node [anchor=east,lnode] (labelsmall1) at ([xshift=-8em]nodeoutput.west) {\tiny{\color{white} $1$}};
+\node [anchor=north,lnode] (labelsmall2) at ([yshift=-2.0em]labelsmall1.south) {\tiny{\color{white} $8$}};
+\draw [->,thick] ([yshift=1pt]labelsmall2.north) -- ([yshift=-1pt]labelsmall1.south);
+\node [anchor=north] (subfigurelabel) at ([yshift=-1em]node8.south) {(a) 前向传播};
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% backward pass
+
+\begin{scope}[xshift=20em,every path/.append style={draw=FigureCoral}]
+
+% nodes
+\node [anchor=center,nnode,fill=white] (node7) at (0,0) {$\mathbf{x}$};
+\node [anchor=west,nnode,fill=white] (node8) at ([xshift=\nodesep]node7.east) {$\mathbf{w}_1$};
+\node [anchor=south,nnode,fill=white] (node5) at ([xshift= 0.5*\nodesep,yshift=\noderowsep]node7.east) {$\cdot$};
+\node [anchor=west,nnode,fill=white] (node6) at ([xshift=\nodesep]node5.east) {$\mathbf{b}_1$};
+\node [anchor=south,nnode,fill=white] (node4) at ([xshift= 0.5*\nodesep,yshift=\noderowsep]node5.east) {$+$};
+\node [anchor=south,nnode,fill=white] (node2) at ([yshift=\noderowsep]node4.north) {$\psi(\cdot)$};
+\node [anchor=west,nnode,fill=white] (node3) at ([xshift=\nodesep]node2.east) {$\mathbf{w}_2$};
+\node [anchor=south,nnode,fill=white] (node1) at ([xshift= 0.5*\nodesep,yshift=\noderowsep]node2.east) {$\cdot$};
+
+\node [anchor=south] (nodeoutput) at ([yshift=0.5*\noderowsep]node1.north) {\footnotesize{损失 $L$}};
+
+\foreach \x in {1,...,8}{
+    \node [anchor=center,lnode,fill=red] (label\x) at ([xshift=2pt,yshift=-2pt]node\x.north west) {\tiny{\color{white} $\x$}};
+}
+
+\node [anchor=east] (node5math) at (node5.west) {\small{$\mathbf{h}_3 = \mathbf{x} \cdot \mathbf{w}_1$}};
+\node [anchor=east] (node4math) at (node4.west) {\small{$\mathbf{h}_2 = \mathbf{h}_3 + \mathbf{b}_1$}};
+\node [anchor=east] (node2math) at (node2.west) {\small{$\mathbf{h}_1 = \psi(\mathbf{h}_2)$}};
+\node [anchor=east] (node1math) at (node1.west) {\small{$\mathbf{y} = \mathbf{h}_1 \cdot \mathbf{w}_2$}};
+
+% connections
+\draw [<-,very thick] ([yshift=2pt]node7.north) -- ([yshift=-2pt,xshift=-0.3em]node5.south) node [pos=0.5,inner sep=2pt,fill=white,xshift=-2em] (g7) {\scriptsize{{\color{red} $\frac{\partial L}{\partial \mathbf{x}} = \frac{\partial L}{\partial \mathbf{h}_3} \cdot \mathbf{w}_1^{\rm{T}}$}}};
+\draw [<-,very thick] ([yshift=2pt]node8.north) -- ([yshift=-2pt,xshift=+0.3em]node5.south) node [pos=0.5,inner sep=2pt,fill=white,xshift=2em] (g8) {\scriptsize{{\color{red} $\frac{\partial L}{\partial \mathbf{w}_1} = \mathbf{x}^{\rm{T}} \cdot \frac{\partial L}{\partial \mathbf{h}_3}$}}};
+\draw [<-,very thick] ([yshift=2pt]node5.north) -- ([yshift=-2pt,xshift=-0.3em]node4.south) node [pos=0.5,inner sep=2pt,fill=white,xshift=-1em] (g5) {\scriptsize{{\color{red} $\frac{\partial L}{\partial \mathbf{h}_3} = \frac{\partial L}{\partial \mathbf{h}_2}$}}};
+\draw [<-,very thick] ([yshift=2pt]node6.north) -- ([yshift=-2pt,xshift=+0.3em]node4.south) node [pos=0.5,inner sep=2pt,fill=white,xshift=1em] (g6) {\scriptsize{{\color{red} $\frac{\partial L}{\partial \mathbf{b}_1} = \frac{\partial L}{\partial \mathbf{h}_2}$}}};
+\draw [<-,very thick] ([yshift=2pt]node4.north) -- ([yshift=-2pt,xshift=+0.0em]node2.south) node [pos=0.5,inner sep=2pt,fill=white,xshift=0em] (g4) {\scriptsize{{\color{red} $\frac{\partial L}{\partial \mathbf{h}_2} = \frac{\partial L}{\partial \mathbf{h}_1} \odot \psi'(\mathbf{h}_2)$}}};
+\draw [<-,very thick] ([yshift=2pt]node2.north) -- ([yshift=-2pt,xshift=-0.3em]node1.south) node [pos=0.5,inner sep=2pt,fill=white,xshift=-2em] (g2) {\scriptsize{{\color{red} $\frac{\partial L}{\partial \mathbf{h}_1} = \frac{\partial L}{\partial \mathbf{y}} \cdot \mathbf{w}_2^{\rm{T}}$}}};
+\draw [<-,very thick] ([yshift=2pt]node3.north) -- ([yshift=-2pt,xshift=+0.3em]node1.south) node [pos=0.5,inner sep=2pt,fill=white,xshift=2em] (g3) {\scriptsize{{\color{red} $\frac{\partial L}{\partial \mathbf{w}_2} = \mathbf{h}_1^{\rm{T}} \cdot \frac{\partial L}{\partial \mathbf{y}}$}}};
+\draw [<-,very thick] ([yshift=2pt]node1.north) -- ([yshift=-0pt,xshift=+0.0em]nodeoutput.south) node [pos=0.5,inner sep=2pt,fill=white] (g5) {\scriptsize{{\color{red} $\frac{\partial L}{\partial \mathbf{y}}$}}};
+
+% label
+\node [anchor=east,lnode,fill=red] (labelsmall1) at ([xshift=-8em]nodeoutput.west) {\tiny{\color{white} $1$}};
+\node [anchor=north,lnode,fill=red] (labelsmall2) at ([yshift=-2.0em]labelsmall1.south) {\tiny{\color{white} $8$}};
+\draw [<-,thick] ([yshift=1pt]labelsmall2.north) -- ([yshift=-1pt]labelsmall1.south);
+\node [anchor=north] (subfigurelabel) at ([yshift=-1em]node8.south) {(b) 反向传播};
+
+\end{scope}
+
+\end{tikzpicture}
+
+\end{center}

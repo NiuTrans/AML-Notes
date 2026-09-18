@@ -1,0 +1,106 @@
+% !Mode:: "TeX:UTF-8"
+% !TEX encoding = UTF-8 Unicode
+\input{figures/figure-theme.tex}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+	
+\def\nodewidth{0.55cm}
+\def\nodeheight{0.55cm}
+
+\tikzstyle{enode} = [minimum width=\nodewidth,minimum height=\nodeheight,inner sep=2pt,draw=FigureLine,fill=FigureMist,line width=.45pt,rounded corners=1pt]
+
+%%% pre-training encoders
+\begin{scope}
+
+\node [enode,anchor=west] (w0) at (0,0) {$x_0$};
+\node [enode,anchor=west] (w1) at ([xshift=\nodewidth]w0.east) {$x_1$};
+\node [enode,anchor=west] (w2) at ([xshift=\nodewidth]w1.east) {$x_2$};
+\node [enode,anchor=west] (w3) at ([xshift=\nodewidth]w2.east) {$x_3$};
+\node [enode,anchor=west] (w4) at ([xshift=\nodewidth]w3.east) {$x_4$};
+\node [enode,anchor=north] (w3mask) at ([yshift=0.4em]w3.south) {\footnotesize{（masked）}};
+
+\node [enode,anchor=south] (e0) at ([yshift=\nodeheight]w0.north) {$\mathbf{e}_0$};
+\node [enode,anchor=west] (e1) at ([xshift=\nodewidth]e0.east) {$\mathbf{e}_1$};
+\node [enode,anchor=west] (e2) at ([xshift=\nodewidth]e1.east) {$\mathbf{e}_2$};
+\node [enode,anchor=west] (e3) at ([xshift=\nodewidth]e2.east) {$\mathbf{e}_3$};
+\node [enode,anchor=west] (e4) at ([xshift=\nodewidth]e3.east) {$\mathbf{e}_4$};
+
+\draw [->] (w0.north) -- ([yshift=0]e0.south);
+\draw [->] (w1.north) -- ([yshift=0]e1.south);
+\draw [->] (w2.north) -- ([yshift=0]e2.south);
+\draw [->] (w3.north) -- ([yshift=0]e3.south);
+\draw [->] (w4.north) -- ([yshift=0]e4.south);
+
+\node [anchor=south,minimum width=10*\nodewidth,minimum height=2*\nodeheight,draw=FigureBlue,fill=FigureBlue!13,line width=.8pt,rounded corners=2pt] (encoder) at ([yshift=\nodeheight]e2.north) {\large{Encoder}};
+
+\draw [->] ([yshift=0pt]e0.north) -- ([yshift=\nodeheight-2pt]e0.north);
+\draw [->] ([yshift=0pt]e1.north) -- ([yshift=\nodeheight-2pt]e1.north);
+\draw [->] ([yshift=0pt]e2.north) -- ([yshift=\nodeheight-2pt]e2.north);
+\draw [->] ([yshift=0pt]e3.north) -- ([yshift=\nodeheight-2pt]e3.north);
+\draw [->] ([yshift=0pt]e4.north) -- ([yshift=\nodeheight-2pt]e4.north);
+
+\draw [->] ([yshift=3*\nodeheight+2pt]e0.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e0.north);
+\draw [->] ([yshift=3*\nodeheight+2pt]e1.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e1.north);
+\draw [->] ([yshift=3*\nodeheight+2pt]e2.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e2.north);
+\draw [->] ([yshift=3*\nodeheight+2pt]e3.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e3.north);
+\draw [->] ([yshift=3*\nodeheight+2pt]e4.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e4.north);
+
+\node [anchor=south,minimum width=10*\nodewidth,minimum height=\nodeheight,draw=FigureGold,fill=FigureWarm,line width=.8pt,rounded corners=2pt] (softmax) at ([yshift=1.2*\nodeheight]encoder.north) {Softmax};
+
+\node [anchor=south west] (supervision1) at ([yshift=1.5*\nodeheight]softmax.north west) {\footnotesize{模型对被掩码 token 的重构效果}};
+\node [anchor=south west] (supervision2) at ([yshift=-0.4em]supervision1.north west) {\footnotesize{例如，评估}};
+\node [anchor=south west] (supervision3) at ([yshift=-0.3em]supervision2.north west) {自监督};
+
+\draw [->,thick] ([yshift=1.5*\nodeheight,xshift=-0.8cm]softmax.north) .. controls +(south:0.6cm) and +(north:0.7cm) .. ([yshift=2pt]softmax.north);
+
+\node [anchor=north] (caption) at ([yshift=-\nodeheight]w2.south) {\small{(a) 预训练}};
+
+\end{scope}
+
+%%% applying pre-trained encoders
+\begin{scope}[xshift=7cm]
+
+\node [enode,anchor=west] (w0) at (0,0) {$x_0$};
+\node [enode,anchor=west] (w1) at ([xshift=\nodewidth]w0.east) {$x_1$};
+\node [enode,anchor=west] (w2) at ([xshift=\nodewidth]w1.east) {$x_2$};
+\node [enode,anchor=west] (w3) at ([xshift=\nodewidth]w2.east) {$x_3$};
+\node [enode,anchor=west] (w4) at ([xshift=\nodewidth]w3.east) {$x_4$};
+
+\node [enode,anchor=south] (e0) at ([yshift=\nodeheight]w0.north) {$\mathbf{e}_0$};
+\node [enode,anchor=west] (e1) at ([xshift=\nodewidth]e0.east) {$\mathbf{e}_1$};
+\node [enode,anchor=west] (e2) at ([xshift=\nodewidth]e1.east) {$\mathbf{e}_2$};
+\node [enode,anchor=west] (e3) at ([xshift=\nodewidth]e2.east) {$\mathbf{e}_3$};
+\node [enode,anchor=west] (e4) at ([xshift=\nodewidth]e3.east) {$\mathbf{e}_4$};
+
+\draw [->] (w0.north) -- ([yshift=0]e0.south);
+\draw [->] (w1.north) -- ([yshift=0]e1.south);
+\draw [->] (w2.north) -- ([yshift=0]e2.south);
+\draw [->] (w3.north) -- ([yshift=0]e3.south);
+\draw [->] (w4.north) -- ([yshift=0]e4.south);
+
+\node [anchor=south,minimum width=10*\nodewidth,minimum height=2*\nodeheight,draw=FigureTeal,fill=FigureTeal!13,line width=.8pt,rounded corners=2pt] (encoder) at ([yshift=\nodeheight]e2.north) {\large{预训练编码器}};
+
+\draw [->] ([yshift=0]e0.north) -- ([yshift=\nodeheight-2pt]e0.north);
+\draw [->] ([yshift=0]e1.north) -- ([yshift=\nodeheight-2pt]e1.north);
+\draw [->] ([yshift=0]e2.north) -- ([yshift=\nodeheight-2pt]e2.north);
+\draw [->] ([yshift=0]e3.north) -- ([yshift=\nodeheight-2pt]e3.north);
+\draw [->] ([yshift=0]e4.north) -- ([yshift=\nodeheight-2pt]e4.north);
+
+\draw [->] ([yshift=3*\nodeheight+2pt]e0.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e0.north);
+\draw [->] ([yshift=3*\nodeheight+2pt]e1.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e1.north);
+\draw [->] ([yshift=3*\nodeheight+2pt]e2.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e2.north);
+\draw [->] ([yshift=3*\nodeheight+2pt]e3.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e3.north);
+\draw [->] ([yshift=3*\nodeheight+2pt]e4.north) -- ([yshift=3*\nodeheight+1.2*\nodeheight-2pt]e4.north);
+
+\node [anchor=south,minimum width=10*\nodewidth,minimum height=\nodeheight,draw=FigureCoral,fill=FigureCoral!12,line width=.8pt,rounded corners=2pt] (softmax) at ([yshift=1.2*\nodeheight]encoder.north) {Prediction Network};
+
+\node [anchor=south] (supervision1) at ([yshift=1.5*\nodeheight]softmax.north) {下游任务输出};
+
+\draw [->,thick] ([yshift=2pt]softmax.north) -- (supervision1.south);
+
+\node [anchor=north] (caption) at ([yshift=-\nodeheight]w2.south) {\small{(b) 应用预训练编码器}};
+
+\end{scope}
+	
+\end{tikzpicture}

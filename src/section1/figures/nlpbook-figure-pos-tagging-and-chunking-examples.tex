@@ -1,0 +1,61 @@
+\input{figures/figure-theme.tex}
+\begin{tikzpicture}[aml figure,node distance = 0,scale = 1]
+\amlfigurepalette
+\begin{scope}[xshift=0cm,yshift=0cm]
+\tikzstyle{txt} = [minimum width = 1.6cm,minimum height=1cm,text width=2cm,align=left]
+
+\node(row1)[minimum width = 3.1cm, text width=2cm,align=right]{Tokens};
+\node(row2)[minimum width = 3.1cm, below of = row1, yshift = -1cm,text width=2cm,align=right]{POS tags};
+\node(row3)[minimum width = 3.1cm, below of = row2, yshift = -1.1cm,text width=2cm,align=right]{Chunk tags};
+\node(text1_1)[txt]at([xshift = 0.9cm]row1.east){Most};
+\node(text1_2)[txt]at([xshift = 0.2cm,yshift = -0.05cm]text1_1.east){are};
+\node(text1_3)[txt]at([xshift = -0.1cm,yshift = 0.02cm]text1_2.east){expected};
+\node(text1_4)[txt]at([xshift = 0.6cm,yshift = 0.02cm]text1_3.east){to};
+\node(text1_5)[txt]at([xshift = -0.2cm,yshift = 0.02cm]text1_4.east){fall};
+\node(text1_6)[txt]at([xshift = 0cm]text1_5.east){below};
+\node(text1_7)[txt]at([xshift = 0.4cm,yshift = -0.2cm]text1_6.east){previous-month};
+\node(text1_8)[txt]at([xshift = 0.6cm,yshift = 0.2cm]text1_7.east){levels};
+\node(text1_9)[txt]at([xshift = 0.1cm,yshift = -0.08cm]text1_8.east){.};
+
+\node(text2_1)[txt, below of = text1_1, yshift = -1cm]{JJS};
+\node(text2_2)[txt, below of = text1_2, yshift = -0.95cm]{VBP};
+\node(text2_3)[txt, below of = text1_3, yshift = -0.97cm]{VBN};
+\node(text2_4)[txt, below of = text1_4, yshift = -0.99cm]{TO};
+\node(text2_5)[txt, below of = text1_5, yshift = -1.01cm]{VB};
+\node(text2_6)[txt, below of = text1_6, yshift = -1.01cm]{IN};
+\node(text2_7)[txt, below of = text1_7, yshift = -0.81cm]{JJ};
+\node(text2_8)[txt, below of = text1_8, yshift = -1.01cm]{NNS};
+\node(text2_9)[txt, below of = text1_9, yshift = -0.93cm]{.};
+
+\node(text3_1)[txt, below of = text2_1, yshift = -1cm]{B-NP};
+\node(text3_2)[txt, below of = text2_2, yshift = -1cm]{B-VP};
+\node(text3_3)[txt, below of = text2_3, yshift = -1cm]{I-VP};
+\node(text3_4)[txt, below of = text2_4, yshift = -1cm]{I-VP};
+\node(text3_5)[txt, below of = text2_5, yshift = -1cm]{I-VP};
+\node(text3_6)[txt, below of = text2_6, yshift = -1cm]{B-PP};
+\node(text3_7)[txt, below of = text2_7, yshift = -1cm]{B-NP};
+\node(text3_8)[txt, below of = text2_8, yshift = -1cm]{I-NP};
+\node(text3_9)[txt, below of = text2_9, yshift = -1cm]{O};
+
+\node(text4_1)[txt, below of = text3_1, yshift = -0.4cm, xshift = 0.2cm]{\small{NP}};
+\node(text4_2)[txt, below of = text3_3, yshift = -0.4cm, xshift = 0.9cm]{\small{VP}};
+\node(text4_3)[txt, below of = text3_6, yshift = -0.4cm, xshift = 0.2cm]{\small{PP}};
+\node(text4_4)[txt, below of = text3_7, yshift = -0.4cm, xshift = 1cm]{\small{NP}};
+
+\begin{pgfonlayer}{background}
+\node[fit=(text1_1)(text1_9),fill=FigureMist,rounded corners=2pt,inner sep=3pt] {};
+\node[fit=(text2_1)(text2_9),fill=FigureBlue!11,rounded corners=2pt,inner sep=3pt] {};
+\node[fit=(text3_1)(text3_9),fill=FigureTeal!12,rounded corners=2pt,inner sep=3pt] {};
+\end{pgfonlayer}
+
+\node(sign1)at([xshift = -0.4cm]row1.east){:};
+\node(sign2)at([xshift = -0.4cm]row2.east){:};
+\node(sign3)at([xshift = -0.4cm,yshift = 0.0cm]row3.east){:};
+
+\draw[-,FigureGold,line width=1.2pt]([xshift=-1.1cm,yshift=0.3cm]text3_1.south)to([xshift=-0.1cm,yshift=0.3cm]text3_1.south);
+\draw[-,FigureGold,line width=1.2pt]([xshift=-1.1cm,yshift=0.3cm]text3_2.south)to([xshift=-0.2cm,yshift=0.3cm]text3_5.south);
+\draw[-,FigureGold,line width=1.2pt]([xshift=-1.1cm,yshift=0.3cm]text3_6.south)to([xshift=-0.1cm,yshift=0.3cm]text3_6.south);
+\draw[-,FigureGold,line width=1.2pt]([xshift=-1.cm,yshift=0.3cm]text3_7.south)to([xshift=-0.1cm,yshift=0.3cm]text3_8.south);
+
+\end{scope}
+\end{tikzpicture}

@@ -16,19 +16,27 @@ A_t &\sim& \pi_\theta(\cdot \mid c_t, T_t).
 一个经典的例子是让智能体在电商网站为用户选购笔记本电脑。原始 LLM 可能直接生成一个含错误参数的搜索指令，而 ReAct 智能体的交互过程如下：
 
 \vspace{0.5em}
-\begin{quote}
-\textit{思维：用户需要视频剪辑用的电脑，需要高性能 GPU 和至少 32 GB 内存。我先用关键词搜索。}
 
-\textit{动作：search("视频剪辑笔记本电脑")}
+\begin{tcolorbox}[frame empty]
 
-\textit{观察：返回 50 条商品，但摘要中没有显示内存信息。}
+\begingroup
 
-\textit{思维：我需要筛选内存条件。页面上有“高级筛选”按钮，我可以点击它并设置内存为 32 GB。}
+思维：用户需要视频剪辑用的电脑，需要高性能 GPU 和至少 32 GB 内存。我先用关键词搜索。
 
-\textit{动作：click("高级筛选"); select("内存", "32GB")}
+动作：search("视频剪辑笔记本电脑")
 
-\textit{观察：列表刷新，剩余 8 个匹配商品。}
-\end{quote}
+观察：返回 50 条商品，但摘要中没有显示内存信息。
+
+思维：我需要筛选内存条件。页面上有“高级筛选”按钮，我可以点击它并设置内存为 32 GB。
+
+动作：click("高级筛选"); select("内存", "32GB")
+
+观察：列表刷新，剩余 8 个匹配商品。
+
+\endgroup
+
+\end{tcolorbox}
+
 \vspace{0.5em}
 
 这种“思维—动作—观察”的循环带来了两个关键优势：(1) 思维为动作提供了可解释的决策依据；(2) 每一轮观察都可以用来修正后续的推理方向，使系统具备在线适应能力。在实际部署中，动作集通常被实现为工具 API 调用，模型通过生成特定格式的文本（如 \texttt{Action: search("...")}）来触发工具，环境则将执行结果以文本形式回传。
@@ -48,10 +56,27 @@ R_k &=& \text{LLM}\bigl(\mathbf{x}, \tau_k, \text{``Task failed. Analyze the err
 仍以选购电脑为例，假设某次尝试中智能体在筛选后直接选择了一款外观漂亮的机型，却忽略了 GPU 型号，导致最终购买结果不符合要求。失败后，Reflexion 模块可能输出如下反思：
 
 \vspace{0.5em}
-\begin{quote}
-\textit{反思：上次失败是因为我只关注了内存筛选，而没有验证 GPU 是否符合视频剪辑的需求。在下一步选择具体产品时，必须检查其 GPU 是否为独立高性能显卡（如 RTX 4060 及以上）。}
-\end{quote}
+
+\begin{tcolorbox}[frame empty]
+
+\begingroup
+
+\renewcommand{\arraystretch}{1.0}
+
+\setlength{\tabcolsep}{6pt}
+
+\begin{tabular}{p{\linewidth}}
+
+反思：上次失败是因为我只关注了内存筛选，而没有验证 GPU 是否符合视频剪辑的需求。在下一步选择具体产品时，必须检查其 GPU 是否为独立高性能显卡（如 RTX 4060 及以上）。
+
+\end{tabular}
+
+\endgroup
+
+\end{tcolorbox}
+
 \vspace{0.5em}
+
 
 在下一轮尝试中，这条反思被加入提示，智能体在筛选后会主动检查每款候选品的 GPU 参数，从而显著提高成功率。
 

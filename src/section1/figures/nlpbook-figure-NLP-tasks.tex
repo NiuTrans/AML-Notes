@@ -1,0 +1,311 @@
+\begin{center}
+
+\begin{tikzpicture}
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\blockw{0.49\textwidth}
+\def\blockh{0.35\textwidth}
+\def\itemrowsep{0}
+\def\xlen{0}
+\def\textw{10em}
+\tikzstyle{wnode} = [minimum width=1.5em,minimum height=1.5em,very thick,rounded corners=3pt]
+
+%----------------------------------------------------------------------------------------
+% block of classification
+\begin{scope}
+\node [anchor=north west] (label-classifcation-null) at (0,0) {};
+\node [anchor=center] (label-classifcation) at (0.5*\blockw,-0.9*\blockh) {(a) 分类};
+
+\node [anchor=center,minimum width=11em,minimum height=3em,draw=blue,very thick] (classifier) at (0.5*\blockw,-0.5*\blockh+0.7em) {分类器 $f(\mathbf{x})$};
+\node [anchor=north,minimum width=11em,minimum height=1.5em,draw=red,very thick,rounded corners=3pt] (sample) at ([yshift=-1.2em]classifier.south) {\small{样本 $\mathbf{x}$ (特征向量)}};
+
+\node [anchor=south,minimum width=1em,minimum height=0.8em,fill=kellygreen] (bar1) at ([yshift=1.2em]classifier.north) {};
+\node [anchor=south east,minimum width=1em,minimum height=1.5em,fill=kellygreen,draw=ugreen,thick] (bar2l) at ([xshift=-1pt]bar1.south west) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.6em,fill=kellygreen] (bar3l) at ([xshift=-1pt]bar2l.south west) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.3em,fill=kellygreen] (bar4l) at ([xshift=-1pt]bar3l.south west) {};
+\node [anchor=south west,minimum width=1em,minimum height=1.1em,fill=kellygreen] (bar2r) at ([xshift=1pt]bar1.south east) {};
+\node [anchor=south west,minimum width=1em,minimum height=0.7em,fill=kellygreen] (bar3r) at ([xshift=1pt]bar2r.south east) {};
+\node [anchor=south west,minimum width=1em,minimum height=0.3em,fill=kellygreen] (bar4r) at ([xshift=1pt]bar3r.south east) {};
+
+\node [anchor=south west] (classhat) at ([xshift=0.5em,yshift=0.8em]bar2l.north) {\small{类别 $\hat{c}$}};
+
+\draw [<-] ([yshift=1pt]bar2l.north) .. controls +(north:0.8em) and +(south:0.7em) .. ([yshift=1pt]classhat.south);
+\draw [->,very thick] ([yshift=1pt]sample.north) -- ([yshift=-1pt]classifier.south);
+\draw [->,very thick] ([yshift=1pt]classifier.north) -- ([yshift=-1pt]bar1.south);
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% block of sequence labeling
+\begin{scope}[xshift=\blockw]
+\node [anchor=north west] (label-sequence-labeling-null) at (0,0) {};
+\node [anchor=center] (label-sequence-labeling) at (0.5*\blockw,-0.9*\blockh) {(b) 序列标注};
+
+\node [anchor=center,minimum width=15.5em,minimum height=3em,draw=blue,very thick,align=center] (sequence-labeler) at (0.5*\blockw,-0.5*\blockh+0.7em) {序列标注器\\$f(\begin{bmatrix}\mathbf{x}_1&...&\mathbf{x}_n\end{bmatrix})$};
+\node [anchor=north,wnode,draw=red] (input3) at ([yshift=-1.2em]sequence-labeler.south) {\footnotesize{$\mathbf{x}_3$}};
+\node [anchor=north,wnode,draw=red] (input2) at ([yshift=-1.2em,xshift=-3em]sequence-labeler.south) {\footnotesize{$\mathbf{x}_2$}};
+\node [anchor=north,wnode,draw=red] (input1) at ([yshift=-1.2em,xshift=-6em]sequence-labeler.south) {\footnotesize{$\mathbf{x}_1$}};
+\node [anchor=north,wnode,draw=red] (input4) at ([yshift=-1.2em,xshift=3em]sequence-labeler.south) {\footnotesize{$\mathbf{x}_4$}};
+\node [anchor=north,wnode,draw=red] (input5) at ([yshift=-1.2em,xshift=6em]sequence-labeler.south) {\footnotesize{$\mathbf{x}_5$}};
+
+\draw [->,very thick] ([yshift=1pt]input1.north) -- ([xshift=-6em,yshift=-1pt]sequence-labeler.south);
+\draw [->,very thick] ([yshift=1pt]input2.north) -- ([xshift=-3em,yshift=-1pt]sequence-labeler.south);
+\draw [->,very thick] ([yshift=1pt]input3.north) -- ([xshift=-0em,yshift=-1pt]sequence-labeler.south);
+\draw [->,very thick] ([yshift=1pt]input4.north) -- ([xshift=3em,yshift=-1pt]sequence-labeler.south);
+\draw [->,very thick] ([yshift=1pt]input5.north) -- ([xshift=6em,yshift=-1pt]sequence-labeler.south);
+
+\node [anchor=south,fill=orange,circle,minimum size=0.5em,inner sep=1pt] (p31) at ([yshift=1.5em]sequence-labeler.north) {};
+\node [anchor=south,fill=cyan,circle,minimum size=0.5em,inner sep=1pt] (p32) at ([yshift=0.3em]p31.north) {};
+\node [anchor=south,fill=purple,circle,minimum size=0.5em,inner sep=1pt] (p33) at ([yshift=0.3em]p32.north) {};
+\node [draw,thin,inner sep=2pt,thick,rounded corners=2pt]  [fit = (p31) (p33)] (p3label) {};
+
+\node [anchor=south,fill=orange,circle,minimum size=0.5em,inner sep=1pt] (p21) at ([xshift=-3em,yshift=1.5em]sequence-labeler.north) {};
+\node [anchor=south,fill=cyan,circle,minimum size=0.5em,inner sep=1pt] (p22) at ([yshift=0.3em]p21.north) {};
+\node [anchor=south,fill= purple,circle,minimum size=0.5em,inner sep=1pt] (p23) at ([yshift=0.3em]p22.north) {};
+\node [draw,thin,inner sep=2pt,thick,rounded corners=2pt]  [fit = (p21) (p23)] (p2label) {};
+
+\node [anchor=south,fill=orange,circle,minimum size=0.5em,inner sep=1pt] (p11) at ([xshift=-6em,yshift=1.5em]sequence-labeler.north) {};
+\node [anchor=south,fill=cyan,circle,minimum size=0.5em,inner sep=1pt] (p12) at ([yshift=0.3em]p11.north) {};
+\node [anchor=south,fill= purple,circle,minimum size=0.5em,inner sep=1pt] (p13) at ([yshift=0.3em]p12.north) {};
+\node [draw,thin,inner sep=2pt,thick,rounded corners=2pt]  [fit = (p11) (p13)] (p1label) {};
+
+\node [anchor=south,fill=orange,circle,minimum size=0.5em,inner sep=1pt] (p41) at ([xshift=3em,yshift=1.5em]sequence-labeler.north) {};
+\node [anchor=south,fill=cyan,circle,minimum size=0.5em,inner sep=1pt] (p42) at ([yshift=0.3em]p41.north) {};
+\node [anchor=south,fill= purple,circle,minimum size=0.5em,inner sep=1pt] (p43) at ([yshift=0.3em]p42.north) {};
+\node [draw,thin,inner sep=2pt,thick,rounded corners=2pt]  [fit = (p41) (p43)] (p4label) {};
+
+\node [anchor=south,fill=orange,circle,minimum size=0.5em,inner sep=1pt] (p51) at ([xshift=6em,yshift=1.5em]sequence-labeler.north) {};
+\node [anchor=south,fill=cyan,circle,minimum size=0.5em,inner sep=1pt] (p52) at ([yshift=0.3em]p51.north) {};
+\node [anchor=south,fill= purple,circle,minimum size=0.5em,inner sep=1pt] (p53) at ([yshift=0.3em]p52.north) {};
+\node [draw,thin,inner sep=2pt,thick,rounded corners=2pt]  [fit = (p51) (p53)] (p5label) {};
+
+
+\draw [->,thick] ([yshift=1pt,xshift=-6em]sequence-labeler.north) -- ([yshift=-1pt]p1label.south);
+\draw [->,thick] ([yshift=1pt,xshift=-3em]sequence-labeler.north) -- ([yshift=-1pt]p2label.south);
+\draw [->,thick] ([yshift=1pt,xshift=-0em]sequence-labeler.north) -- ([yshift=-1pt]p3label.south);
+\draw [->,thick] ([yshift=1pt,xshift=+3em]sequence-labeler.north) -- ([yshift=-1pt]p4label.south);
+\draw [->,thick] ([yshift=1pt,xshift=+6em]sequence-labeler.north) -- ([yshift=-1pt]p5label.south);
+
+\begin{pgfonlayer}{background}
+\draw [->,very thick,dotted] ([xshift=-1em]p11.west) -- ([xshift=1em]p11.east) -- ([xshift=-1em]p22.west) -- ([xshift=1em]p22.east) -- ([xshift=-1em]p33.west) -- ([xshift=1em]p33.east) -- ([xshift=-1em]p41.west) -- ([xshift=1em]p41.east) -- ([xshift=-1em]p51.west) -- ([xshift=1.0em]p51.east);
+\end{pgfonlayer}
+
+\node [anchor=south] (prediction1) at ([yshift=0.0em]p1label.north) {\scriptsize{$\hat{l}_1=\textrm{\color{orange} B}$}};
+\node [anchor=south] (prediction2) at ([yshift=0.0em]p2label.north) {\scriptsize{$\hat{l}_2=\textrm{\color{cyan} I}$}};
+\node [anchor=south] (prediction3) at ([yshift=0.0em]p3label.north) {\scriptsize{$\hat{l}_3=\textrm{\color{purple} O}$}};
+\node [anchor=south] (prediction4) at ([yshift=0.0em]p4label.north) {\scriptsize{$\hat{l}_4=\textrm{\color{orange} B}$}};
+\node [anchor=south] (prediction5) at ([yshift=0.0em]p5label.north) {\scriptsize{$\hat{l}_5=\textrm{\color{orange} B}$}};
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% block of language modeling
+\begin{scope}[yshift=-\blockh]
+\node [anchor=north west] (label-language-modeling-null) at (0,0) {};
+\node [anchor=center] (label-language-modeling) at (0.5*\blockw,-0.9*\blockh) {(c) 语言建模};
+
+\node [anchor=center,minimum width=15.5em,minimum height=3em,draw=blue,very thick,align=center] (language-model) at (0.5*\blockw,-0.5*\blockh+0.7em) {语言模型\\$\Pr(w_i|w_1,...,w_{i-1})$};
+\node [anchor=north,wnode,draw=red] (input3) at ([yshift=-1.2em]language-model.south) {\footnotesize{$w_3$}};
+\node [anchor=north,wnode,draw=red] (input2) at ([yshift=-1.2em,xshift=-3em]language-model.south) {\footnotesize{$w_2$}};
+\node [anchor=north,wnode,draw=red] (input1) at ([yshift=-1.2em,xshift=-6em]language-model.south) {\footnotesize{$w_1$}};
+\node [anchor=north,wnode,draw=red] (input4) at ([yshift=-1.2em,xshift=+3em]language-model.south) {\footnotesize{$w_4$}};
+
+\draw [->,very thick] ([yshift=1pt]input1.north) -- ([xshift=-6em,yshift=-1pt]language-model.south);
+\draw [->,very thick] ([yshift=1pt]input2.north) -- ([xshift=-3em,yshift=-1pt]language-model.south);
+\draw [->,very thick] ([yshift=1pt]input3.north) -- ([xshift=-0em,yshift=-1pt]language-model.south);
+\draw [->,very thick] ([yshift=1pt]input4.north) -- ([xshift=3em,yshift=-1pt]language-model.south);
+
+\node [anchor=south,minimum width=1em,minimum height=0.5em,fill=kellygreen] (bar1) at ([xshift=6em,yshift=1.2em]language-model.north) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.4em,fill=kellygreen,inner sep=0pt] (bar2) at ([xshift=-1pt]bar1.south west) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.8em,fill=kellygreen,draw=ugreen,thick] (bar3) at ([xshift=-1pt]bar2.south west) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.7em,fill=kellygreen] (bar4) at ([xshift=-1pt]bar3.south west) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.3em,fill=kellygreen,inner sep=0pt] (bar5) at ([xshift=-1pt]bar4.south west) {};
+
+\draw [->,very thick] ([xshift=6em,yshift=1pt]language-model.north) -- ([yshift=-1pt]bar1.south);
+
+\node [anchor=south,wnode,draw=red] (predictionlabel) at ([xshift=-0em,yshift=1.3em]bar1.north) {\small{$w_5$}};
+\draw [<-] ([yshift=1pt]bar3.north) .. controls +(north:1.0em) and +(south:0.5em) .. ([yshift=-1pt]predictionlabel.south);
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% block of sequence generation
+\begin{scope}[yshift=-\blockh,xshift=\blockw]
+\node [anchor=north west] (label-sequence-generation-null) at (0,0) {};
+\node [anchor=center] (label-sequence-generation) at (0.5*\blockw,-0.9*\blockh) {(d) 序列生成（序列到序列）};
+
+\node [anchor=east,minimum width=7.2em,minimum height=3em,draw=blue,very thick,align=center] (encoder) at (0.5*\blockw-0.6em,-0.5*\blockh+0.7em) {编码器\\$\mathrm{Enc}(\mathbf{s})$};
+\node [anchor=west,minimum width=7.2em,minimum height=3em,draw=blue,very thick,align=center] (decoder) at (0.5*\blockw+0.6em,-0.5*\blockh+0.7em) {解码器\\\scriptsize{$\mathrm{Dec}(\mathrm{Enc},t_1...t_{i-1})$}};
+
+\node [anchor=north,wnode,draw=red] (source2) at ([yshift=-1.2em]encoder.south) {\footnotesize{$s_2$}};
+\node [anchor=north,wnode,draw=red] (source1) at ([yshift=-1.2em,xshift=-2.5em]encoder.south) {\footnotesize{$s_1$}};
+\node [anchor=north,wnode,draw=red] (source3) at ([yshift=-1.2em,xshift=+2.5em]encoder.south) {\footnotesize{$s_3$}};
+
+\draw [->,very thick] ([yshift=1pt]source1.north) -- ([xshift=-2.5em,yshift=-1pt]encoder.south);
+\draw [->,very thick] ([yshift=1pt]source2.north) -- ([xshift=+0.0em,yshift=-1pt]encoder.south);
+\draw [->,very thick] ([yshift=1pt]source3.north) -- ([xshift=+2.5em,yshift=-1pt]encoder.south);
+
+\draw [->,very thick] ([yshift=1pt]encoder.north) -- ([yshift=0.8em]encoder.north) -- ([yshift=0.8em,xshift=0.6em]encoder.north east) -- ([yshift=0em,xshift=0.6em]encoder.east) -- ([yshift=0em,xshift=-1pt]decoder.west);
+
+\node [anchor=north,wnode,draw=red] (target2) at ([yshift=-1.2em]decoder.south) {\footnotesize{$t_2$}};
+\node [anchor=north,wnode,draw=red] (target1) at ([yshift=-1.2em,xshift=-2.5em]decoder.south) {\footnotesize{$t_1$}};
+
+\draw [->,very thick] ([yshift=1pt]target1.north) -- ([xshift=-2.5em,yshift=-1pt]decoder.south);
+\draw [->,very thick] ([yshift=1pt]target2.north) -- ([xshift=+0.0em,yshift=-1pt]decoder.south);
+
+\node [anchor=south,minimum width=1em,minimum height=0.2em,fill=kellygreen,inner sep=0pt] (bar1) at ([xshift=2.5em,yshift=1.2em]decoder.north) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.4em,fill=kellygreen] (bar2) at ([xshift=-1pt]bar1.south west) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.8em,fill=kellygreen,draw=ugreen,thick] (bar3) at ([xshift=-1pt]bar2.south west) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.2em,fill=kellygreen,inner sep=0pt] (bar4) at ([xshift=-1pt]bar3.south west) {};
+\node [anchor=south east,minimum width=1em,minimum height=0.7em,fill=kellygreen,inner sep=0pt] (bar5) at ([xshift=-1pt]bar4.south west) {};
+
+\draw [->,very thick] ([xshift=2.5em,yshift=1pt]decoder.north) -- ([yshift=-1pt]bar1.south);
+
+\node [anchor=south,wnode,draw=red] (predictionlabel) at ([xshift=-0em,yshift=1.7em]bar1.north) {\small{$t_3$}};
+\draw [<-] ([yshift=1pt]bar3.north) .. controls +(north:1.0em) and +(south:0.5em) .. ([yshift=-1pt]predictionlabel.south);
+
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% block of tree generation
+\begin{scope}[yshift=-2*\blockh]
+\node [anchor=north west] (label-tree-generation-null) at (0,0) {};
+\node [anchor=center] (label-tree-generation) at (0.5*\blockw,-0.9*\blockh) {(e) 树生成（序列到树）};
+
+\node [anchor=east,minimum width=7.2em,minimum height=3em,draw=blue,very thick,align=center] (parser) at (0.5*\blockw-0.6em,-0.5*\blockh+0.7em) {句法分析器\\$\Pr(d|\mathbf{s})$};
+
+\draw [->,very thick] ([yshift=1pt]parser.north) -- ([yshift=0.8em]parser.north) -- ([yshift=0.8em,xshift=0.6em]parser.north east) -- ([yshift=0em,xshift=0.6em]parser.east) -- ([yshift=0em,xshift=1.5em]parser.east);
+
+\node [anchor=north,wnode,draw=red] (source2) at ([yshift=-1.2em]parser.south) {\footnotesize{$s_2$}};
+\node [anchor=north,wnode,draw=red] (source1) at ([yshift=-1.2em,xshift=-2.5em] parser.south) {\footnotesize{$s_1$}};
+\node [anchor=north,wnode,draw=red] (source3) at ([yshift=-1.2em,xshift=+2.5em] parser.south) {\footnotesize{$s_3$}};
+
+\draw [->,very thick] ([yshift=1pt]source1.north) -- ([xshift=-2.5em,yshift=-1pt] parser.south);
+\draw [->,very thick] ([yshift=1pt]source2.north) -- ([xshift=+0.0em,yshift=-1pt] parser.south);
+\draw [->,very thick] ([yshift=1pt]source3.north) -- ([xshift=+2.5em,yshift=-1pt] parser.south);
+
+\node [anchor=south west] (word1) at ([xshift=2em,yshift=-2em]parser.south east) {\scriptsize{$s_1$}};
+\node [anchor=south west] (word2) at ([xshift=1em]word1.south east) {\scriptsize{$s_2$}};
+\node [anchor=south west] (word3) at ([xshift=1em]word2.south east) {\scriptsize{$s_3$}};
+
+\node [anchor=south,fill=orange!30,rounded corners=2pt] (POS1) at ([yshift=0.8em]word1.north) {\scriptsize{NNS}};
+\node [anchor=south,fill=orange!30,rounded corners=2pt] (POS2) at ([yshift=0.8em]word2.north) {\scriptsize{VBD}};
+\node [anchor=south,fill=orange!30,rounded corners=2pt] (POS3) at ([yshift=0.8em]word3.north) {\scriptsize{NN}};
+
+\node [anchor=south,fill=orange!30,rounded corners=2pt] (treenode1) at ([yshift=0.8em]POS1.north) {\scriptsize{NP}};
+\node [anchor=south,fill=orange!30,rounded corners=2pt] (treenode2) at ([yshift=0.8em]POS2.north east) {\scriptsize{VP}};
+\node [anchor=south,fill=orange!30,rounded corners=2pt] (treenode3) at ([yshift=0.8em,xshift=-1em]treenode2.north west) {\scriptsize{S}};
+
+\draw [-] ([yshift=1pt]word1.north) -- ([yshift=-1pt]POS1.south);
+\draw [-] ([yshift=1pt]word2.north) -- ([yshift=-1pt]POS2.south);
+\draw [-] ([yshift=1pt]word3.north) -- ([yshift=-1pt]POS3.south);
+\draw [-] ([yshift=1pt]POS1.north) -- ([yshift=-1pt]treenode1.south);
+\draw [-] ([yshift=1pt]POS2.north) -- ([xshift=-0.3em,yshift=-1pt]treenode2.south);
+\draw [-] ([yshift=1pt]POS3.north) -- ([xshift=+0.3em,yshift=-1pt]treenode2.south);
+\draw [-] ([yshift=1pt]treenode1.north) -- ([xshift=-0.3em,yshift=-1pt]treenode3.south);
+\draw [-] ([yshift=1pt]treenode2.north) -- ([xshift=+0.3em,yshift=-1pt]treenode3.south);
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% block of relevance modeling
+\begin{scope}[yshift=-2*\blockh,xshift=\blockw]
+\node [anchor=north west] (label-relevance-modeling-null) at (0,0) {};
+\node [anchor=center] (label-relevance-modeling) at (0.5*\blockw,-0.9*\blockh) {(f) 相关性建模};
+
+\node [anchor=east,minimum width=6em,minimum height=1.5em,draw=blue,very thick,align=center] (queryfunction) at (0.5*\blockw-0.6em,-0.5*\blockh-0.3em) {\footnotesize{$\mathbf{q} = Q(\text{查询})$}};
+\node [anchor=west,minimum width=6em,minimum height=1.5em,draw=blue,very thick,align=center] (keyfunction) at (0.5*\blockw+0.6em,-0.5*\blockh-0.3em) {\footnotesize{$\mathbf{k} = K(\text{键})$}};
+
+\node [anchor=north,wnode,minimum width=4em,draw=red] (query) at ([yshift=-1.2em]queryfunction.south) {\footnotesize{查询}};
+\node [anchor=north,wnode,minimum width=4em,draw=red] (key) at ([yshift=-1.2em]keyfunction.south) {\footnotesize{键}};
+
+\node [anchor=south west, minimum width=13.3em,minimum height=1.5em,draw=blue,very thick,align=center] (simfunction) at ([yshift=1.2em]queryfunction.north west) {\small{相似度函数 $f(\mathbf{q},\mathbf{k})$} };
+
+\draw [->,very thick] ([yshift=1pt]query.north) -- ([yshift=-1pt]queryfunction.south);
+\draw [->,very thick] ([yshift=1pt]key.north) -- ([yshift=-1pt]keyfunction.south);
+\draw [->,very thick] ([yshift=1pt]queryfunction.north) -- ([yshift=1.2em-1pt]queryfunction.north);
+\draw [->,very thick] ([yshift=1pt]keyfunction.north) -- ([yshift=1.2em-1pt]keyfunction.north);
+
+\node [fill=kellygreen,minimum width=3em] (simresult) at ([yshift=1.6em]simfunction.north) {{\color{white} 0.82}};
+\draw [->,very thick] ([yshift=1pt]simfunction.north) -- ([yshift=-1pt]simresult.south);
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% block of alignment
+\begin{scope}[yshift=-3*\blockh]
+\node [anchor=north west] (label-alignment-null) at (0,0) {};
+\node [anchor=center] (label-alignment) at (0.5*\blockw,-0.9*\blockh) {(g) 语言对齐};
+
+\node [anchor=east,minimum width=7.2em,minimum height=3em,draw=blue,very thick,align=center] (aligner) at (0.5*\blockw-0.6em,-0.5*\blockh+0.7em) {对齐器\\$a(\mathbf{s},\mathbf{t})$};
+
+\node [anchor=north,wnode,draw=red] (source2) at ([yshift=-1.2em]aligner.south) {\footnotesize{$s_2$}};
+\node [anchor=north,wnode,draw=red] (source1) at ([yshift=-1.2em,xshift=-2.5em] aligner.south) {\footnotesize{$s_1$}};
+\node [anchor=north,wnode,draw=red] (source3) at ([yshift=-1.2em,xshift=+2.5em] aligner.south) {\footnotesize{$s_3$}};
+
+\draw [->,very thick] ([yshift=1pt]source1.north) -- ([xshift=-2.5em,yshift=-1pt] aligner.south);
+\draw [->,very thick] ([yshift=1pt]source2.north) -- ([xshift=+0.0em,yshift=-1pt] aligner.south);
+\draw [->,very thick] ([yshift=1pt]source3.north) -- ([xshift=+2.5em,yshift=-1pt] aligner.south);
+
+\node [anchor=south,wnode,draw=red] (target2) at ([yshift=1.2em]aligner.north) {\footnotesize{$t_2$}};
+\node [anchor=south,wnode,draw=red] (target1) at ([yshift=1.2em,xshift=-2.5em] aligner.north) {\footnotesize{$t_1$}};
+\node [anchor=south,wnode,draw=red] (target3) at ([yshift=1.2em,xshift=+2.5em] aligner.north) {\footnotesize{$t_3$}};
+
+\draw [->,very thick] ([yshift=-1pt]target1.south) -- ([xshift=-2.5em,yshift=1pt] aligner.north);
+\draw [->,very thick] ([yshift=-1pt]target2.south) -- ([xshift=+0.0em,yshift=1pt] aligner.north);
+\draw [->,very thick] ([yshift=-1pt]target3.south) -- ([xshift=+2.5em,yshift=1pt] aligner.north);
+
+\draw [->,very thick] ([xshift=1pt]aligner.east) -- ([xshift=1.6em]aligner.east);
+
+\node [anchor=south west,fill=kellygreen,inner sep=0pt,minimum size=0.7em] (node11) at ([xshift=2.2em]aligner.south east) {};
+\node [anchor=center,fill=kellygreen,inner sep=0pt,minimum size=0.7em] (node12) at ([xshift=1.5em]node11.center) {\tiny{\color{white} .7}};
+\node [anchor=center,fill=kellygreen,inner sep=0pt,minimum size=0.4em] (node13) at ([xshift=1.5em]node12.center) {};
+\node [anchor=center,fill=kellygreen,inner sep=0pt,minimum size=1.0em] (node21) at ([yshift=1.5em]node11.center) {\tiny{\color{white} 1}};
+\node [anchor=center,fill=kellygreen,inner sep=0pt,minimum size=0.4em] (node22) at ([xshift=1.5em]node21.center) {};
+\node [anchor=center,fill=kellygreen,inner sep=0pt,minimum size=0.6em] (node23) at ([xshift=1.5em]node22.center) {\tiny{\color{white} .6}};
+\node [anchor=center,fill=kellygreen,inner sep=0pt,minimum size=0.3em] (node31) at ([yshift=1.5em]node21.center) {};
+\node [anchor=center,fill=kellygreen,inner sep=0pt,minimum size=0.5em] (node32) at ([xshift=1.5em]node31.center) {};
+\node [anchor=center,fill=kellygreen,inner sep=0pt,minimum size=0.8em] (node33) at ([xshift=1.5em]node32.center) {\tiny{\color{white} .8}};
+
+\node [anchor=south] (tm1) at ([yshift=0.6em]node31.center) {\scriptsize{$t_1$}};
+\node [anchor=south] (tm2) at ([yshift=0.6em]node32.center) {\scriptsize{$t_2$}};
+\node [anchor=south] (tm3) at ([yshift=0.6em]node33.center) {\scriptsize{$t_3$}};
+\node [anchor=west] (sm1) at ([xshift=0.6em]node33.center) {\scriptsize{$s_1$}};
+\node [anchor=west] (sm2) at ([xshift=0.6em]node23.center) {\scriptsize{$s_2$}};
+\node [anchor=west] (sm3) at ([xshift=0.6em]node13.center) {\scriptsize{$s_3$}};
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% block of extraction
+\begin{scope}[yshift=-3*\blockh,xshift=\blockw]
+\node [anchor=north west] (label-extraction-null) at (0,0) {};
+\node [anchor=center] (label-extraction) at (0.5*\blockw,-0.9*\blockh) {(h) 信息抽取};
+
+\node [anchor=center,minimum width=15.5em,minimum height=3em,draw=blue,very thick,align=center] (extractor) at (0.5*\blockw,-0.5*\blockh+0.7em) {抽取器\\\scriptsize{抽取所需内容，例如一个片段}};
+\node [anchor=north,wnode,draw=red] (input3) at ([yshift=-1.2em]extractor.south) {\footnotesize{$s_3$}};
+\node [anchor=north,wnode,draw=red] (input2) at ([yshift=-1.2em,xshift=-3em] extractor.south) {\footnotesize{$s_2$}};
+\node [anchor=north,wnode,draw=red] (input1) at ([yshift=-1.2em,xshift=-6em] extractor.south) {\footnotesize{$s_1$}};
+\node [anchor=north,wnode,draw=red] (input4) at ([yshift=-1.2em,xshift=3em] extractor.south) {\footnotesize{$s_4$}};
+\node [anchor=north,wnode,draw=red] (input5) at ([yshift=-1.2em,xshift=6em] extractor.south) {\footnotesize{$s_5$}};
+
+\draw [->,very thick] ([yshift=1pt]input1.north) -- ([xshift=-6em,yshift=-1pt] extractor.south);
+\draw [->,very thick] ([yshift=1pt]input2.north) -- ([xshift=-3em,yshift=-1pt] extractor.south);
+\draw [->,very thick] ([yshift=1pt]input3.north) -- ([xshift=-0em,yshift=-1pt] extractor.south);
+\draw [->,very thick] ([yshift=1pt]input4.north) -- ([xshift=3em,yshift=-1pt] extractor.south);
+\draw [->,very thick] ([yshift=1pt]input5.north) -- ([xshift=6em,yshift=-1pt] extractor.south);
+
+\node [anchor=south,fill=kellygreen] (spanlabel) at ([yshift=1.2em]extractor.north) {\small{\color{white} $\text{片段}=[2,4]$}};
+
+\draw [->,very thick] ([yshift=1pt]extractor.north) -- ([yshift=-1pt]spanlabel.south);
+
+\node [draw,dotted,inner sep=3pt,very thick,ugreen,rounded corners=2pt]  [fit = (input2) (input4)] (extractedspan) {};
+
+\end{scope}
+
+\end{tikzpicture}
+
+\end{center}
+

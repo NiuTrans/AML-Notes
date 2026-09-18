@@ -13,7 +13,7 @@
 提示通常通过提示模板（简称模板）\cite{liu-etal:2023pre}获得。模板是一段含有占位符或变量的文本，各占位符可填入具体信息。以下展示两个向LLM征求周末建议的模板示例：
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame empty]
+\begin{tcolorbox}[frame hidden]
 
 \hspace{2em} 请给我一些有趣的周末建议。
 
@@ -22,7 +22,7 @@
 \vspace{0.5em}
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame empty]
+\begin{tcolorbox}[frame hidden]
 
 \hspace{2em} 如果 $\{*\mathrm{premise}*\}$，你有什么有趣的周末建议吗？
 
@@ -37,7 +37,7 @@
 则可生成如下提示：
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame empty]
+\begin{tcolorbox}[frame hidden]
 
 \hspace{2em} 如果这个周末天气很好，
 
@@ -50,7 +50,7 @@
 除了自由格式的文本，另一种常见做法是采用“名称: 内容”的结构组织提示，明确标识问题与答案的位置。例如，用“问”和“答”分别表示问题与答案，可构建如下问答模板：
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame empty]
+\begin{tcolorbox}[frame hidden]
 
 \hspace{2em} 问：$\{*\mathrm{question}*\}$
 
@@ -64,7 +64,7 @@
 除了直接描述任务，许多提示还会包含一段系统信息（system message），用于设定模型的角色、能力与行为约束。系统信息帮助LLM更好地理解当前任务的背景，从而生成更符合预期的回复。以下是一个语法纠错任务的提示，其中第一条语句便是系统信息：
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame empty]
+\begin{tcolorbox}[frame hidden]
 
 \begingroup
 \renewcommand{\arraystretch}{1.0}
@@ -89,7 +89,7 @@
 我们可以通过对比零样本学习、单样本学习和少样本学习来具体说明上下文学习。在上一节中，我们已经看到了一个语法纠错的零样本学习示例——它直接要求模型纠正句子，不提供任何示例。在单样本学习中，我们添加一个已完成的纠错示例作为演示，让LLM从这个新增的经验中学习：
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame empty]
+\begin{tcolorbox}[frame hidden]
 
 \begingroup
 \renewcommand{\arraystretch}{1.0}
@@ -111,7 +111,7 @@
 在此基础上增加更多演示，便构成少样本学习：
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame empty]
+\begin{tcolorbox}[frame hidden]
 
 \begingroup
 \renewcommand{\arraystretch}{1.0}
@@ -150,7 +150,7 @@
 \item \vspace{0.5em} \textbf{尽可能清晰地描述任务}。当我们应用LLM解决问题时，我们需要提供对问题的精确、具体、清晰的描述，并指示LLM按照我们的期望执行。当我们希望LLM的输出满足某些期望时，这一点尤其重要。例如，假设我们对气候变化感到好奇。一个要求LLM提供一些信息的简单提示是
 
     \vspace{0.5em}
-    \begin{tcolorbox}[frame empty]
+    \begin{tcolorbox}[frame hidden]
 
     \hspace{2em} 告诉我关于气候变化的信息。
 
@@ -162,7 +162,7 @@
     由于这个指令太过笼统，LLM可能会生成一个涉及气候变化任何方面的回应，而这可能与我们的特定兴趣不符。在这种情况下，我们可以使用更具体、更详细的提示。现在，假设我们打算向一个10岁的孩子解释气候变化。一个这样的例子是
 
     \vspace{0.5em}
-    \begin{tcolorbox}[frame empty]
+    \begin{tcolorbox}[frame hidden]
 
     \begingroup
     \setlength{\leftskip}{2em}
@@ -180,7 +180,7 @@
 \item \vspace{0.3em} \textbf{引导LLM思考}。LLM已经展现出了惊人的“思考”能力。一个常见的例子是，发展成熟的LLM在被认为极具挑战性的数学推理任务中取得了令人印象深刻的表现。在提示工程中，LLM的“思考”能力需要通过适当的提示来激活，特别是对于那些需要大量推理的问题。在许多情况下，被指示“思考”的LLM与被指示直接执行任务的同一个LLM相比，可以产生完全不同的结果。例如，\citet{kojima-etal:2022large}发现，仅仅在每个提示的末尾附加“Let's think step by step”就可以提高LLM在多个推理任务上的性能。有多种方法可以提示LLM进行“思考”。一种方法是指示LLM在得出最终答案之前，生成推理问题的步骤。例如，考虑一个解决数学问题的任务。下面是该任务的一个简单提示。
 
     \vspace{0.5em}
-    \begin{tcolorbox}[frame empty]
+    \begin{tcolorbox}[frame hidden]
 
     \begingroup
     \setlength{\leftskip}{2em}
@@ -198,7 +198,7 @@
     由于解决数学问题需要详细的推理过程，如果LLM试图直接得出答案，很可能会犯错。因此，我们可以明确要求LLM在得出结论之前遵循给定的推理过程。
 
     \vspace{0.5em}
-    \begin{tcolorbox}[frame empty]
+    \begin{tcolorbox}[frame hidden]
 
     \begingroup
     \setlength{\leftskip}{2em}
@@ -252,7 +252,7 @@
 \item \vspace{0.3em} \textbf{提供参考信息}。如前一节所述，我们可以在提示中包含示例，让LLM通过这些示例进行情境学习，从而了解如何执行任务。事实上，鉴于LLM卓越的语言理解能力，我们可以在提示中加入任何类型的文本，这样模型就可以基于更丰富的上下文进行预测。在许多应用中，我们拥有与用户查询相关的各种信息。我们通常不希望LLM进行无约束的预测，而是希望LLM生成的输出局限于相关文本。一个这样的例子是RAG，其中用户查询的相关文本是通过调用IR系统提供的，然后我们提示LLM基于这些提供的相关文本生成回应。下面的提示展示了一个例子。
 
     \vspace{0.5em}
-    \begin{tcolorbox}[frame empty]
+    \begin{tcolorbox}[frame hidden]
 
     \begingroup
     \setlength{\leftskip}{2em}
@@ -283,31 +283,30 @@
 \vspace{0.5em}
 
 上面，我们只讨论了几种编写好提示的策略。此外，提示的呈现格式（如使用字段、引号或代码风格）也对结果有显著影响，这些细节需要在实践中不断体会。当然，还有很多这样的方法，需要通过实践来形成自己的方法。感兴趣的读者可以参考各种在线文档以获取更多信息，例如OpenAI关于GPT系列模型的手册\footnote{参见 \url{https://platform.openai.com/docs/guides/prompt-engineering/six-strategies-for-getting-better-results}。}。
-
 \subsubsection{思维链}
 \label{sec:chain-of-thought}
 
-\noindent 思维链（\mindex{CoT}）使 LLM 能够针对复杂问题生成逐步的推理过程，从而以更接近人类认知的方式处理任务。与直接输出结论不同，CoT 要求 LLM 自行产生推理步骤，或从提示中给出的详尽推理演示中学习。为具体说明 CoT，不妨考虑文献中常用的一类代数计算问题。设问题为：
+\noindent 思维链（CoT）使 LLM 能够针对复杂问题生成逐步的推理过程，从而以更接近人类认知的方式处理任务。与直接输出结论不同，CoT 要求 LLM 自行产生推理步骤，或从提示中给出的详尽推理演示中学习。为具体说明 CoT，不妨考虑文献中常用的一类代数计算问题。设问题为：
 
 \vspace{0.8em}
 
-\hspace{5em} \textit{计算数字 2、4 和 6 的平均值。}
+\hspace{5em} 计算数字 2、4 和 9 的平均值。
 
 \vspace{0.8em}
 
 \noindent 可直接将该问题作为输入，提示 LLM 作答。
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame style={draw=none}]
+\begin{tcolorbox}[frame hidden]
 \begingroup
 \setlength{\leftskip}{2em}
 \setlength{\rightskip}{2em}
 
-Q: Please calculate the average of the numbers $2$, $4$, and $9$.
+问：请计算数字 $2$、$4$ 和 $9$ 的平均值。
 
 \vspace{0.3em}
 
-A: \underline{The answer is $6$.}
+答：\underline{答案是 $6$。}
 
 \endgroup
 \end{tcolorbox}
@@ -316,24 +315,24 @@ A: \underline{The answer is $6$.}
 此时 LLM 通常难以直接给出正确结果。一种简单的改进措施是在提示中加入同类问题的问答示例，使 LLM 从中获得参照。
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame style={draw=none}]
+\begin{tcolorbox}[frame hidden]
 \begingroup
 \setlength{\leftskip}{2em}
 \setlength{\rightskip}{2em}
 
-Q: Please calculate the average of the numbers $1$, $3$, $5$, and $7$.
+问：请计算数字 $1$、$3$、$5$ 和 $7$ 的平均值。
 
 \vspace{0.3em}
 
-A: The answer is $4$.
+答：答案是 $4$。
 
 \vspace{0.7em}
 
-Q: Please calculate the average of the numbers $2$, $4$, and $9$.
+问：请计算数字 $2$、$4$ 和 $9$ 的平均值。
 
 \vspace{0.3em}
 
-A: \underline{The answer is $7$.}
+答：\underline{答案是 $7$。}
 
 \endgroup
 \end{tcolorbox}
@@ -342,26 +341,25 @@ A: \underline{The answer is $7$.}
 然而，仅提供问答对仍不足以使 LLM 掌握正确的推理方式。CoT 方法的核心理念在于，LLM 不仅学习问题和答案之间的映射关系，还能从推导答案所涉及的详细步骤中获益。为此，可在提示中加入若干推理步骤，构造 CoT 风格的提示。
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame style={draw=none}]
+\begin{tcolorbox}[frame hidden]
 \begingroup
 \setlength{\leftskip}{2em}
 \setlength{\rightskip}{2em}
 
-Q: Please calculate the mean square of the numbers 1, 3, 5, and 7.
+问：请计算数字 $1$、$3$、$5$ 和 $7$ 的平方的平均值。
 
 \vspace{0.3em}
 
-A: \textcolor[RGB]{154,245,175}{Calculate the square of each number: $1^2 = 1$, $3^2=9$, $5^2=25$, and $7^2=49$. Sum the squares, $1+9+25+49=84$. There are $4$ numbers in total. Divide the sum by the number of items, $84 / 4 = 21$.} The answer is $21$.
+答：\textcolor[RGB]{46,125,50}{计算每个数字的平方：$1^2 = 1$，$3^2=9$，$5^2=25$，$7^2=49$。对平方求和，$1+9+25+49=84$。总共有 $4$ 个数字。将总和除以数字个数，$84 / 4 = 21$。} 答案是 $21$。
 
 \vspace{0.7em}
 
-Q: Please calculate the average of the numbers $2$, $4$, and $9$.
+问：请计算数字 $2$、$4$ 和 $9$ 的平均值。
 
 \vspace{0.3em}
 
-A: \underline{\textcolor[RGB]{154,245,175}{Calculate $2 + 4 + 9$, which equals $15$. There are three numbers. Divide the}}
-
-\underline{\textcolor[RGB]{154,245,175}{total sum by the count, resulting in $15/3=5$.} The answer is $5$.}
+答：\underline{\textcolor[RGB]{46,125,50}{计算 $2 + 4 + 9$，结果为 $15$。共有三个数字。将}}
+\underline{\textcolor[RGB]{46,125,50}{总和除以个数，得到 $15/3=5$。} 答案是 $5$。}
 
 \endgroup
 \end{tcolorbox}
@@ -378,20 +376,25 @@ CoT 提示在实际应用中表现出若干优势。其一，CoT 将复杂问题
 上述方法需要提供一个或多个包含推理步骤的示例，通常称为少样本 CoT。与之相对，零样本 CoT 无需提供示例，而是通过在提示中加入特定指令，要求 LLM 执行逐步推理。例如，下面给出一个零样本 CoT 提示的实例。
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame style={draw=none}]
+\begin{tcolorbox}[frame hidden]
 \begingroup
 \setlength{\leftskip}{2em}
 \setlength{\rightskip}{2em}
 
-Q: Please calculate the average of the numbers $2$, $4$, and $9$.
+问：请计算数字 $2$、$4$ 和 $9$ 的平均值。
 
 \vspace{0.3em}
 
-A: \textcolor[RGB]{154,245,175}{Let's think step-by-step.}
+答：\textcolor[RGB]{46,125,50}{让我们一步一步思考。}
 
 \vspace{0.3em}
 
-\uline{We have three numbers: $2$, $4$, and $9$. Add these numbers together, $2+4+9=15$. Determine how many numbers there are, which in this case is three. The average is calculated by dividing the total sum by the number of elements. Completing the division gives $15/3 = 5$. So the answer is $5$.}
+\parbox{\linewidth}{%
+\uline{
+我们有三个数字：$2$、$4$ 和 $9$。将这些数字相加，$2+4+9=15$。确定有多少 \\
+个数字，此处为三个。平均值通过将总和除以元素个数来计算。完成除法得\\ 
+到$15/3 = 5$。所以答案是 $5$。}%
+}
 
 \endgroup
 \end{tcolorbox}
@@ -400,7 +403,6 @@ A: \textcolor[RGB]{154,245,175}{Let's think step-by-step.}
 在“让我们一步一步思考”这一指令的引导下，LLM 被要求生成详细的推理步骤。\citet{kojima-etal:2022large} 的研究指出，此类指令有时会使 LLM 只输出推理过程而不给出最终结论。此时，可通过第二轮提示将第一轮的输入和输出结合，再交由 LLM 继续生成，从而提取出正确答案。此外，除“一步一步思考”外，其他类似指令（如“请先展示思考过程”或“让我们有逻辑地分析”）同样可用于引导推理。
 
 在结束本节之前，有必要审视 CoT 在实际应用中面临的若干局限。其一，少样本 CoT 依赖高质量的多步推理示例，而这些示例的获取（无论是自动还是手动）均存在一定难度。其二，缺乏将复杂问题分解为适当子步骤的标准方法论，这在很大程度上依赖于使用者的经验。其三，中间步骤的累积错误可能对最终结论的准确性产生不利影响。关于 CoT 优缺点更为全面的讨论，可参考近年来的综述文献 \cite{chu-etal:2023survey,yu-etal:2023towards,zhang-etal:2023igniting}。
-
 \subsection{学习提示}
 \label{sec:learning-prompts}
 
@@ -416,7 +418,7 @@ A: \textcolor[RGB]{154,245,175}{Let's think step-by-step.}
 \subsubsection{提示优化}
 \label{sec:prompt-optimization}
 
-\noindent 自动提示优化的目标是用算法发现针对特定任务的最优离散提示，这可以视为\mindex{自动机器学习} (AutoML) 的一种实例，与\mindex{神经架构搜索} (NAS) 的思路颇为相似。一个通用的提示优化框架通常包含三个关键组件：
+\noindent 自动提示优化的目标是用算法发现针对特定任务的最优离散提示，这可以视为\mindex{自动机器学习} (AutoML) 的一种实例，与\mindex{神经架构搜索} (Neural Architecture Search, NAS) 的思路颇为相似。一个通用的提示优化框架通常包含三个关键组件：
 
 \begin{itemize}
 \item \textbf{提示搜索空间}。定义所有可供探索的提示。例如，可以围绕若干种子提示，通过编辑、扩展等方式生成多样化的候选。
@@ -443,7 +445,7 @@ A: \textcolor[RGB]{154,245,175}{Let's think step-by-step.}
 \noindent 自然语言提示（即硬提示）虽然直观，但往往冗长且计算开销大，反复输入相同长提示更是低效。注意到硬提示作为离散 token 序列，实际上会被大语言模型编码为连续向量，这引出一个自然的问题：能否直接使用这些连续表示作为更紧凑的提示？为此，我们引入 \mindex{软提示}（soft prompt）的概念，视其为提示的隐藏、分布式表示。与人类可读的硬提示不同，软提示是模型内部的、可适应的隐式模式，以实值向量形式存在，更便于模型处理。
 
 \vspace{0.5em}
-\begin{tcolorbox}[frame style={draw=none}]
+\begin{tcolorbox}[frame hidden]
 \begingroup
 \setlength{\leftskip}{2em}
 \setlength{\rightskip}{2em}

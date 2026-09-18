@@ -1,67 +1,66 @@
-
 \begin{tikzpicture}
 
-\pgfmathsetseed{765}
-
-\begin{scope}
-\begin{axis}[
-width=7.2cm, height=6cm,
-ytick={2.4,3.2,...,5.6},
-yticklabels={$2.4$, $3.2$, $4.0$, $4.8$, $5.6$},
-xtick={100000,10000000,1000000000},
-xlabel={Number of Parameters},
-ylabel={Test Loss},
-xlabel style={align=center},
-ylabel style={yshift=-0.8em},
-x tick label style={font=\footnotesize},
-y tick label style={font=\footnotesize},
-tick align=outside,
-tickpos=left,
-major tick length=0.05cm,
-xmode=log,
-ymode=log,
-legend style={font=\scriptsize,draw=gray!20,rounded corners=2pt},
-xmin=6000,
-xmax=3000000000,
-ymin=2.2,
-ymax=6.4]
-\addplot [sharp plot,very thick,gray, domain=10000:1200000000] {(x/(8.8*10^13))^-0.076};
-\legend{$\mathcal{L}(N)=(\frac{N}{8.8\cdot10^{13}})^{-0.076}$}
-
-\addplot [sharp plot,blue,mark=*,mark size=1pt, samples=12, domain=10000:1500000000] {((x)/(8.8*10^13))^-0.076 + rand*0.1};
-\end{axis}
-\end{scope}
-
-\pgfmathsetseed{265}
-
-\begin{scope}[xshift=2.8in]
-\begin{axis}[
-width=7.2cm, height=6cm,
-ytick={2.7,3.0,...,4.2},
-xtick={100000000,1000000000},
-xlabel={Dataset Size},
-ylabel={Test Loss},
-xlabel style={align=center},
-ylabel style={yshift=-0.8em},
-x tick label style={font=\footnotesize},
-y tick label style={font=\footnotesize},
-log identify minor tick positions=false,
-tick align=outside,
-tickpos=left,
-major tick length=0.05cm,
-xmode=log,
-legend style={font=\scriptsize,draw=gray!20,rounded corners=2pt},
-xmin=10000000,
-xmax=2000000000,
-ymin=2.6,
-ymax=4.3]
-\addplot [sharp plot,very thick,gray, domain=15000000:1500000000] {(x/(5.4*10^13))^-0.095};
-\legend{$\mathcal{L}(D)=(\frac{D}{5.4\cdot10^{13}})^{-0.095}$}
-
-\addplot [sharp plot,blue,mark=*,mark size=1pt, samples=7, domain=15000000:1500000000] {(x/(5.4*10^13))^-0.095 + rand*0.04};
-
-\end{axis}
-\node[anchor=north,fill=white,minimum width=5em,inner sep=0pt,minimum height=0.3em] (mask) at (10em,-0.02em) {};
-\end{scope}
-
-\end{tikzpicture}
+    \pgfmathsetseed{765}
+    
+    \begin{scope}
+    \begin{axis}[
+    width=7.2cm, height=6cm,
+    ytick={2.4,3.2,...,5.6},
+    yticklabels={$2.4$, $3.2$, $4.0$, $4.8$, $5.6$},
+    xtick={100000,10000000,1000000000},
+    xlabel={参数量},
+    ylabel={测试损失},
+    xlabel style={align=center},
+    ylabel style={yshift=-0.8em},
+    x tick label style={font=\footnotesize},
+    y tick label style={font=\footnotesize},
+    tick align=outside,
+    tickpos=left,
+    major tick length=0.05cm,
+    xmode=log,
+    ymode=log,
+    legend style={font=\scriptsize,draw=gray!20,rounded corners=2pt},
+    xmin=6000,
+    xmax=3000000000,
+    ymin=2.2,
+    ymax=6.4]
+    \addplot [sharp plot,very thick,gray, domain=10000:1200000000] {(x/(8.8*10^13))^-0.076};
+    \legend{$\mathcal{L}(N)=(\frac{N}{8.8\cdot10^{13}})^{-0.076}$}
+    
+    \addplot [sharp plot,blue,mark=*,mark size=1pt, samples=12, domain=10000:1500000000] {((x)/(8.8*10^13))^-0.076 + rand*0.1};
+    \end{axis}
+    \end{scope}
+    
+    \pgfmathsetseed{265}
+    
+    \begin{scope}[xshift=2.8in]
+    \begin{axis}[
+    width=7.2cm, height=6cm,
+    ytick={2.7,3.0,...,4.2},
+    xtick={100000000,1000000000},
+    xlabel={数据集规模},
+    ylabel={测试损失},
+    xlabel style={align=center},
+    ylabel style={yshift=-0.8em},
+    x tick label style={font=\footnotesize},
+    y tick label style={font=\footnotesize},
+    log identify minor tick positions=false,
+    tick align=outside,
+    tickpos=left,
+    major tick length=0.05cm,
+    xmode=log,
+    legend style={font=\scriptsize,draw=gray!20,rounded corners=2pt},
+    xmin=10000000,
+    xmax=2000000000,
+    ymin=2.6,
+    ymax=4.3]
+    \addplot [sharp plot,very thick,gray, domain=15000000:1500000000] {(x/(5.4*10^13))^-0.095};
+    \legend{$\mathcal{L}(D)=(\frac{D}{5.4\cdot10^{13}})^{-0.095}$}
+    
+    \addplot [sharp plot,blue,mark=*,mark size=1pt, samples=7, domain=15000000:1500000000] {(x/(5.4*10^13))^-0.095 + rand*0.04};
+    
+    \end{axis}
+    \node[anchor=north,fill=white,minimum width=5em,inner sep=0pt,minimum height=0.3em] (mask) at (10em,-0.02em) {};
+    \end{scope}
+    
+    \end{tikzpicture}

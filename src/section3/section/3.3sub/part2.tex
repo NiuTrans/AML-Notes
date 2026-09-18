@@ -246,14 +246,14 @@ Text: Congratulations! You've won a \$500 gift card... & \\
 
 \noindent 我们的目标是最大化在给定输入下生成正确输出的条件概率。沿用概述部分的记号，令 $\hat{\theta}$ 为预训练得到的参数，则微调后的最优参数 $\tilde{\theta}$ 由下式给出（为书写简洁，后文将用 $\theta$ 表示从 $\hat{\theta}$ 开始调整后的参数）：
 \begin{eqnarray}
-\tilde{\theta} = \argmax_{\theta} \sum_{(\mathbf{x},\mathbf{y}) \in \mathcal{D}} \log \mathrm{Pr}_{\theta}(\mathbf{y}|\mathbf{x})
+\tilde{\theta} = \argmax_{\theta} \sum_{(\mathbf{x},\mathbf{y}) \in \mathcal{D}} \log \Pr_{\theta}(\mathbf{y}|\mathbf{x})
 \label{eq:sft-objective}
 \end{eqnarray}
-其中 $\log \mathrm{Pr}_{\theta}(\mathbf{y}|\mathbf{x}) = \sum_{i=1}^{n} \log \mathrm{Pr}_{\theta}(y_i|\mathbf{x},\mathbf{y}_{<i})$，即只对输出部分的 token 计算交叉熵损失。
+其中 $\log \Pr_{\theta}(\mathbf{y}|\mathbf{x}) = \sum_{i=1}^{n} \log \Pr_{\theta}(y_i|\mathbf{x},\mathbf{y}_{<i})$，即只对输出部分的 token 计算交叉熵损失。
 
 与标准语言模型训练不同，这里我们不关心输入序列 $\mathbf{x}$ 自身的生成概率。在实际实现中，通常将 $[\mathbf{x}, \mathbf{y}]$ 拼接为一个完整序列进行前向传播，而在反向传播时强行将输入部分的损失设为 $0$，仅保留输出部分的梯度。这一过程可以借助链式法则清晰地表达为
 \begin{eqnarray}
-\log \mathrm{Pr}_{\theta}(\mathbf{x},\mathbf{y}) &=& \underbrace{\log \mathrm{Pr}_{\theta}(\mathbf{x})}_{\text{设为 } 0} + \underbrace{\log \mathrm{Pr}_{\theta}(\mathbf{y}|\mathbf{x})}_{\text{实际计算损失}}
+\log \Pr_{\theta}(\mathbf{x},\mathbf{y}) &=& \underbrace{\log \Pr_{\theta}(\mathbf{x})}_{\text{设为 } 0} + \underbrace{\log \Pr_{\theta}(\mathbf{y}|\mathbf{x})}_{\text{实际计算损失}}
 \label{eq:sft-chain}
 \end{eqnarray}
 图\ref{fig:sft-forward-backward} 给出了这种“前向计算全序列，反向仅传播输出部分”的训练方式示意图。由此可见，SFT 本质上就是一种修改了损失掩码的标准语言模型训练。
@@ -269,20 +269,20 @@ Text: Congratulations! You've won a \$500 gift card... & \\
 \noindent\textbf{扩展到多轮对话。}
 上述单轮预测假定每次交互相互独立，但在聊天机器人等真实应用中，往往需要进行多轮对话。假设一段对话包含 $K$ 轮，每轮依次为用户输入 $\mathbf{x}^k$ 和助手回复 $\mathbf{y}^k$，整体构成序列 $\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{x}^K,\mathbf{y}^K$。我们希望模型在每一轮都能基于已有的对话历史生成恰当的回复，即最大化
 \begin{eqnarray}
-\tilde{\theta} = \argmax_{\theta} \sum_{k=1}^{K} \log \mathrm{Pr}_{\theta}(\mathbf{y}^k|\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{x}^k)
+\tilde{\theta} = \argmax_{\theta} \sum_{k=1}^{K} \log \Pr_{\theta}(\mathbf{y}^k|\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{x}^k)
 \label{eq:multi-turn-obj}
 \end{eqnarray}
 
 一种朴素的实现方式是对每个 $k$ 分别运行一次 LLM，但这样做的效率极低。更高效的做法与单轮情形类似：将整个对话序列 $[\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{x}^K,\mathbf{y}^K]$ 视为一个长序列，在单次前向传播中完成所有轮次的损失计算。应用链式法则展开：
 \begin{eqnarray}
-\log \mathrm{Pr}_{\theta}(\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{x}^K,\mathbf{y}^K) &=& \underbrace{\log \mathrm{Pr}_{\theta}(\mathbf{x}^1)}_{\text{设为 }0} + \underbrace{\log \mathrm{Pr}_{\theta}(\mathbf{y}^1|\mathbf{x}^1)}_{\text{损失}} + \cdots \nonumber \\
-&+& \underbrace{\log \mathrm{Pr}_{\theta}(\mathbf{x}^K|\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{y}^{K-1})}_{\text{设为 }0} \nonumber \\
-&+& \underbrace{\log \mathrm{Pr}_{\theta}(\mathbf{y}^K|\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{x}^K)}_{\text{损失}}
+\log \Pr_{\theta}(\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{x}^K,\mathbf{y}^K) &=& \underbrace{\log \Pr_{\theta}(\mathbf{x}^1)}_{\text{设为 }0} + \underbrace{\log \Pr_{\theta}(\mathbf{y}^1|\mathbf{x}^1)}_{\text{损失}} + \cdots \nonumber \\
+&+& \underbrace{\log \Pr_{\theta}(\mathbf{x}^K|\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{y}^{K-1})}_{\text{设为 }0} \nonumber \\
+&+& \underbrace{\log \Pr_{\theta}(\mathbf{y}^K|\mathbf{x}^1,\mathbf{y}^1,\dots,\mathbf{x}^K)}_{\text{损失}}
 \label{eq:multi-turn-chain}
 \end{eqnarray}
 我们只需将每一处用户输入项对应的对数概率损失设为 $0$，仅计算助手回复部分的损失，便能在单次运行中达到式(\ref{eq:multi-turn-obj})所描述的目标。图\ref{fig:sft-conversational-models} 展示了多轮对话 SFT 的训练范式。最终，整体训练目标依然可以简洁地写为
 \begin{eqnarray}
-\tilde{\theta} = \argmax_{\theta} \sum_{\mathrm{seq} \in \mathcal{D}} \log \mathrm{Pr}_{\theta}(\mathrm{seq})
+\tilde{\theta} = \argmax_{\theta} \sum_{\mathrm{seq} \in \mathcal{D}} \log \Pr_{\theta}(\mathrm{seq})
 \end{eqnarray}
 其中 $\mathrm{seq}$ 即上述完整对话序列，损失掩码模式保证了模型仅学习如何生成助手回复，而不会去预测用户提问。
 

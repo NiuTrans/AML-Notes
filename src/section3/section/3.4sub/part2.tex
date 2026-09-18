@@ -39,11 +39,11 @@ r(\mathbf{x},\mathbf{y}) & = & \mathbf{h}_{\mathrm{last}} \mathbf{W}_{r}
 
 训练奖励模型时，我们希望奖励模型赋予被偏好输出更高的分数，也就是最大化上述偏好概率。由此可以得到基于 Bradley-Terry 模型的损失函数
 \begin{eqnarray}
-\mathcal{L}_r(\phi) & = & -\mathbb{E}_{(\mathbf{x},\mathbf{y}_a,\mathbf{y}_b) \sim \mathcal{D}_r} \bigl[ \log \mathrm{Pr}_{\phi}(\mathbf{y}_a \succ \mathbf{y}_b \mid \mathbf{x}) \bigr] \label{eq:pairwise-reward-loss-expectation}
+\mathcal{L}_r(\phi) & = & -\mathbb{E}_{(\mathbf{x},\mathbf{y}_a,\mathbf{y}_b) \sim \mathcal{D}_r} \bigl[ \log \Pr_{\phi}(\mathbf{y}_a \succ \mathbf{y}_b \mid \mathbf{x}) \bigr] \label{eq:pairwise-reward-loss-expectation}
 \end{eqnarray}
 其中 $(\mathbf{x},\mathbf{y}_a,\mathbf{y}_b)$ 采样自包含输入及其偏好输出对的人类标注数据集 $\mathcal{D}_r$，$\phi$ 表示奖励模型的参数（包括 Transformer 解码器的参数和线性映射矩阵 $\mathbf{W}_{r}$）。实际中通常假设样本均匀采样，因此可以用求和代替期望：
 \begin{eqnarray}
-\mathcal{L}_r(\phi) & = & -\frac{1}{|\mathcal{D}_r|} \sum_{(\mathbf{x},\mathbf{y}_a,\mathbf{y}_b) \in \mathcal{D}_r} \log \mathrm{Pr}_{\phi}(\mathbf{y}_a \succ \mathbf{y}_b \mid \mathbf{x}) \label{eq:pairwise-reward-loss-sum}
+\mathcal{L}_r(\phi) & = & -\frac{1}{|\mathcal{D}_r|} \sum_{(\mathbf{x},\mathbf{y}_a,\mathbf{y}_b) \in \mathcal{D}_r} \log \Pr_{\phi}(\mathbf{y}_a \succ \mathbf{y}_b \mid \mathbf{x}) \label{eq:pairwise-reward-loss-sum}
 \end{eqnarray}
 
 训练的目标是找到最小化该损失的最优参数 $\hat{\phi}$：

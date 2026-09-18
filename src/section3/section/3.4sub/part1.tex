@@ -62,7 +62,7 @@ RLHF 涉及两个学习任务：一、利用人类反馈训练奖励模型；二
 \begin{eqnarray}
 \tilde{\theta} = \argmax_{\hat{\theta}^+} \mathbb{E}_{(\mathbf{x},\mathbf{y}_{\hat{\theta}^+}) \sim \mathcal{D}_{\mathrm{rlft}}} R_{\hat{\omega}}(\mathbf{x},\mathbf{y}_{\hat{\theta}^+})
 \end{eqnarray}
-其中$\mathbf{x}$从输入数据集中采样，$\mathbf{y}_{\hat{\theta}^+}$则从当前策略分布$\mathrm{Pr}_{\hat{\theta}^+}(\mathbf{y}|\mathbf{x})$中采样。实践中通常会采用更高级的强化学习算法，如\mindex{proximal policy optimization} (\mindex{PPO})，以获得更稳定的训练效果，详细算法将在后续章节展开。
+其中$\mathbf{x}$从输入数据集中采样，$\mathbf{y}_{\hat{\theta}^+}$则从当前策略分布$\Pr_{\hat{\theta}^+}(\mathbf{y}|\mathbf{x})$中采样。实践中通常会采用更高级的强化学习算法，如\mindex{proximal policy optimization} (\mindex{PPO})，以获得更稳定的训练效果，详细算法将在后续章节展开。
 
 % 为什么不直接将偏好学习视为标准监督学习问题？因为要让标注者精确描述人类的价值观，并给出完美对齐的输出，往往异常困难；相比之下，对已有输出进行偏好排序就简单得多。RLHF 通过学习奖励模型来捕捉人类偏好，再用它来指导策略训练，尤其适用于那些“演示难、评判易”的场景。此外，强化学习的探索机制还能让模型发现标注数据之外的潜在有益策略，从而进一步提升对齐效果。
 

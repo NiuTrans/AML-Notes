@@ -1,5 +1,6 @@
 \documentclass[border=9pt]{standalone}
 \input{figure_preamble.tex}
+
 \begin{document}
 \begin{tikzpicture}
 
@@ -9,75 +10,172 @@
 
 \tikzstyle{snode} = [fig/module,minimum width=0.28cm,minimum height=0.28cm,inner sep=0pt]
 
+% =========================
+% (a) ODE
+% =========================
 \begin{scope}
 \draw [-{Latex[scale=1.2]},thick] (0,0) -- (13.5,0);
 \draw [-{Latex[scale=1.2]},thick] (0,-1.5) -- (0,2.5);
-\node [anchor=north east,align=right] (ylabel) at (0-0.1,2.5) {\footnotesize{$\mathbf{x}(t)$}};
-\node [anchor=north,align=left] (xlabel) at (13.3,-0.1) {\footnotesize{时间 $t$}};
 
-\draw [Round Cap-Round Cap,blue,very thick,domain=0:12.7,samples=100] plot (\x,{0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))});
+\node [anchor=north east,align=right] at (-0.1,2.5) {\footnotesize{$\mathbf{x}(t)$}};
+\node [anchor=north,align=left] at (13.3,-0.1) {\footnotesize{时间 $t$}};
 
+% ODE 轨迹
+\draw [Round Cap-Round Cap,blue,very thick,domain=0:12.7,samples=120]
+plot (\x,{0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))});
+
+% 图例
 \node [anchor=west] (legend1) at (1.5,2.4) {\footnotesize{确定性轨迹}};
 \draw [-,blue,very thick] ([xshift=-0.2cm]legend1.west) -- ([xshift=-0.8cm]legend1.west);
 
-\node [fig/caption,anchor=north] (caption) at (6.5,-2.0) {\small{(a) ODE（确定性轨迹）}};
-
+% 标题
+\node [fig/caption,anchor=north] at (6.5,-2.0) {\small{(a) ODE（确定性轨迹）}};
 \end{scope}
 
+% =========================
+% (b) SDE
+% =========================
 \begin{scope}[yshift=-6.5cm]
 \draw [-{Latex[scale=1.2]},thick] (0,0) -- (13.5,0);
 \draw [-{Latex[scale=1.2]},thick] (0,-1.5) -- (0,2.5);
-\node [anchor=north east,align=right] (ylabel) at (0-0.1,2.5) {\footnotesize{$\mathbf{x}(t)$}};
-\node [anchor=north,align=left] (xlabel) at (13.3,-0.1) {\footnotesize{时间 $t$}};
 
-\draw [Round Cap-Round Cap,blue,very thick,domain=0:12.7,samples=100] plot (\x,{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1)});
+\node [anchor=north east,align=right] at (-0.1,2.5) {\footnotesize{$\mathbf{x}(t)$}};
+\node [anchor=north,align=left] at (13.3,-0.1) {\footnotesize{时间 $t$}};
 
-\begin{pgfonlayer}{background}
-\draw [Round Cap-Round Cap,name path=linetop,dotted,domain=0:12.7,samples=100] plot (\x,{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1) + 1 * (\x/12.7) });
-\draw [Round Cap-Round Cap,name path=linebottom,dotted,domain=0:12.7,samples=100] plot (\x,{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1) - 1 * (\x/12.7) });
-    \tikzfillbetween[of=linetop and linebottom,on layer=background]{orange!20}
-\end{pgfonlayer}
+% 定义中间轨迹函数
+\def\traj#1{(0.3-0.001*(((#1-1)/1.15)^4)*(#1-1) + 0.029375*(((#1-1)/1.15)^4) + 1/(1.15)^4*(-(323/1200)*((#1-1)^3) + 0.75*((#1-1)^2))) * ((-#1/12.7)+1)}
 
+% 定义噪声幅度函数（随时间逐渐增大）
+\def\noise#1{1*(#1/12.7)}
+
+% 先画噪声阴影带
+\fill[orange!20,opacity=0.8]
+  plot[domain=0:12.7,samples=120] (\x,{\traj{\x} + \noise{\x}})
+  --
+  plot[domain=12.7:0,samples=120] (\x,{\traj{\x} - \noise{\x}})
+  -- cycle;
+
+% 画上下边界虚线
+\draw [dotted,gray!70,domain=0:12.7,samples=120]
+  plot (\x,{\traj{\x} + \noise{\x}});
+\draw [dotted,gray!70,domain=0:12.7,samples=120]
+  plot (\x,{\traj{\x} - \noise{\x}});
+
+% 画确定性轨迹
+\draw [Round Cap-Round Cap,blue,very thick,domain=0:12.7,samples=120]
+  plot (\x,{\traj{\x}});
+
+% 噪声幅度标注箭头
 \foreach \x in {10}{
-\pgfmathsetmacro{\p}{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1) + 1 * (\x/12.7) }
-\pgfmathsetmacro{\q}{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1) - 1 * (\x/12.7) }
-\node [circle,minimum size=2pt,inner sep=0,fill=blue] (pointp) at (\x,\p) {};
-\node [circle,minimum size=2pt,inner sep=0,fill=blue] (pointq) at (\x,\q) {};
-\draw [<->,blue] ([yshift=-1pt]pointp.south) -- ([yshift=1pt]pointq.north);
+    \pgfmathsetmacro{\p}{\traj{\x} + \noise{\x}}
+    \pgfmathsetmacro{\q}{\traj{\x} - \noise{\x}}
+    \node [circle,minimum size=2pt,inner sep=0,fill=blue] (pointp) at (\x,\p) {};
+    \node [circle,minimum size=2pt,inner sep=0,fill=blue] (pointq) at (\x,\q) {};
+    \draw [<->,blue] ([yshift=-1pt]pointp.south) -- ([yshift=1pt]pointq.north);
 }
 
+% 图例1：确定性轨迹
 \node [anchor=west] (legend1) at (1.5,2.4) {\footnotesize{确定性轨迹}};
 \draw [-,blue,very thick] ([xshift=-0.2cm]legend1.west) -- ([xshift=-0.8cm]legend1.west);
 
+% 图例2：随机噪声
 \node [anchor=west] (legend2) at (1.5,1.9) {\footnotesize{随机噪声}};
-\node [anchor=east,inner sep=0,draw,fill=orange!20,thin,dotted,minimum width=0.6cm,minimum height=0.2cm] (legend2label) at ([xshift=-0.2cm]legend2.west) {};
+\node [anchor=east,inner sep=0,draw=gray!70,fill=orange!20,dotted,
+       minimum width=0.6cm,minimum height=0.2cm]
+       at ([xshift=-0.2cm]legend2.west) {};
 
-\node [anchor=south east] (noiselabel) at (10.7,0.6) {\footnotesize{噪声幅度}};
+% 噪声幅度文字
+\node [anchor=south east] at (10.7,0.6) {\footnotesize{噪声幅度}};
 
-\node [fig/caption,anchor=north] (caption) at (6.5,-2.0) {\small{(b) SDE（含随机噪声）}};
-
+% 标题
+\node [fig/caption,anchor=north] at (6.5,-2.0) {\small{(b) SDE（含随机噪声）}};
 \end{scope}
 
 \end{tikzpicture}
 \end{document}
-figure/figure-forward-sde-example.tex
 
-前向 SDE 将双峰非高斯分布逐渐变换为标准高斯分布。
-彩色曲线表示随机轨迹，灰色曲线表示确定性的概率流 ODE 轨迹。
 
-figure/figure-forward-sde-example.tex
 
-说明：
-1. 左侧为双峰非高斯分布 p_0(x)
-2. 右侧为单峰高斯先验 p_T(x)
-3. 灰色曲线表示光滑的 probability flow ODE
-4. 彩色曲线表示更粗糙、更曲折的 SDE 样本轨迹
+% \documentclass[border=9pt]{standalone}
+% \input{figure_preamble.tex}
+% \begin{document}
+% \begin{tikzpicture}
 
-使用方式：
-\begin{figure}[!t]
-  \centering
-  \AMLFigure{figure-forward-sde-example}
-  \caption{...}
-  \label{fig:forward-sde-example}
-\end{figure}
+% \def\ssize{1}
+% \def\boxsize{1.3}
+% \def\smallsize{0.13}
+
+% \tikzstyle{snode} = [fig/module,minimum width=0.28cm,minimum height=0.28cm,inner sep=0pt]
+
+% \begin{scope}
+% \draw [-{Latex[scale=1.2]},thick] (0,0) -- (13.5,0);
+% \draw [-{Latex[scale=1.2]},thick] (0,-1.5) -- (0,2.5);
+% \node [anchor=north east,align=right] (ylabel) at (0-0.1,2.5) {\footnotesize{$\mathbf{x}(t)$}};
+% \node [anchor=north,align=left] (xlabel) at (13.3,-0.1) {\footnotesize{时间 $t$}};
+
+% \draw [Round Cap-Round Cap,blue,very thick,domain=0:12.7,samples=100] plot (\x,{0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))});
+
+% \node [anchor=west] (legend1) at (1.5,2.4) {\footnotesize{确定性轨迹}};
+% \draw [-,blue,very thick] ([xshift=-0.2cm]legend1.west) -- ([xshift=-0.8cm]legend1.west);
+
+% \node [fig/caption,anchor=north] (caption) at (6.5,-2.0) {\small{(a) ODE（确定性轨迹）}};
+
+% \end{scope}
+
+% \begin{scope}[yshift=-6.5cm]
+% \draw [-{Latex[scale=1.2]},thick] (0,0) -- (13.5,0);
+% \draw [-{Latex[scale=1.2]},thick] (0,-1.5) -- (0,2.5);
+% \node [anchor=north east,align=right] (ylabel) at (0-0.1,2.5) {\footnotesize{$\mathbf{x}(t)$}};
+% \node [anchor=north,align=left] (xlabel) at (13.3,-0.1) {\footnotesize{时间 $t$}};
+
+% \draw [Round Cap-Round Cap,blue,very thick,domain=0:12.7,samples=100] plot (\x,{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1)});
+
+% \begin{pgfonlayer}{background}
+% \draw [Round Cap-Round Cap,name path=linetop,dotted,domain=0:12.7,samples=100] plot (\x,{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1) + 1 * (\x/12.7) });
+% \draw [Round Cap-Round Cap,name path=linebottom,dotted,domain=0:12.7,samples=100] plot (\x,{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1) - 1 * (\x/12.7) });
+%     \tikzfillbetween[of=linetop and linebottom,on layer=background]{orange!20}
+% \end{pgfonlayer}
+
+% \foreach \x in {10}{
+% \pgfmathsetmacro{\p}{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1) + 1 * (\x/12.7) }
+% \pgfmathsetmacro{\q}{(0.3-0.001*(((\x-1)/1.15)^4) * (\x-1) + 0.029375*(((\x-1)/1.15)^4) + 1/(1.15)^4*(- (323/1200)*((\x-1)^3) + 0.75*((\x-1)^2))) * ((-\x/12.7) + 1) - 1 * (\x/12.7) }
+% \node [circle,minimum size=2pt,inner sep=0,fill=blue] (pointp) at (\x,\p) {};
+% \node [circle,minimum size=2pt,inner sep=0,fill=blue] (pointq) at (\x,\q) {};
+% \draw [<->,blue] ([yshift=-1pt]pointp.south) -- ([yshift=1pt]pointq.north);
+% }
+
+% \node [anchor=west] (legend1) at (1.5,2.4) {\footnotesize{确定性轨迹}};
+% \draw [-,blue,very thick] ([xshift=-0.2cm]legend1.west) -- ([xshift=-0.8cm]legend1.west);
+
+% \node [anchor=west] (legend2) at (1.5,1.9) {\footnotesize{随机噪声}};
+% \node [anchor=east,inner sep=0,draw,fill=orange!20,thin,dotted,minimum width=0.6cm,minimum height=0.2cm] (legend2label) at ([xshift=-0.2cm]legend2.west) {};
+
+% \node [anchor=south east] (noiselabel) at (10.7,0.6) {\footnotesize{噪声幅度}};
+
+% \node [fig/caption,anchor=north] (caption) at (6.5,-2.0) {\small{(b) SDE（含随机噪声）}};
+
+% \end{scope}
+
+% \end{tikzpicture}
+% \end{document}
+% figure/figure-forward-sde-example.tex
+
+% 前向 SDE 将双峰非高斯分布逐渐变换为标准高斯分布。
+% 彩色曲线表示随机轨迹，灰色曲线表示确定性的概率流 ODE 轨迹。
+
+% figure/figure-forward-sde-example.tex
+
+% 说明：
+% 1. 左侧为双峰非高斯分布 p_0(x)
+% 2. 右侧为单峰高斯先验 p_T(x)
+% 3. 灰色曲线表示光滑的 probability flow ODE
+% 4. 彩色曲线表示更粗糙、更曲折的 SDE 样本轨迹
+
+% 使用方式：
+% \begin{figure}[!t]
+%   \centering
+%   \AMLFigure{figure-forward-sde-example}
+%   \caption{...}
+%   \label{fig:forward-sde-example}
+% \end{figure}
 

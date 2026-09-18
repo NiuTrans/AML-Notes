@@ -116,17 +116,17 @@
 \node[cand] at (4,9) {D};
 
 % legend
-\node[blackstone] at (1.2,5.1) {};
-\node[anchor=west] at (1.45,5.1) {\footnotesize 黑棋};
+% \node[blackstone] at (1.2,4.6) {};
+% \node[anchor=west] at (1.45,4.6) {\footnotesize 黑棋};
 
-\node[whitestone] at (2.4,5.1) {};
-\node[anchor=west] at (2.65,5.1) {\footnotesize 白棋};
+% \node[whitestone] at (2.4,4.6) {};
+% \node[anchor=west] at (2.65,4.6) {\footnotesize 白棋};
 
-\node[cand, minimum size=5.8mm] at (3.7,5.1) {};
-\node[anchor=west] at (3.95,5.1) {\footnotesize 候选位置};
+% \node[cand, minimum size=5.8mm] at (3.7,4.6) {};
+% \node[anchor=west] at (3.95,4.6) {\footnotesize 候选位置};
 
-\node[bestcand, minimum size=6.2mm] at (5.05,5.1) {};
-\node[anchor=west] at (5.3,5.1) {\footnotesize 采样动作};
+% \node[bestcand, minimum size=6.2mm] at (5.05,4.6) {};
+% \node[anchor=west] at (5.3,4.6) {\footnotesize 采样动作};
 
 % =========================
 % Middle panel: policy model
@@ -149,17 +149,17 @@
 \node[titlebox, minimum width=5.0cm] at (15.4,11.55) {落子概率分布};
 
 \draw[rowbox, fill=white] (12.8,10.1) rectangle (18.0,10.7);
-\node[anchor=west] at (13.05,10.4) {$A:(7,8)\qquad \pi_{\theta}(A\mid s_t)=0.15$};
+\node[anchor=west] at (12.8,10.4) {$A:(7,8)\qquad \pi_{\theta}(A\mid s_t)=0.15$};
 
 \draw[rowbox, fill=green!15] (12.8,9.15) rectangle (18.0,9.75);
-\node[anchor=west] at (13.05,9.45) {$B:(8,8)\qquad \pi_{\theta}(B\mid s_t)=0.40$};
-\node[anchor=west, text=green!40!black] at (16.95,9.45) {\footnotesize 概率最高};
+\node[anchor=west] at (12.8,9.45) {$B:(8,8)\qquad \pi_{\theta}(B\mid s_t)=0.40$};
+% \node[anchor=west, text=green!40!black] at (16.95,9.45) {\footnotesize 概率最高};
 
 \draw[rowbox, fill=white] (12.8,8.2) rectangle (18.0,8.8);
-\node[anchor=west] at (13.05,8.5) {$C:(8,9)\qquad \pi_{\theta}(C\mid s_t)=0.25$};
+\node[anchor=west] at (12.8,8.5) {$C:(8,9)\qquad \pi_{\theta}(C\mid s_t)=0.25$};
 
 \draw[rowbox, fill=white] (12.8,7.25) rectangle (18.0,7.85);
-\node[anchor=west] at (13.05,7.55) {$D:(9,9)\qquad \pi_{\theta}(D\mid s_t)=0.20$};
+\node[anchor=west] at (12.8,7.55) {$D:(9,9)\qquad \pi_{\theta}(D\mid s_t)=0.20$};
 
 % bottom formula / note
 \draw[infobox] (12.8,5.85) rectangle (18.0,6.85);
@@ -167,11 +167,11 @@
 \node[align=center, text=green!40!black] at (15.4,6.1) {\footnotesize 按概率分布采样动作};
 
 % sampled action arrow from probability row B back to board B
-\draw[dashedflow]
-    (12.8,9.45)
-    .. controls (10.8,10.9) and (6.7,10.8)
-    .. (3,8.35);
+% \draw[dashedflow]
+%     (12.8,9.45)
+%     .. controls (10.8,10.9) and (6.7,10.8)
+%     .. (3,8.35);
 
-\node[text=green!40!black] at (8.0,10.45) {\footnotesize 本次采样选择位置 $B=(8,8)$};
+% \node[text=green!40!black] at (8.0,10.45) {\footnotesize 本次采样选择位置 $B=(8,8)$};
 
 \end{tikzpicture}

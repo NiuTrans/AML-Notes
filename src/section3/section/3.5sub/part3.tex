@@ -8,20 +8,34 @@
 验证推理结果主要有两种范式：\mindex{结果奖励模型}（ORMs）和\mindex{过程奖励模型}（PRMs）\cite{uesato-etal:2022solving,lightman-etal:2024lets}。ORM 仅评估最终答案，虽然容易训练，但它存在“假阳性”问题。考虑一个简单的数学问题：
 
 \vspace{0.5em}
-\begin{quote}
-\textit{求解 $x$：$2x + 4 = 10$。}
-\end{quote}
+
+\begin{tcolorbox}[
+    frame empty,
+    colback=black!5,
+    coltext=black
+]
+
+求解 $x$：$2x + 4 = 10$。
+
+\end{tcolorbox}
+
 \vspace{0.5em}
 
 模型可能生成如下推理路径：
 \vspace{0.5em}
-\begin{quote}
-\textit{$2x + 4 = 10$ 意味着 $x$ 必须是 $10$ 的一半，即 $5$。}
 
-\textit{但是 $5 - 2 = 3$。}
+\begin{tcolorbox}[
+    frame empty,
+    colback=black!5,
+    coltext=black
+]
 
-\textit{因此，$x = 3$。}
-\end{quote}
+但是 $5 - 2 = 3$。
+
+因此，$x = 3$。
+
+\end{tcolorbox}
+
 \vspace{0.5em}
 
 虽然最终答案（$3$）正确，但逻辑步骤完全是错的。如果只用 ORM，这条路径可能获得高分，从而强化了错误的推理。为了解决这个问题，PRM 会评估路径中每一步的正确性。给定推理路径 $\mathbf{y} = \{\bar{\mathbf{y}}_1, \dots, \bar{\mathbf{y}}_{n_p}\}$，PRM 基于输入 $\mathbf{x}$ 和之前的步骤 $\bar{\mathbf{y}}_{<t}$，为当前步骤 $\bar{\mathbf{y}}_t$ 打一个正确性分数 $r_t$：
@@ -40,7 +54,7 @@ v(\mathbf{x}, \mathbf{y}) & = & \min_{1 \le t \le n_p} v_{\mathrm{prm}}(\bar{\ma
 \item \textbf{人工标注}：人类专家将模型生成的中间步骤标记为“正确”或“错误”。这种方法准确，但成本高、难以扩展，尤其在需要领域专家的高级任务上。
 \item \textbf{通过 Rollout 自动验证}：如果我们拥有已知最终答案的数据集，就可以用自动方法估计步骤价值 \cite{wang-etal:2024math}。从中间步骤 $\bar{\mathbf{y}}_t$ 出发，让模型继续生成多条完整路径。如果这些路径中很大比例最终得到了正确答案 $a^*$，我们就可以认为该步骤走在正确的轨道上。步骤的估计值 $\hat{r}_t$ 可以定义为达到正确答案的期望概率：
     \begin{eqnarray}
-    \hat{r}_t & = & \mathbb{E}_{\mathbf{y}_{>t} \sim \pi_\theta} [ \mathbbm{1}(\mathrm{Extract}(\mathbf{y}_{>t}) = a^*) ].
+    \hat{r}_t & = & \mathbb{E}_{\mathbf{y}_{>t} \sim \pi_\theta} [ \mathbb{I}(\mathrm{Extract}(\mathbf{y}_{>t}) = a^*) ].
     \end{eqnarray}
     有了这些估计值后，就可以训练 PRM 去预测 $\hat{r}_t$。
 \end{itemize}
@@ -51,18 +65,34 @@ v(\mathbf{x}, \mathbf{y}) & = & \min_{1 \le t \le n_p} v_{\mathrm{prm}}(\bar{\ma
 
 为了看清它是怎么工作的，我们来看一个例子。假设模型在求解方程组：
 \vspace{0.5em}
-\begin{quote}
-\textit{问题：已知 $2x + y = 10$ 和 $x - y = 2$，求解 $x$ 和 $y$。}
-\end{quote}
+
+\begin{tcolorbox}[
+    frame empty,
+    colback=black!5,
+    coltext=black
+]
+
+问题：已知 $2x + y = 10$ 和 $x - y = 2$，求解 $x$ 和 $y$。
+
+\end{tcolorbox}
+
 \vspace{0.5em}
 
 模型已经生成了两个正确的步骤：
 \vspace{0.5em}
-\begin{quote}
-\textit{从第二个方程，用 $y$ 表示 $x$：$x = y + 2$。}
 
-\textit{将 $x$ 代入第一个方程：$2(y + 2) + y = 10$。}
-\end{quote}
+\begin{tcolorbox}[
+    frame empty,
+    colback=black!5,
+    coltext=black
+]
+
+从第二个方程，用 $y$ 表示 $x$：$x = y + 2$。
+
+将 $x$ 代入第一个方程：$2(y + 2) + y = 10$。
+
+\end{tcolorbox}
+
 \vspace{0.5em}
 
 接下来它尝试第三步，但出现了计算错误：
@@ -72,12 +102,19 @@ v(\mathbf{x}, \mathbf{y}) & = & \min_{1 \le t \le n_p} v_{\mathrm{prm}}(\bar{\ma
 \end{quote}
 \vspace{0.5em}
 
-我们把问题、前两步以及当前步骤拼接起来，再加上一条验证指令（例如“给定前面的步骤，检查当前步骤中的逻辑是否正确并解释你的结论”），一起输入模型。生成式验证器可能会输出这样的文本评论：
+\begin{tcolorbox}[
+    frame empty,
+    colback=black!5,
+    coltext=black
+]
+
+评论：错误。分配 $2$ 到 $(y+2)$ 时必须对括号内每一项都乘以 $2$，应得到 $2y + 4$，而不是 $2y + 2$。正确展开为 $2y + 4 + y = 10$，化简为 $3y + 4 = 10$。
+
+\end{tcolorbox}
+
 \vspace{0.5em}
-\begin{quote}
-\textit{评论：错误。分配 $2$ 到 $(y+2)$ 时必须对括号内每一项都乘以 $2$，应得到 $2y + 4$，而不是 $2y + 2$。正确展开为 $2y + 4 + y = 10$，化简为 $3y + 4 = 10$。}
-\end{quote}
-\vspace{0.5em}
+
+
 
 形式化地，设查询为 $\mathbf{z}$，验证指令为 $\mathbf{c}$，推理历史为 $\bar{\mathbf{y}}_{\le t}$。将它们拼接后输入大语言模型，即可生成评论 $\mathbf{p}_t$：
 \begin{eqnarray}

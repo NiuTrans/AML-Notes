@@ -89,7 +89,7 @@
 % 左侧：当前状态、策略与动作采样
 % ==================================================
 
-\node[inputbox] (input) at (2.5,4.75) {
+\node[inputbox] (input) at (2.2,4.75) {
     {\bfseries 当前策略与动作}\\[6pt]
 
     {\bfseries 当前棋盘状态 $s_t$}\\[4pt]
@@ -133,7 +133,7 @@
 % 中间：负优势分支
 % ==================================================
 
-\node[negativebox] (negative) at (9.0,3.10) {
+\node[negativebox] (negative) at (9.0,2.10) {
     {\bfseries 负优势（$-$）：回报低于基线}\\[6pt]
 
     实际回报：$G_t=3$\\[3pt]
@@ -173,7 +173,7 @@
 % 右侧：负优势对应的策略更新结果
 % ==================================================
 
-\node[negativeresult] (negative-result) at (15.6,3.10) {
+\node[negativeresult] (negative-result) at (15.6,2.10) {
     {\bfseries 动作概率降低（$\downarrow$）}\\[7pt]
 
     更新前：\\[-1pt]
@@ -250,12 +250,12 @@
 % 底部：统一的基线与策略更新原则
 % ==================================================
 
-\node[principlebox] (principle) at (9.0,0.45) {
-    {\bfseries 基线与策略更新原则}\\[5pt]
-    常用状态基线为
-    $\displaystyle b(s_t)=V^{\pi}(s_t)$。\\[3pt]
-    策略更新关注的不是回报的绝对大小，
-    而是动作结果相对于当前平均水平的好坏。
-};
+% \node[principlebox] (principle) at (9.0,-0.7) {
+%     {\bfseries 基线与策略更新原则}\\[5pt]
+%     常用状态基线为
+%     $\displaystyle b(s_t)=V^{\pi}(s_t)$。\\[3pt]
+%     策略更新关注的不是回报的绝对大小，
+%     而是动作结果相对于当前平均水平的好坏。
+% };
 
 \end{tikzpicture}

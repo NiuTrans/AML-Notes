@@ -1,0 +1,66 @@
+
+%\definecolor{ublue}{rgb}{0.152,0.250,0.545}
+\begin{tikzpicture}
+\begin{scope}
+\begin{axis}[ 
+width=6.5cm, height=5cm, 
+%symbolic x coords={1-15,16-25,26-35,>35},
+ytick={0,4,8,...,20},
+xtick={200,400,...,1200},
+xlabel={数据规模},
+ylabel={词表大小},
+xlabel style={align=center},
+ylabel style={yshift=-1.2em},
+%y tick style={opacity=0},
+x tick label style={font=\footnotesize},
+y tick label style={font=\footnotesize},
+tick align=inside,
+%major grid style={draw=blue,dashed},
+legend pos=outer north east,
+%legend style={anchor=north west,yshift=-1cm},
+%legend style={yshift=-4.5em,xshift=-6em,legend cell align=left,legend plot pos=right},
+xmin=-20,
+xmax=1220,
+ymin=-2,
+ymax=22]
+%\addplot [sharp plot,very thick,ublue,mark=o] coordinates{(4.72,1.48) (9.45, 2.37) (14.18, 3.09) (18.91, 3.74) (23.64, 4.32) (28.37, 4.85) (33.09, 5.35) (37.82, 5.82) (42.55, 6.27) (47.28, 6.7) (51.58, 6.7) (55.88, 7.1) (60.17, 7.49) (64.47, 7.87) (68.77, 8.24) (73.07, 8.59) (77.37, 8.93) (81.67, 9.26) (85.97, 9.3)};
+%\addplot [sharp plot,thick,blue,mark=square] coordinates{(6,1.69) (12, 2.64) (18, 3.40) (24, 4.04) (30, 4.6) (36, 5.1) (42, 5.55) (48, 5.96) (54, 6.34) (60, 6.7) (66, 7.0) (72, 7.34) (78, 7.62) (84, 7.88) (90, 8.12) (96, 8.35) (102, 8.56) (108, 8.75) (114, 8.94) (120, 9.12)};
+\addplot [sharp plot,thick,blue,mark=square] coordinates{(0.1,0.04) (0.25, 0.09) (0.76, 0.21) (1.7, 0.36) (3.59, 0.58) (9.28, 1.07) (18.64, 1.74) (37.46, 2.83) (56.47, 3.73) (75.97, 4.5) (95.78, 5.19) (198.93, 8) (417.56, 12.03) (1102.31, 19.9)};
+%\addplot [sharp plot,very thick,orange,mark=*] coordinates{(1-15,17.5) (16-25,24) (26-35,25) (>35,27)};
+%\legend{\tiny{NMT},\tiny{SPB},\tiny{HPB},\tiny{PBSY}} 
+\end{axis}
+\node[anchor=east] (ny) at (1.2em,9.8em){\footnotesize($\cdot 10^4$)};
+\node[anchor=west] (nx) at (12.8em,0.4em){\footnotesize($\cdot 10^5$)};
+\end{scope}
+
+\begin{scope}[xshift=2.85in]
+\begin{axis}[
+width=6.5cm, height=5cm, 
+    title={},
+    xlabel={词表大小},
+    ylabel={未登录词比例},
+    ylabel style={yshift=-1.2em},
+    xmin=-1, xmax=21,
+%    ymin=0, ymax=10e-2, 
+    ymin=0, ymax=100, 
+    xtick={0,4,...,20},
+%    ytick={0,1e-2,2e-2,3e-2,4e-2,5e-2,6e-2,7e-2,8e-2,9e-2,10e-2},
+    ytick={20,40,...,100},
+]
+
+\addplot[
+    color=blue,
+    mark=square,
+    thick,
+    ]
+%    coordinates {(27248,0.0867) (69248,0.0383) (100195,0.0268) (144777,0.0184) (180743,0.0148)};
+%    coordinates {(0.27,8.67) (0.38,6.27) (0.52,4.97) (0.69,3.83) (1.0,2.68) (1.44,1.84) (1.8,1.48)};
+%    coordinates {(0.27,60.1) (0.38,51.63) (0.52,41.22) (0.69,33.97) (1.0,28.64) (1.44,23.19) (1.8,1.48)};
+    coordinates {(0.04, 60.1) (0.09, 51.63) (0.21, 41.22) (0.36, 33.97) (0.58, 28.64) (1.07, 23.19) (1.74, 19.97) (2.83, 17.73) (3.73, 16.94) (4.5, 16.52) (5.19, 16.26) (8, 15.71) (12.03, 15.44) (19.9, 15.27)};
+\end{axis}
+\node[anchor=east] (ny) at (1.2em,9.8em){\footnotesize($\%$)};
+\node[anchor=west] (nx) at (12.8em,0.4em){\footnotesize($\cdot 10^4$)};
+\end{scope}
+\end{tikzpicture}
+
+%---------------------------------------------------------------------

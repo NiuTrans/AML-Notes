@@ -1,8 +1,8 @@
 % !TeX program = xelatex
 % 高级机器学习中文讲义
-% 编译建议：XeLaTeX 或 LuaLaTeX。Windows / macOS / Linux 均可使用 ctex 自动处理中文字体。
-% \documentclass[UTF8,fontset=none,a4paper,zihao=-4,oneside,openany]{ctexbook}
-\documentclass[UTF8,a4paper,zihao=-4,oneside,openany]{ctexbook}
+% 独立编译入口；正文统一维护在 chapter.tex。
+% 使用 TeX Live 自带的 Fandol 字体，避免依赖操作系统字体。
+\documentclass[UTF8,fontset=fandol,a4paper,zihao=-4,oneside,openany]{ctexbook}
 
 
 
@@ -133,7 +133,7 @@
 % 章节样式
 \ctexset{
   chapter = {
-    name = {第,讲},
+    name = {第,章},
     number = \chinese{chapter},
     format = \huge\bfseries\color{CourseBlue},
     beforeskip = 0pt,
@@ -157,9 +157,31 @@
 \newcommand{\blankline}{\par\noindent\rule{\linewidth}{0.4pt}\par}
 \newcommand{\keyword}[1]{\textbf{\color{CourseBlue}#1}}
 
+% 与教材总入口保持一致的作者、参考说明框。
+\newcommand{\chapterinfo}[2][]{%
+  \begin{tcolorbox}[
+    colback=CourseGray,
+    colframe=CourseLine,
+    boxrule=0.5pt,
+    arc=1.5mm,
+    left=3mm,
+    right=3mm,
+    top=1.5mm,
+    bottom=1.5mm,
+    before skip=-0.4em,
+    after skip=1.0em
+  ]
+    {\small\noindent\textbf{\color{CourseBlue}作者：}#2%
+    \if\relax\detokenize{#1}\relax
+    \else\\[0.25em]\textbf{\color{CourseBlue}参考：}#1%
+    \fi}
+  \end{tcolorbox}
+}
+
 \begin{document}
 
 % 封面
+\hypersetup{pageanchor=false}
 \begin{titlepage}
   \centering
   \vspace*{1.5cm}
@@ -191,6 +213,7 @@
 
 % 目录
 \frontmatter
+\hypersetup{pageanchor=true}
 \pagestyle{plain}
 \tableofcontents
 \cleardoublepage
@@ -199,7 +222,7 @@
 \mainmatter
 \pagestyle{fancy}
 
-\input{chapters/part1_ml_foundations}
+\input{chapter.tex}
 
 
 \backmatter

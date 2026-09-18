@@ -7,15 +7,35 @@
 
 例如，考虑一个简单的应用题：
 
-\begin{quote}
-\textit{如果约翰的年龄是玛丽的两倍，而玛丽在3年后将是10岁，那么约翰现在多大？}
-\end{quote}
+\vspace{0.5em}
+
+\begin{tcolorbox}[
+    frame empty,
+    colback=black!5,
+    coltext=black
+]
+
+如果约翰的年龄是玛丽的两倍，而玛丽在3年后将是10岁，那么约翰现在多大？
+
+\end{tcolorbox}
+
+\vspace{0.5em}
 
 基础的 LLM 可能会通过简单关联关键词“两倍”和“10”输出一个错误的猜测，如“20”。相比之下，具备推理能力的 LLM 可能会在回答前显式生成逻辑链：
 
-\begin{quote}
-\textit{玛丽现在的年龄是 $10 - 3 = 7$ 岁。因此，约翰的年龄是 $7 \times 2 = 14$ 岁。}
-\end{quote}
+\vspace{0.5em}
+
+\begin{tcolorbox}[
+    frame empty,
+    colback=black!5,
+    coltext=black
+]
+
+玛丽现在的年龄是 $10 - 3 = 7$ 岁。因此，约翰的年龄是 $7 \times 2 = 14$ 岁。
+
+\end{tcolorbox}
+
+\vspace{0.5em}
 
 要使用 LLM 解决复杂的演绎和溯因任务，必须显式激活这些潜在的推理能力，无论是通过思维链（CoT）等提示技术，还是通过强化学习等先进的后训练范式。
 

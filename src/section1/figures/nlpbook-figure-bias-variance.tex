@@ -1,0 +1,29 @@
+\begin{center}
+
+  \begin{tikzpicture}[scale=1] 
+\begin{axis}[
+	  axis x line=bottom,
+      axis y line=left,
+      line width=1.2pt,
+      xlabel near ticks,
+      width=12cm, height=6cm,
+      xlabel={模型复杂度},
+      y label style={font=\large},  
+      xmin=-0.1,xmax=10,
+      ymin=0,ymax=20.5,
+      xmajorticks=false,
+      ymajorticks=false,
+      legend style={xshift=-1em,yshift=1em,anchor=north east,legend cell align=left},
+  ]
+
+ \addplot[-latex,color=blue, line width=4pt, smooth,line cap=round,opacity=.55] coordinates {(0.2,20)(0.5,14.2)(1,10)(1.5,7.6)(2,6.04)(3,4.5)(4,3.7)(5,3.2)(6,2.8)(7,2.7)(8,2.6)(9.5,2.6)};
+ \addplot[-latex,color=ugreen, line width=4pt, smooth,line cap=round,opacity=.55] coordinates {(0.2,2.5)(1,2.6)(2,2.7)(3,3)(4,3.5)(5,4)(6,5.1)(7,6.5)(8,8.3)(8.8,10)(9.5,11.8)};
+ \addplot[-latex,color=red, line width=4pt, smooth,line cap=round,opacity=.55] coordinates {(0.35,20)(0.54,16.4)(1,11.88)(1.5,9.5)(2,8.2)(3,6.6)(4,5.7)(5,5.4)(6,6)(7,7.4)(8,9.2)(9.5,12.6)};
+ %\addplot[color=red, mark=x,draw=none,line width=1.6pt] coordinates {(0,1)(0.5,1)(1,1)(2,1)(3,1)(4,1)(5,1)(6,1)(7,1)(8,1)(9,1)};
+  \end{axis}
+  \node[color=blue,opacity=.6] (bias) at (2em,4.5em) {偏差};
+  \node[color=red,opacity=.6] (error) at (18em,5.3em) {测试误差};
+  \node[color=ugreen,opacity=.6] (variance) at (22em,3.2em) {方差};
+  \end{tikzpicture}
+\end{center}
+

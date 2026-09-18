@@ -1,0 +1,59 @@
+\input{figures/figure-theme.tex}
+\begin{center}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\nodesep{1.7em}
+\def\noderowsep{2.5em}
+\tikzstyle{nnode} = [minimum width=1.5em,fill=FigureBlue!62,inner sep=0pt,label=above:#1,rounded corners=.8pt]
+
+\begin{scope}
+	\node[nnode=0,minimum height=0.05em] (n1) at (0,0){};
+	\node[nnode=0,minimum height=0.05em,anchor=south] (n2) at ([xshift=\nodesep]n1.south){};
+	\node[nnode=1,minimum height=4.1em,anchor=south] (n3) at ([xshift=\nodesep]n2.south){};
+	\node[nnode=0,minimum height=0.05em,anchor=south] (n4) at ([xshift=\nodesep]n3.south){};
+	\node[nnode=0,minimum height=0.05em,anchor=south] (n5) at ([xshift=\nodesep]n4.south){};
+	\node[nnode=0,minimum height=0.05em,anchor=south] (n6) at ([xshift=\nodesep]n5.south){};
+	\node[nnode=0,minimum height=0.05em,anchor=south] (n7) at ([xshift=\nodesep]n6.south){};
+	\node[nnode=0,minimum height=0.05em,anchor=south] (n8) at ([xshift=\nodesep]n7.south){};
+	\node[nnode=0,minimum height=0.05em,anchor=south] (n9) at ([xshift=\nodesep]n8.south){};
+	\node[nnode=0,minimum height=0.05em,anchor=south] (n10) at ([xshift=\nodesep]n9.south){};
+	
+	\node[anchor=east] at ([xshift=-1em,yshift=0.2em]n1.west){$p_k$};
+\end{scope}
+
+\begin{scope}[yshift=-10em]
+    \node[nnode=.02,minimum height=0.2em,fill=black!50] (n1) at (0,0){};
+	\node[nnode=.02,minimum height=0.2em,anchor=south,fill=black!50] (n2) at ([xshift=\nodesep]n1.south){};
+	\node[nnode,minimum height=3.1em,anchor=south] (n31) at ([xshift=\nodesep]n2.south){};
+	\node[nnode,minimum height=0.2em,anchor=south,fill=black!50] (n32) at ([xshift=\nodesep]n2.south){};
+	\node[nnode=.82,minimum height=1em,minimum width=1.45em,anchor=south,fill=white,draw=blue!40,dash pattern=on 2pt off 1pt] (n33) at ([xshift=\nodesep,yshift=3.1em]n2.south){};
+	\node[nnode=.02,minimum height=0.2em,anchor=south,fill=black!50] (n4) at ([xshift=\nodesep]n31.south){};
+	\node[nnode=.02,minimum height=0.2em,anchor=south,fill=black!50] (n5) at ([xshift=\nodesep]n4.south){};
+	\node[nnode=.02,minimum height=0.2em,anchor=south,fill=black!50] (n6) at ([xshift=\nodesep]n5.south){};
+	\node[nnode=.02,minimum height=0.2em,anchor=south,fill=black!50] (n7) at ([xshift=\nodesep]n6.south){};
+	\node[nnode=.02,minimum height=0.2em,anchor=south,fill=black!50] (n8) at ([xshift=\nodesep]n7.south){};
+	\node[nnode=.02,minimum height=0.2em,anchor=south,fill=black!50] (n9) at ([xshift=\nodesep]n8.south){};
+	\node[nnode=.02,minimum height=0.2em,anchor=south,fill=black!50] (n10) at ([xshift=\nodesep]n9.south){};
+	
+	\node[anchor=east] at ([xshift=-1em,yshift=0.2em]n1.west){$\hat{p}_k(\epsilon=0.2)$};
+	
+	\node[inner sep=0pt,anchor=west] (eps) at ([xshift=2em,yshift=1em]n33.east){$\epsilon$};
+	\node[inner sep=0pt,anchor=west] (arrow) at ([xshift=0.2em]eps.east){$\to$};
+	\node[minimum width=1.5em, minimum height=0.2em, inner sep=0pt,fill=black!50,anchor=west] (n1) at ([xshift=0.5em,]arrow.east) {};
+	\node[minimum width=1.2em, minimum height=0.2em, inner sep=0pt,anchor=west] (n2) at ([xshift=0.5em]n1.east) {...};
+	\node[minimum width=1.5em, minimum height=0.2em, inner sep=0pt,fill=black!50,anchor=west] (n3) at ([xshift=0.5em]n2.east) {};
+	\draw[decorate,decoration={brace,amplitude=3mm}] ([yshift=0.1em]n1.north west) -- node[yshift=1.5em] {$\frac{\epsilon}{n} \times n$}([yshift=0.1em]n3.north east);
+	\begin{pgfonlayer}{background}
+	\node [draw=FigureGold!80!FigureInk,inner sep=6pt,fill=FigureWarm,line width=.7pt,rounded corners=2pt,minimum height=3em,yshift=1em]  [fit = (eps) (n3)] (box) {};
+	\end{pgfonlayer}
+
+	\draw [->, thick,dotted] (n33.center) .. controls +(east:2em) and +(west:1.5em) .. ([xshift=-0.1em]box.west);	
+	\draw [->, thick,dotted] ([yshift=-0.1em]n3.south) .. controls +(south:2em) and +(north:2em) .. ([yshift=1.2em]n10.north);
+\end{scope}
+\end{tikzpicture}
+
+\end{center}

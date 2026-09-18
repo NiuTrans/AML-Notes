@@ -1,0 +1,154 @@
+% !Mode:: "TeX:UTF-8"
+% !TEX encoding = UTF-8 Unicode
+\input{figures/figure-theme.tex}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+	
+\def\nodewidth{0.5cm}
+\def\nodeheight{0.5cm}
+\def\nodestep{0.6*\nodewidth}
+
+\tikzstyle{enode} = [minimum width=\nodewidth,minimum height=\nodeheight,inner sep=2pt,fill=gray!50,draw=FigureInk!28,line width=.35pt,rounded corners=.8pt]
+
+%%% causal language modeling
+\begin{scope}
+
+\node [enode,anchor=west,fill=blue!80] (node00) at (0,0) {};
+\node [enode,anchor=west] (node01) at ([xshift=\nodestep]node00.east) {};
+\node [enode,anchor=west] (node02) at ([xshift=\nodestep]node01.east) {};
+\node [enode,anchor=west] (node03) at ([xshift=\nodestep]node02.east) {};
+\node [enode,anchor=west] (node04) at ([xshift=\nodestep]node03.east) {};
+\node [enode,anchor=north,fill=blue!80] (node10) at ([yshift=-\nodestep]node00.south) {};
+\node [enode,anchor=west,fill=blue!80] (node11) at ([xshift=\nodestep]node10.east) {};
+\node [enode,anchor=west] (node12) at ([xshift=\nodestep]node11.east) {};
+\node [enode,anchor=west] (node13) at ([xshift=\nodestep]node12.east) {};
+\node [enode,anchor=west] (node14) at ([xshift=\nodestep]node13.east) {};
+\node [enode,anchor=north,fill=blue!80] (node20) at ([yshift=-\nodestep]node10.south) {};
+\node [enode,anchor=west,fill=blue!80] (node21) at ([xshift=\nodestep]node20.east) {};
+\node [enode,anchor=west,fill=blue!80] (node22) at ([xshift=\nodestep]node21.east) {};
+\node [enode,anchor=west] (node23) at ([xshift=\nodestep]node22.east) {};
+\node [enode,anchor=west] (node24) at ([xshift=\nodestep]node23.east) {};
+\node [enode,anchor=north,fill=blue!80] (node30) at ([yshift=-\nodestep]node20.south) {};
+\node [enode,anchor=west,fill=blue!80] (node31) at ([xshift=\nodestep]node30.east) {};
+\node [enode,anchor=west,fill=blue!80] (node32) at ([xshift=\nodestep]node31.east) {};
+\node [enode,anchor=west,fill=blue!80] (node33) at ([xshift=\nodestep]node32.east) {};
+\node [enode,anchor=west] (node34) at ([xshift=\nodestep]node33.east) {};
+\node [enode,anchor=north,fill=blue!80] (node40) at ([yshift=-\nodestep]node30.south) {};
+\node [enode,anchor=west,fill=blue!80] (node41) at ([xshift=\nodestep]node40.east) {};
+\node [enode,anchor=west,fill=blue!80] (node42) at ([xshift=\nodestep]node41.east) {};
+\node [enode,anchor=west,fill=blue!80] (node43) at ([xshift=\nodestep]node42.east) {};
+\node [enode,anchor=west,fill=blue!80] (node44) at ([xshift=\nodestep]node43.east) {};
+
+\foreach \i in {0,...,4}{
+    \node [anchor=south] (hx\i) at ([yshift=0.2em]node0\i.north) {\small{$x_{\i}$}};
+    \node [anchor=east] (vx\i) at ([xshift=-0.2em]node\i0.west) {\small{$x_{\i}$}};
+    \draw [->,double] ([xshift=1.0cm]node\i4.east) -- ([xshift=1.6cm]node\i4.east);
+}
+
+\node [anchor=west] (pr0) at ([xshift=2.4cm]node04.east) {$\Pr(x_0)=1$};
+\node [anchor=west] (pr1) at ([xshift=2.4cm]node14.east) {$\Pr(x_1|\mathbf{e}_0)$};
+\node [anchor=west] (pr2) at ([xshift=2.4cm]node24.east) {$\Pr(x_2|\mathbf{e}_0,\mathbf{e}_1)$};
+\node [anchor=west] (pr3) at ([xshift=2.4cm]node34.east) {$\Pr(x_3|\mathbf{e}_0,\mathbf{e}_1,\mathbf{e}_2)$};
+\node [anchor=west] (pr4) at ([xshift=2.4cm]node44.east) {$\Pr(x_4|\mathbf{e}_0,\mathbf{e}_1,\mathbf{e}_2,\mathbf{e}_3)$};
+
+\node [anchor=north] (caption) at ([yshift=-0.5cm,xshift=0.8cm]node44.south east) {(a) 因果语言建模 (顺序： $x_0 \to x_1 \to x_2 \to x_3 \to x_4$)};
+
+\end{scope}
+
+%%% masked language modeling
+\begin{scope}[yshift=-6.5cm]
+
+\node [enode,anchor=west,fill=blue!80] (node00) at (0,0) {};
+\node [enode,anchor=west,fill=blue!80] (node01) at ([xshift=\nodestep]node00.east) {};
+\node [enode,anchor=west,fill=blue!80] (node02) at ([xshift=\nodestep]node01.east) {};
+\node [enode,anchor=west,fill=blue!80] (node03) at ([xshift=\nodestep]node02.east) {};
+\node [enode,anchor=west,fill=blue!80] (node04) at ([xshift=\nodestep]node03.east) {};
+\node [enode,anchor=north,fill=blue!80] (node10) at ([yshift=-\nodestep]node00.south) {};
+\node [enode,anchor=west,fill=blue!80] (node11) at ([xshift=\nodestep]node10.east) {};
+\node [enode,anchor=west,fill=blue!80] (node12) at ([xshift=\nodestep]node11.east) {};
+\node [enode,anchor=west,fill=blue!80] (node13) at ([xshift=\nodestep]node12.east) {};
+\node [enode,anchor=west,fill=blue!80] (node14) at ([xshift=\nodestep]node13.east) {};
+\node [enode,anchor=north,fill=blue!80] (node20) at ([yshift=-\nodestep]node10.south) {};
+\node [enode,anchor=west,fill=blue!80] (node21) at ([xshift=\nodestep]node20.east) {};
+\node [enode,anchor=west,fill=blue!80] (node22) at ([xshift=\nodestep]node21.east) {};
+\node [enode,anchor=west,fill=blue!80] (node23) at ([xshift=\nodestep]node22.east) {};
+\node [enode,anchor=west,fill=blue!80] (node24) at ([xshift=\nodestep]node23.east) {};
+\node [enode,anchor=north,fill=blue!80] (node30) at ([yshift=-\nodestep]node20.south) {};
+\node [enode,anchor=west,fill=blue!80] (node31) at ([xshift=\nodestep]node30.east) {};
+\node [enode,anchor=west,fill=blue!80] (node32) at ([xshift=\nodestep]node31.east) {};
+\node [enode,anchor=west,fill=blue!80] (node33) at ([xshift=\nodestep]node32.east) {};
+\node [enode,anchor=west,fill=blue!80] (node34) at ([xshift=\nodestep]node33.east) {};
+\node [enode,anchor=north,fill=blue!80] (node40) at ([yshift=-\nodestep]node30.south) {};
+\node [enode,anchor=west,fill=blue!80] (node41) at ([xshift=\nodestep]node40.east) {};
+\node [enode,anchor=west,fill=blue!80] (node42) at ([xshift=\nodestep]node41.east) {};
+\node [enode,anchor=west,fill=blue!80] (node43) at ([xshift=\nodestep]node42.east) {};
+\node [enode,anchor=west,fill=blue!80] (node44) at ([xshift=\nodestep]node43.east) {};
+
+\foreach \i in {0,...,4}{
+    \node [anchor=south] (hx\i) at ([yshift=0.2em]node0\i.north) {\small{$x_{\i}$}};
+    \node [anchor=east] (vx\i) at ([xshift=-0.2em]node\i0.west) {\small{$x_{\i}$}};
+    \draw [->,double] ([xshift=1.0cm]node\i4.east) -- ([xshift=1.6cm]node\i4.east);
+}
+
+\node [anchor=south] (hmasked3) at ([yshift=-0.1cm]hx3.north) {\footnotesize{已掩码}};
+\node [anchor=south] (hmasked1) at ([yshift=-0.1cm]hx1.north) {\footnotesize{已掩码}};
+\node [anchor=north east] (vmasked3) at ([yshift=0.2cm]vx3.south east) {\footnotesize{已掩码}};
+\node [anchor=north east] (vmasked1) at ([yshift=0.2cm]vx1.south east) {\footnotesize{已掩码}};
+
+\node [anchor=west] (pr0) at ([xshift=2.4cm]node04.east) {$1$};
+\node [anchor=west] (pr1) at ([xshift=2.4cm]node14.east) {$\Pr(x_1|\mathbf{e}_0,\mathbf{e}_{\mathrm{mask}},\mathbf{e}_2,\mathbf{e}_{\mathrm{mask}},\mathbf{e}_4)$};
+\node [anchor=west] (pr2) at ([xshift=2.4cm]node24.east) {$1$};
+\node [anchor=west] (pr3) at ([xshift=2.4cm]node34.east) {$\Pr(x_3|\mathbf{e}_0,\mathbf{e}_{\mathrm{mask}},\mathbf{e}_2,\mathbf{e}_{\mathrm{mask}},\mathbf{e}_4)$};
+\node [anchor=west] (pr4) at ([xshift=2.4cm]node44.east) {$1$};
+
+\node [anchor=north] (caption) at ([yshift=-0.5cm,xshift=0.8cm]node44.south east) {(b) 掩码语言建模 (顺序： $x_0, \mathrm{[MASK]}, x_2, \mathrm{[MASK]}, x_4 \to x_1, x_3$)};
+
+\end{scope}
+
+%%% permuted language modeling
+\begin{scope}[yshift=-13cm]
+
+\node [enode,anchor=west,fill=blue!80] (node00) at (0,0) {};
+\node [enode,anchor=west] (node01) at ([xshift=\nodestep]node00.east) {};
+\node [enode,anchor=west] (node02) at ([xshift=\nodestep]node01.east) {};
+\node [enode,anchor=west] (node03) at ([xshift=\nodestep]node02.east) {};
+\node [enode,anchor=west] (node04) at ([xshift=\nodestep]node03.east) {};
+\node [enode,anchor=north,fill=blue!80] (node10) at ([yshift=-\nodestep]node00.south) {};
+\node [enode,anchor=west,fill=blue!80] (node11) at ([xshift=\nodestep]node10.east) {};
+\node [enode,anchor=west,fill=blue!80] (node12) at ([xshift=\nodestep]node11.east) {};
+\node [enode,anchor=west] (node13) at ([xshift=\nodestep]node12.east) {};
+\node [enode,anchor=west,fill=blue!80] (node14) at ([xshift=\nodestep]node13.east) {};
+\node [enode,anchor=north,fill=blue!80] (node20) at ([yshift=-\nodestep]node10.south) {};
+\node [enode,anchor=west] (node21) at ([xshift=\nodestep]node20.east) {};
+\node [enode,anchor=west,fill=blue!80] (node22) at ([xshift=\nodestep]node21.east) {};
+\node [enode,anchor=west] (node23) at ([xshift=\nodestep]node22.east) {};
+\node [enode,anchor=west,fill=blue!80] (node24) at ([xshift=\nodestep]node23.east) {};
+\node [enode,anchor=north,fill=blue!80] (node30) at ([yshift=-\nodestep]node20.south) {};
+\node [enode,anchor=west,fill=blue!80] (node31) at ([xshift=\nodestep]node30.east) {};
+\node [enode,anchor=west,fill=blue!80] (node32) at ([xshift=\nodestep]node31.east) {};
+\node [enode,anchor=west,fill=blue!80] (node33) at ([xshift=\nodestep]node32.east) {};
+\node [enode,anchor=west,fill=blue!80] (node34) at ([xshift=\nodestep]node33.east) {};
+\node [enode,anchor=north,fill=blue!80] (node40) at ([yshift=-\nodestep]node30.south) {};
+\node [enode,anchor=west] (node41) at ([xshift=\nodestep]node40.east) {};
+\node [enode,anchor=west] (node42) at ([xshift=\nodestep]node41.east) {};
+\node [enode,anchor=west] (node43) at ([xshift=\nodestep]node42.east) {};
+\node [enode,anchor=west,fill=blue!80] (node44) at ([xshift=\nodestep]node43.east) {};
+
+\foreach \i in {0,...,4}{
+    \node [anchor=south] (hx\i) at ([yshift=0.2em]node0\i.north) {\small{$x_{\i}$}};
+    \node [anchor=east] (vx\i) at ([xshift=-0.2em]node\i0.west) {\small{$x_{\i}$}};
+    \draw [->,double] ([xshift=1.0cm]node\i4.east) -- ([xshift=1.6cm]node\i4.east);
+}
+
+\node [anchor=west] (pr0) at ([xshift=2.4cm]node04.east) {$\Pr(x_0)=1$};
+\node [anchor=west] (pr1) at ([xshift=2.4cm]node14.east) {$\Pr(x_1|\mathbf{e}_0,\mathbf{e}_4,\mathbf{e}_2)$};
+\node [anchor=west] (pr2) at ([xshift=2.4cm]node24.east) {$\Pr(x_2|\mathbf{e}_0,\mathbf{e}_4)$};
+\node [anchor=west] (pr3) at ([xshift=2.4cm]node34.east) {$\Pr(x_3|\mathbf{e}_0,\mathbf{e}_4,\mathbf{e}_2,\mathbf{e}_1)$};
+\node [anchor=west] (pr4) at ([xshift=2.4cm]node44.east) {$\Pr(x_4|\mathbf{e}_0)$};
+
+\node [anchor=north] (caption) at ([yshift=-0.5cm,xshift=0.8cm]node44.south east) {(c) 排列语言建模 (顺序： $x_0 \to x_4 \to x_2 \to x_1 \to x_3$)};
+
+\end{scope}
+	
+\end{tikzpicture}

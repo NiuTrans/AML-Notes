@@ -1,0 +1,38 @@
+\input{figures/figure-theme.tex}
+\begin{center}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\nodesep{4em}
+\def\noderowsep{3.0em}
+\tikzstyle{nnode} = [circle,minimum size=3em,draw=FigureBlue,line width=1pt,fill=FigureMist]
+
+%----------------------------------------------------------------------------------------
+% layer 1 (hidden 1)
+
+\node [anchor=center,nnode] (neuron) at (0,0) {};
+\node [anchor=north] (x2) at ([yshift=-\noderowsep]neuron.south) {$x_2$};
+\node [anchor=east] (x1) at ([xshift=-\nodesep]x2.west) {$x_1$};
+\node [anchor=west] (x3) at ([xshift=\nodesep]x2.east) {$1$};
+\node [anchor=south] (y) at ([yshift=\noderowsep]neuron.north) {$y$};
+
+\draw [->,very thick] ([yshift=0pt]x1.north east) -- ([yshift=-2pt]neuron.-120) node [pos=0.5,left,xshift=-0.3em] (w1) {$w_1$};
+\draw [->,very thick] ([yshift=1pt]x2.north) -- ([yshift=-2pt]neuron.-90) node [pos=0.5,left,xshift=0.0em] (w1) {$w_2$};
+\draw [->,very thick] ([yshift=0pt]x3.north west) -- ([yshift=-2pt]neuron.-60) node [pos=0.5,right,xshift=0.5em] (b) {$b$};
+\draw [->,very thick] ([yshift=2pt]neuron.north) -- ([yshift=0pt]y.south);
+
+\node [anchor=north west] (label01) at ([xshift=6em,yshift=-2em]y.north east) {\textbf{神经元}: };
+\node [anchor=north west] (eqn) at (label01.south west) {${\displaystyle y = \begin{cases} 1 & x_1 \cdot w_1 + x_2 \cdot w_2 + b> 0 \\ 0 & \textrm{其他情况} \end{cases}}$};
+
+\begin{pgfonlayer}{background}
+\node [draw=FigureGold!80!FigureInk,inner sep=4pt,fill=FigureWarm,line width=.7pt,rounded corners=2pt]  [fit = (label01) (eqn)] (neuronbox) {};
+\end{pgfonlayer}
+
+\draw [->,FigureTeal,line width=.9pt,dotted] ([yshift=2em]neuronbox.west) .. controls +(west:4em) and +(east:5em) .. ([yshift=0.5em,xshift=-1em]neuron.east);
+
+\end{tikzpicture}
+
+\end{center}

@@ -108,28 +108,28 @@ $\langle s \rangle$ \texttt{The cat sat} & \texttt{on} & 有了``The cat sat''�
 表 \ref{tab:llm-model-size-comparison} 列出了近年来代表性 LLM 的深度 $L$、宽度 $d$ 及注意力头数等架构参数，帮助读者建立对模型规模的直观感受。
 
 \begin{table}[t]
-\centering
-\begingroup
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l | r | r | r | r}
-LLM & \# of Params & Depth $L$ & Width $d$ & \# of Heads (Q/KV) \\ \hline
-GPT-2 \cite{radford-etal:2019language} & 1.5B & 48 & 1,600 & 25/25 \\
-GPT-3 \cite{brown-etal:2020language} & 175B & 96 & 12,288 & 96/96 \\ \hline
-\multirow{3}{*}{LLaMA3.1 \cite{dubey2024llama}}
- & 8B & 32 & 4,096 & 32/8 \\
- & 70B & 80 & 8,192 & 64/8 \\
- & 405B & 126 & 16,384 & 128/8 \\ \hline
-\multirow{3}{*}{Qwen3 \cite{yang2025qwen3}}
- & 0.6B & 28 & 1,024 & 16/8 \\
- & 8B & 36 & 4,096 & 32/8 \\
- & 235B$^\dagger$ & 94 & 4,096 & 64/4 \\ \hline
-Gemma3 \cite{gemmateam2025gemma3} & 27B & 62 & 5,376 & 32/16 \\ \hline
-DeepSeek-V3 \cite{liu2024deepseek} & 671B$^\dagger$ & 61 & 7,168 & 128/128 \\
-Mistral-Large-3 \cite{mistral2025mistral3} & 673B$^\dagger$ & 61 & 7,168 & 128/128
-\end{tabular}
-\endgroup
-\caption{部分大语言模型的架构参数对比。表中列出了各模型的参数量、层数（$L$）、隐藏维度（$d$）以及注意力头数（$a/b$ 表示 $a$ 个 Query 注意力头，$b$ 个 Key/Value 注意力头）。标记 $^\dagger$ 的模型采用混合专家（Mixture-of-Experts, MoE）架构，表中给出的是总参数量；推理时每 token 实际激活的参数量分别为 Qwen3-235B $\sim$22B、DeepSeek-V3 $\sim$37B、Mistral-Large-3 $\sim$41B。}
-\label{tab:llm-model-size-comparison}
+  \centering
+  \begingroup
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{l | r | r | r | r}
+  大语言模型 & 参数量 & 深度 $L$ & 宽度 $d$ & 注意力头数 (Q/KV) \\ \hline
+  GPT-2 \cite{radford-etal:2019language} & 1.5B & 48 & 1,600 & 25/25 \\
+  GPT-3 \cite{brown-etal:2020language} & 175B & 96 & 12,288 & 96/96 \\ \hline
+  \multirow{3}{*}{LLaMA3.1 \cite{dubey2024llama}}
+   & 8B & 32 & 4,096 & 32/8 \\
+   & 70B & 80 & 8,192 & 64/8 \\
+   & 405B & 126 & 16,384 & 128/8 \\ \hline
+  \multirow{3}{*}{Qwen3 \cite{yang2025qwen3}}
+   & 0.6B & 28 & 1,024 & 16/8 \\
+   & 8B & 36 & 4,096 & 32/8 \\
+   & 235B$^\dagger$ & 94 & 4,096 & 64/4 \\ \hline
+  Gemma3 \cite{gemmateam2025gemma3} & 27B & 62 & 5,376 & 32/16 \\ \hline
+  DeepSeek-V3 \cite{liu2024deepseek} & 671B$^\dagger$ & 61 & 7,168 & 128/128 \\
+  Mistral-Large-3 \cite{mistral2025mistral3} & 673B$^\dagger$ & 61 & 7,168 & 128/128
+  \end{tabular}
+  \endgroup
+  \caption{部分大语言模型的架构参数对比。表中列出了各模型的参数量、层数（$L$）、隐藏维度（$d$）以及注意力头数（$a/b$ 表示 $a$ 个 Query 注意力头，$b$ 个 Key/Value 注意力头）。标记 $^\dagger$ 的模型采用混合专家（Mixture-of-Experts, MoE）架构，表中给出的是总参数量；推理时每 token 实际激活的参数量分别为 Qwen3-235B $\sim$22B、DeepSeek-V3 $\sim$37B、Mistral-Large-3 $\sim$41B。}
+  \label{tab:llm-model-size-comparison}
 \end{table}
 
 \subsection{大语言模型预训练方法}
@@ -141,20 +141,20 @@ Mistral-Large-3 \cite{mistral2025mistral3} & 673B$^\dagger$ & 61 & 7,168 & 128/1
 预训练首先需要大量的文本数据。如表 \ref{tab:training-data-size-llm} 所示，现代 LLM 在预训练阶段通常消耗数万亿乃至数十万亿个 token，远超传统 NLP 模型数个数量级。
 
 \begin{table}[t]
-\centering
-\begingroup
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l | r | r}
-LLM & Year & \# of Tokens \\ \hline
-GPT-3-175B \cite{brown-etal:2020language} & 2020 & 0.5T \\
-LLaMA2-70B \cite{touvron-etal:2023llama} & 2023 & 2.0T \\
-LLaMA3-8B \cite{dubey2024llama} & 2024 & 15T \\
-DeepSeek-V3 \cite{liu2024deepseek} & 2024 & 14.8T \\
-Qwen3-235B \cite{yang2025qwen3} & 2025 & 36T
-\end{tabular}
-\endgroup
-\caption{部分 LLM 的预训练数据规模。}
-\label{tab:training-data-size-llm}
+  \centering
+  \begingroup
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{l | r | r}
+  大语言模型 & 年份 & Token 数量 \\ \hline
+  GPT-3-175B \cite{brown-etal:2020language} & 2020 & 0.5T \\
+  LLaMA2-70B \cite{touvron-etal:2023llama} & 2023 & 2.0T \\
+  LLaMA3-8B \cite{dubey2024llama} & 2024 & 15T \\
+  DeepSeek-V3 \cite{liu2024deepseek} & 2024 & 14.8T \\
+  Qwen3-235B \cite{yang2025qwen3} & 2025 & 36T
+  \end{tabular}
+  \endgroup
+  \caption{部分大语言模型的预训练数据规模。}
+  \label{tab:training-data-size-llm}
 \end{table}
 
 除了规模之外，预训练数据的质量与构成同样决定了模型最终的能力边界。训练语料通常来自多个渠道：

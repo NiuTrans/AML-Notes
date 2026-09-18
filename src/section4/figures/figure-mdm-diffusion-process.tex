@@ -64,7 +64,7 @@
 \node [anchor=center] (x5m1) at ([xshift=-\stepsize]x51) {\small{...}};
 \node [anchor=east] (x5label) at ([xshift=-0.4cm]x5m1) {\small{$(\mathbf{c},\mathbf{x}(4))$}};
 
-\draw [->,line width=1.2pt] ([yshift=-0.2cm]x14.south) -- ([yshift=0.2cm]x24.north) node [pos=0.5,xshift=-0.2cm,left,align=right] {\footnotesize{将词元替换为}\\[-2pt] \footnotesize{\texttt{[MASK]}}};
+\draw [->,line width=1.2pt] ([yshift=-0.2cm]x14.south) -- ([yshift=0.2cm]x24.north) node [pos=0.5,xshift=-0.2cm,left,align=right] {\footnotesize{将 token 替换为}\\[-2pt] \footnotesize{\texttt{[MASK]}}};
 \draw [->,line width=1.2pt] ([yshift=-0.2cm]x24.south) -- ([yshift=0.2cm]x34.north);
 \draw [->,line width=1.2pt] ([yshift=-0.2cm]x34.south) -- ([yshift=0.2cm]x44.north);
 \draw [->,line width=1.2pt] ([yshift=-0.2cm]x44.south) -- ([yshift=0.2cm]x54.north);
@@ -75,7 +75,7 @@
 
 \draw [decorate,decoration={brace,amplitude=5pt,mirror,raise=0}]  ([xshift=-0.1cm,yshift=-0.6cm]x51.west) -- ([xshift=0.1cm,yshift=-0.6cm]x57.east) node[midway,yshift=-0.6cm,align=left] (x5labelbelow) {\footnotesize{全掩码序列 $\mathbf{x}(T)\ (T=4)$}};
 
-\draw [->] (x36.north east) .. controls +(east:0.7cm) and +(east:0.7cm) .. (x26.south east) node [pos=0.5,right,align=left] {\scriptsize{训练时，模型学习}\\[-2pt] \scriptsize{恢复原始词元}};
+\draw [->] (x36.north east) .. controls +(east:0.7cm) and +(east:0.7cm) .. (x26.south east) node [pos=0.5,right,align=left] {\scriptsize{训练时，模型学习}\\[-2pt] \scriptsize{恢复原始 token }};
 
 \end{scope}
 

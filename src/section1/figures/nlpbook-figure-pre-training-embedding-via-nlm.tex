@@ -1,0 +1,29 @@
+% !Mode:: "TeX:UTF-8"
+% !TEX encoding = UTF-8 Unicode
+\input{figures/figure-theme.tex}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+% 基于原图的节点样式重排：流程框只保留模型公式，避免中部留白。
+\tikzstyle{snode} = [minimum width=11em,minimum height=4.2em,inner sep=5pt,fill=FigureMist,rounded corners=3pt]
+
+%% training system
+\node [snode,anchor=center,draw=FigureBlue,line width=1pt] (systemA) at (0,0) {};
+\node [anchor=south] (systemAlabel) at ([yshift=0.35em]systemA.north) {\small{通过语言建模}};
+\node [anchor=south] (systemAlabel2) at ([yshift=-0.15em]systemAlabel.north) {\small{优化 $\mathbf{C}$ 和 $\theta$}};
+\node [anchor=center] (systemAfunc) at (systemA.center) {\Large{$F_{\theta,\mathbf{C}}(\cdot)$}};
+\node [anchor=north] (systemAcaption) at ([yshift=-0.5em]systemA.south) {{\large (a) 训练词向量}};
+
+%% application system
+\node [snode,anchor=center,draw=FigureTeal,line width=1pt] (systemB) at ([xshift=15em]systemA.center) {};
+\node [anchor=south] (systemBlabel) at ([yshift=0.35em]systemB.north) {\small{用于新任务}};
+\node [anchor=south] (systemBlabel2) at ([yshift=-0.15em]systemBlabel.north) {\small{使用优化后的 $\widehat{\mathbf{C}}$}};
+\node [anchor=center] (systemBfunc) at (systemB.center) {\Large{$G_{\pi,\widehat{\mathbf{C}}}(\cdot)$}};
+\node [anchor=north] (systemBcaption) at ([yshift=-0.5em]systemB.south) {{\large (b) 应用词向量}};
+
+%% transfer arrow
+\draw [->,very thick,dotted] ([xshift=0.2em]systemA.east) -- ([xshift=-0.2em]systemB.west)
+  node [pos=0.5,above,align=center] {\scriptsize 迁移词向量\\$\widehat{\mathbf{C}}$};
+
+\end{tikzpicture}

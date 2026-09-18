@@ -1,8 +1,9 @@
-% !TeX root = ../aml-notes.tex
+% !TeX root = ../main.tex
 % 本文件由 section2/aml_notes.tex 抽取正文生成，保留章节目录独立性。
 
 \chapter{强化学习基础}
-\chapterinfo{朱梓铭、徐欣怡、王成龙}
+% \chapterinfo{朱梓铭、徐欣怡、王成龙}
+\chapterinfo[本章内容主要参考 \href{https://wangclnlp.github.io/RL-without-Tears-site/}{\textit{Reinforcement Learning without Tears: An Introduction in the Era of Large Language Models}}，部分内容翻译、整理自该书英文版]{朱梓铭、徐欣怡、王成龙}
 
 许多智能任务并不是对一个静态输入给出一次答案，而是连续作出选择。机器人当前的转向会改变下一时刻的位置，调度系统当前分配的资源会影响后续任务的等待时间，推荐系统展示的内容也可能改变用户之后的行为。此类任务中的动作既影响即时结果，也改变未来能够看到的状态和可以采取的动作。强化学习研究的正是这种\keyword{智能体通过与环境交互，依据反馈学习长期决策策略}的问题。
 
@@ -10,7 +11,7 @@
 
 深度学习的发展进一步扩大了强化学习能够处理的状态规模。深度神经网络可以直接从图像等高维输入中学习表示，DQN 在一组 Atari 游戏中展示了端到端学习决策策略的能力；随后，深度强化学习与搜索、自我对弈结合，在围棋等复杂博弈中取得重要进展。强化学习的应用也由相对低维的控制问题，扩展到高维感知、复杂策略和大规模函数近似场景。
 
-大模型出现后，强化学习获得了新的角色。预训练通过预测海量语料中的下一个词元学习通用知识和语言能力，但“更像训练语料”并不自动等于更符合用户意图。大模型后训练可以把模型看作策略，把生成过程看作一串动作，再利用人类偏好、奖励模型、规则检查器或可自动验证的任务结果提供反馈。基于人类反馈的强化学习（Reinforcement Learning from Human Feedback, RLHF）已被用于改善指令遵循和人类偏好对齐；在答案能够可靠验证的数学、编程等任务中，强化学习还可用于强化多步推理行为。
+大模型出现后，强化学习获得了新的角色。预训练通过预测海量语料中的下一个 token 学习通用知识和语言能力，但“更像训练语料”并不自动等于更符合用户意图。大模型后训练可以把模型看作策略，把生成过程看作一串动作，再利用人类偏好、奖励模型、规则检查器或可自动验证的任务结果提供反馈。基于人类反馈的强化学习（Reinforcement Learning from Human Feedback, RLHF）已被用于改善指令遵循和人类偏好对齐；在答案能够可靠验证的数学、编程等任务中，强化学习还可用于强化多步推理行为。
 
 因此，在当下的大模型技术体系中，强化学习是连接“已有模型能力”与“目标行为”的重要后训练手段，也是训练可交互智能体和自主决策系统的基础工具。它并不替代预训练、监督微调、搜索或工具调用，也不是所有任务都必须采用的方案：只有当目标能够转化为可信反馈、决策会影响后续过程，并且训练数据与探索成本可以控制时，强化学习的优势才更容易发挥。奖励若不能代表真实目标，策略反而可能更有效地利用奖励漏洞；反馈昂贵或不能在线试错时，也需要离线强化学习、模仿学习或其他方法共同解决。
 
@@ -459,26 +460,26 @@ REINFORCE 用实际采样到的后续回报评价动作。这个评价不依赖�
 \begin{equation}
 \pi_{\theta}(a_t\mid s_t)
 \end{equation}
-并采样 $a_t$。环境执行动作和约定范围内的对手回应，返回 $r_t$、$s_{t+1}$ 与终止标记。Critic 随后用相邻状态的价值构造训练目标。图~\ref{fig:actor_critic_framework} 展示了这条数据流。
+并采样 $a_t$。环境执行动作和约定范围内的对手回应，返回 $r_t$、$s_{t+1}$ 与终止标记。Critic 随后用相邻状态的价值构造训练目标。
 
-\begin{figure}[htbp]
-  \centering
-  \IfFileExists{figures/actor_critic_framework.tex}{
-    \resizebox{0.96\linewidth}{!}{
-      \input{figures/actor_critic_framework.tex}
-    }
-  }{
-    \fbox{
-      \begin{minipage}[c][6.2cm][c]{0.96\linewidth}
-        \centering
-        Actor-Critic 框架中的策略选择与价值评价过程\\
-        \texttt{figures/actor\_critic\_framework.tex}
-      \end{minipage}
-    }
-  }
-  \caption{Actor-Critic 框架中的策略选择与价值评价过程}
-  \label{fig:actor_critic_framework}
-\end{figure}
+% \begin{figure}[htbp]
+%   \centering
+%   \IfFileExists{figures/actor_critic_framework.tex}{
+%     \resizebox{0.96\linewidth}{!}{
+%       \input{figures/actor_critic_framework.tex}
+%     }
+%   }{
+%     \fbox{
+%       \begin{minipage}[c][6.2cm][c]{0.96\linewidth}
+%         \centering
+%         Actor-Critic 框架中的策略选择与价值评价过程\\
+%         \texttt{figures/actor\_critic\_framework.tex}
+%       \end{minipage}
+%     }
+%   }
+%   \caption{Actor-Critic 框架中的策略选择与价值评价过程}
+%   \label{fig:actor_critic_framework}
+% \end{figure}
 
 Actor 回答“下一步按什么分布行动”，Critic 回答“从当前状态继续执行该策略，预计能得到多少回报”。动作相对于当前状态平均水平的好坏由优势函数表示：
 \begin{equation}

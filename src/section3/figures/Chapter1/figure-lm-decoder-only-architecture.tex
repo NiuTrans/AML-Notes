@@ -1,144 +1,143 @@
-
 \begin{tikzpicture}
 
-\def\vstep{1.3cm}
-\def\ssep{1.0cm}
-
-\tikzstyle{enode} = [minimum width=9cm,minimum height=1.4cm,inner sep=2pt,draw,thick];
-
-\begin{scope}
-
-\node [anchor=west] (w0) at (0,0) {\footnotesize{$x_0$}};
-\node [anchor=center] (w1) at ([xshift=\ssep]w0.center) {\footnotesize{$x_1$}};
-\node [anchor=center] (w2) at ([xshift=\ssep]w1.center) {\footnotesize{$...$}};
-\node [anchor=center] (w3) at ([xshift=\ssep]w2.center) {\footnotesize{$x_{m-1}$}};
-
-\node [anchor=center] (e0) at ([yshift=0.7*\ssep]w0.center) {\footnotesize{$\mathbf{e}_0$}};
-\node [anchor=center] (e1) at ([yshift=0.7*\ssep]w1.center) {\footnotesize{$\mathbf{e}_1$}};
-\node [anchor=center] (e2) at ([yshift=0.7*\ssep]w2.center) {\footnotesize{$...$}};
-\node [anchor=center] (e3) at ([yshift=0.7*\ssep]w3.center) {\footnotesize{$\mathbf{e}_{m-1}$}};
-
-\draw [->] (w0.north) -- (e0.south);
-\draw [->] (w1.north) -- (e1.south);
-\draw [->] (w3.north) -- (e3.south);
-
-\draw [->] (e0.north) -- ([yshift=0.2*\ssep]e0.north);
-\draw [->] (e1.north) -- ([yshift=0.2*\ssep]e1.north);
-\draw [->] (e3.north) -- ([yshift=0.2*\ssep]e3.north);
-
-\node [anchor=south,minimum width=5*\ssep,minimum height=1.2*\ssep,draw,thick] (lm) at ([yshift=1.0*\ssep,xshift=0.5*\ssep]w1.north) {};
-
-\node [anchor=center] (h0) at ([yshift=2.1*\ssep]w0.center) {\footnotesize{$\mathbf{h}_0^L$}};
-\node [anchor=center] (h1) at ([yshift=2.1*\ssep]w1.center) {\footnotesize{$\mathbf{h}_1^L$}};
-\node [anchor=center] (h2) at ([yshift=2.1*\ssep]w2.center) {\footnotesize{$...$}};
-\node [anchor=center] (h3) at ([yshift=2.1*\ssep]w3.center) {\footnotesize{$\mathbf{h}_{m-1}^L$}};
-
-\node [anchor=south,minimum height=0.8em,minimum width=0.8em,draw,fill=gray!70] (s0) at ([yshift=0.4*\ssep]h0.north) {};
-\node [anchor=south,minimum height=0.8em,minimum width=0.8em,draw,fill=gray!70] (s1) at ([yshift=0.4*\ssep]h1.north) {};
-\node [anchor=south,minimum height=0.8em,minimum width=0.8em,fill=white] (s2) at ([yshift=0.4*\ssep]h2.north) {...};
-\node [anchor=south,minimum height=0.8em,minimum width=0.8em,draw,fill=gray!70] (s3) at ([yshift=0.4*\ssep]h3.north) {};
-
-\draw [->] ([yshift=-3pt]h0.north) -- ([yshift=-2pt]s0.south);
-\draw [->] ([yshift=-3pt]h1.north) -- ([yshift=-2pt]s1.south);
-\draw [->] ([yshift=-3pt]h3.north) -- ([yshift=-2pt]s3.south);
-
-\node [anchor=south] (o0) at ([yshift=0.4*\ssep,xshift=-0.0cm]s0.north) {\scriptsize{$\Pr({\color{blue} x_1}|x_0)$}};
-\node [anchor=south] (o1) at ([yshift=0.8*\ssep,xshift=0.0cm]s1.north) {\scriptsize{$\Pr({\color{blue} x_2}|x_0 x_1)$}};
-\node [anchor=south] (o3) at ([yshift=1.2*\ssep,xshift=0.0cm]s3.north) {\scriptsize{$\Pr({\color{blue} x_m}|x_0 x_1 ... x_{m-1})$}};
-
-\draw [->] ([yshift=2pt]s0.north) -- ([yshift=-2pt]o0.south);
-\draw [->] ([yshift=2pt]s1.north) -- ([yshift=-2pt]o1.south);
-\draw [->] ([yshift=2pt]s3.north) -- ([yshift=-2pt]o3.south);
-
-\node [anchor=south] (p0) at ([yshift=1.3*\ssep]o0.center) {\footnotesize{$x_1$}};
-\node [anchor=center] (p1) at ([xshift=\ssep]p0.center) {\footnotesize{$x_2$}};
-\node [anchor=center] (p2) at ([xshift=\ssep]p1.center) {\footnotesize{$...$}};
-\node [anchor=center] (p3) at ([xshift=\ssep]p2.center) {\footnotesize{$x_{m}$}};
-
-\draw [->] (o0.north) -- (p0.south);
-\draw [->] (o1.north) -- (p1.south);
-\draw [->] (o3.north) -- (p3.south);
-
-\node [anchor=south] (encodercaption) at ([yshift=0.02cm]lm.south) {Language Model};
-
-\end{scope}
-
-\begin{scope}
-
-\node [anchor=west] (h0) at ([xshift=7.5cm,yshift=0.1cm]w0.center) {\footnotesize{$\mathbf{z}_0$}};
-\node [anchor=center] (h1) at ([xshift=\ssep]h0.center) {\footnotesize{$\mathbf{z}_1$}};
-\node [anchor=center] (h2) at ([xshift=\ssep]h1.center) {\footnotesize{$...$}};
-\node [anchor=center] (h3) at ([xshift=\ssep]h2.center) {\footnotesize{$\mathbf{z}_{m-1}$}};
-
-\node [anchor=south,minimum width=5*\ssep,minimum height=1.2*\ssep,draw,thick] (selfatt) at ([yshift=0.8*\ssep,xshift=0.5*\ssep]h1.north) {};
-
-\draw [arrows = {-Stealth[harpoon]},thick] ([xshift=0.5*\ssep,yshift=-0.8*\ssep]selfatt.south west) -- ([xshift=0.5*\ssep,yshift=-1pt]selfatt.south west);
-\draw [arrows = {-Stealth[harpoon,swap]},thick] ([xshift=-0.5*\ssep,yshift=-0.8*\ssep]selfatt.south east) -- ([xshift=-0.5*\ssep,yshift=-1pt]selfatt.south east);
-\path [fill=lolgreen!40,fill opacity=0.5] ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep]selfatt.south west) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1pt]selfatt.south west) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1pt]selfatt.south east) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-0.8*\ssep]selfatt.south east) -- ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep]selfatt.south west);
-
-\node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node00) at ([xshift=-1.8*\ssep,yshift=0.3cm]selfatt.south) {};
-\node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node01) at ([xshift=-0.6*\ssep,yshift=0.3cm]selfatt.south) {};
-\node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node02) at ([xshift=0.6*\ssep,yshift=0.3cm]selfatt.south) {};
-\node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node03) at ([xshift=1.8*\ssep,yshift=0.3cm]selfatt.south) {};
-\node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node10) at ([xshift=-1.8*\ssep,yshift=-0.4cm]selfatt.north) {};
-\node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node11) at ([xshift=-0.6*\ssep,yshift=-0.4cm]selfatt.north) {};
-\node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node12) at ([xshift=0.6*\ssep,yshift=-0.4cm]selfatt.north) {};
-\node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node13) at ([xshift=1.8*\ssep,yshift=-0.4cm]selfatt.north) {};
-
-\draw [-{Stealth[length=1mm]},gray!20] (node00.90) -- (node10.-90);
-\draw [-{Stealth[length=1mm]},gray!20] (node00.75) -- (node11.-105);
-\draw [-{Stealth[length=1mm]}] (node00.60) -- (node12.-140);
-\draw [-{Stealth[length=1mm]},gray!20] (node00.45) -- (node13.-155);
-\draw [-{Stealth[length=1mm]},gray!20] (node01.90) -- (node11.-90);
-\draw [-{Stealth[length=1mm]}] (node01.75) -- (node12.-105);
-\draw [-{Stealth[length=1mm]},gray!20] (node01.60) -- (node13.-130);
-\draw [-{Stealth[length=1mm]}] (node02.90) -- (node12.-90);
-\draw [-{Stealth[length=1mm]},gray!20] (node02.75) -- (node13.-105);
-\draw [-{Stealth[length=1mm]},gray!20] (node03.90) -- (node13.-90);
-
-\node [anchor=south,minimum width=5*\ssep,minimum height=0.8*\ssep,draw,thick] (selfattlnorm) at ([yshift=0.8*\ssep]selfatt.north) {Post-norm or Pre-norm};
-
-\draw [arrows = {-Stealth[harpoon]},thick] ([xshift=0.5*\ssep,yshift=-0.8*\ssep+1pt]selfattlnorm.south west) -- ([xshift=0.5*\ssep,yshift=-1pt]selfattlnorm.south west);
-\draw [arrows = {-Stealth[harpoon,swap]},thick] ([xshift=-0.5*\ssep,yshift=-0.8*\ssep+1pt]selfattlnorm.south east) -- ([xshift=-0.5*\ssep,yshift=-1pt]selfattlnorm.south east);
-\path [fill=lolgreen!40,fill opacity=0.5] ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep+1pt]selfattlnorm.south west) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1pt]selfattlnorm.south west) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1pt]selfattlnorm.south east) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-0.8*\ssep+1pt]selfattlnorm.south east) -- ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep+1pt]selfattlnorm.south west);
-
-\node [anchor=south,minimum width=5*\ssep,minimum height=1.2*\ssep,draw,thick] (ffn) at ([yshift=1.2*\ssep]selfattlnorm.north) {};
-
-\coordinate (ffnb0) at ([xshift=1.2*\ssep,yshift=0.3*\ssep]ffn.south west);
-\coordinate (ffnm0) at ([xshift=0.3*\ssep,yshift=0.6*\ssep]ffn.south west);
-\coordinate (ffnh0) at ([xshift=1.2*\ssep,yshift=0.9*\ssep]ffn.south west);
-\coordinate (ffnb1) at ([xshift=-1.2*\ssep,yshift=0.3*\ssep]ffn.south east);
-\coordinate (ffnm1) at ([xshift=-0.3*\ssep,yshift=0.6*\ssep]ffn.south east);
-\coordinate (ffnh1) at ([xshift=-1.2*\ssep,yshift=0.9*\ssep]ffn.south east);
-
-\path [fill=lolorange!30] (ffnb0) -- (ffnm0) -- (ffnm1) -- (ffnb1) -- (ffnb0);
-\path [fill=lolpurple!30] (ffnm0) -- (ffnh0) -- (ffnh1) -- (ffnm1) -- (ffnm0);
-
-\draw [arrows = {-latex}] ([xshift=-1pt]ffnb0) -- ([xshift=-1pt,yshift=0]ffnm0);
-\draw [arrows = {-latex}] ([xshift=-1pt,yshift=0]ffnm0) -- ([xshift=-1pt]ffnh0);
-\draw [arrows = {-latex}] ([xshift=1pt]ffnb1) -- ([xshift=1pt,yshift=0]ffnm1);
-\draw [arrows = {-latex}] ([xshift=1pt,yshift=0]ffnm1) -- ([xshift=1pt]ffnh1);
-
-\draw [arrows = {-Stealth[harpoon]},thick] ([xshift=0.5*\ssep,yshift=-1.2*\ssep+1pt]ffn.south west) -- ([xshift=0.5*\ssep,yshift=-1pt]ffn.south west);
-\draw [arrows = {-Stealth[harpoon,swap]},thick] ([xshift=-0.5*\ssep,yshift=-1.2*\ssep+1pt]ffn.south east) -- ([xshift=-0.5*\ssep,yshift=-1pt]ffn.south east);
-\path [fill=lolgreen!40,fill opacity=0.5] ([xshift=0.5*\ssep+0.5pt,yshift=-1.2*\ssep+1pt]ffn.south west) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1pt]ffn.south west) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1pt]ffn.south east) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1.2*\ssep+1pt]ffn.south east) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1.2*\ssep+1pt]ffn.south west);
-
-\node [anchor=south,minimum width=5*\ssep,minimum height=0.8*\ssep,draw,thick] (ffnlnorm) at ([yshift=0.8*\ssep]ffn.north) {Post-norm or Pre-norm};
-\draw [arrows = {-Stealth[harpoon]},thick] ([xshift=0.5*\ssep,yshift=-0.8*\ssep+1pt]ffnlnorm.south west) -- ([xshift=0.5*\ssep,yshift=-1pt]ffnlnorm.south west);
-\draw [arrows = {-Stealth[harpoon,swap]},thick] ([xshift=-0.5*\ssep,yshift=-0.8*\ssep+1pt]ffnlnorm.south east) -- ([xshift=-0.5*\ssep,yshift=-1pt]ffnlnorm.south east);
-\path [fill=lolgreen!40,fill opacity=0.5] ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep+1pt]ffnlnorm.south west) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1pt]ffnlnorm.south west) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1pt]ffnlnorm.south east) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-0.8*\ssep+1pt]ffnlnorm.south east) -- ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep+1pt]ffnlnorm.south west);
-
-\draw [->,thick] ([xshift=0.5*\ssep,yshift=-0.4*\ssep]selfatt.south west) -- ([xshift=-0.5*\ssep,yshift=-0.4*\ssep]selfatt.south west) -- ([xshift=-0.5*\ssep]selfattlnorm.west) -- ([xshift=-1pt]selfattlnorm.west);
-
-\draw [->,thick] ([xshift=0.5*\ssep,yshift=-0.6*\ssep]ffn.south west) -- ([xshift=-0.5*\ssep,yshift=-0.6*\ssep]ffn.south west) -- ([xshift=-0.5*\ssep]ffnlnorm.west) -- ([xshift=-1pt]ffnlnorm.west);
-
-\node [anchor=north west,draw,fill=white,inner sep=0,rounded corners=0.05cm,minimum height=0.4cm,minimum width=2cm] (selfattlabel) at ([xshift=-0.1cm,yshift=0.2cm]selfatt.north west) {\scriptsize{Self-attention}};
-\node [anchor=north west,draw,fill=white,inner sep=0,rounded corners=0.05cm,minimum height=0.4cm,minimum width=2cm] (ffnlabel) at ([xshift=-0.1cm,yshift=0.2cm]ffn.north west) {\scriptsize{FFN}};
-
-\draw [decoration={brace,amplitude=5pt},decorate] ([xshift=-2em,yshift=-0.8*\ssep]selfatt.south west) -- ([xshift=-2em,yshift=2pt]ffnlnorm.north west) node [pos=0.5,left,xshift=-1.2em,yshift=2.5em,rotate=90] (timeslayer) {$L$ Blocks};
-
-\draw [->,densely dashed] ([xshift=-0.5em]lm.east) .. controls +(east:1.3cm) and +(west:1.3cm) .. (timeslayer.north);
-
-\end{scope}
-
-\end{tikzpicture}
+    \def\vstep{1.3cm}
+    \def\ssep{1.0cm}
+    
+    \tikzstyle{enode} = [minimum width=9cm,minimum height=1.4cm,inner sep=2pt,draw,thick];
+    
+    \begin{scope}
+    
+    \node [anchor=west] (w0) at (0,0) {\footnotesize{$x_0$}};
+    \node [anchor=center] (w1) at ([xshift=\ssep]w0.center) {\footnotesize{$x_1$}};
+    \node [anchor=center] (w2) at ([xshift=\ssep]w1.center) {\footnotesize{$...$}};
+    \node [anchor=center] (w3) at ([xshift=\ssep]w2.center) {\footnotesize{$x_{m-1}$}};
+    
+    \node [anchor=center] (e0) at ([yshift=0.7*\ssep]w0.center) {\footnotesize{$\mathbf{e}_0$}};
+    \node [anchor=center] (e1) at ([yshift=0.7*\ssep]w1.center) {\footnotesize{$\mathbf{e}_1$}};
+    \node [anchor=center] (e2) at ([yshift=0.7*\ssep]w2.center) {\footnotesize{$...$}};
+    \node [anchor=center] (e3) at ([yshift=0.7*\ssep]w3.center) {\footnotesize{$\mathbf{e}_{m-1}$}};
+    
+    \draw [->] (w0.north) -- (e0.south);
+    \draw [->] (w1.north) -- (e1.south);
+    \draw [->] (w3.north) -- (e3.south);
+    
+    \draw [->] (e0.north) -- ([yshift=0.2*\ssep]e0.north);
+    \draw [->] (e1.north) -- ([yshift=0.2*\ssep]e1.north);
+    \draw [->] (e3.north) -- ([yshift=0.2*\ssep]e3.north);
+    
+    \node [anchor=south,minimum width=5*\ssep,minimum height=1.2*\ssep,draw,thick] (lm) at ([yshift=1.0*\ssep,xshift=0.5*\ssep]w1.north) {};
+    
+    \node [anchor=center] (h0) at ([yshift=2.1*\ssep]w0.center) {\footnotesize{$\mathbf{h}_0^L$}};
+    \node [anchor=center] (h1) at ([yshift=2.1*\ssep]w1.center) {\footnotesize{$\mathbf{h}_1^L$}};
+    \node [anchor=center] (h2) at ([yshift=2.1*\ssep]w2.center) {\footnotesize{$...$}};
+    \node [anchor=center] (h3) at ([yshift=2.1*\ssep]w3.center) {\footnotesize{$\mathbf{h}_{m-1}^L$}};
+    
+    \node [anchor=south,minimum height=0.8em,minimum width=0.8em,draw,fill=gray!70] (s0) at ([yshift=0.4*\ssep]h0.north) {};
+    \node [anchor=south,minimum height=0.8em,minimum width=0.8em,draw,fill=gray!70] (s1) at ([yshift=0.4*\ssep]h1.north) {};
+    \node [anchor=south,minimum height=0.8em,minimum width=0.8em,fill=white] (s2) at ([yshift=0.4*\ssep]h2.north) {...};
+    \node [anchor=south,minimum height=0.8em,minimum width=0.8em,draw,fill=gray!70] (s3) at ([yshift=0.4*\ssep]h3.north) {};
+    
+    \draw [->] ([yshift=-3pt]h0.north) -- ([yshift=-2pt]s0.south);
+    \draw [->] ([yshift=-3pt]h1.north) -- ([yshift=-2pt]s1.south);
+    \draw [->] ([yshift=-3pt]h3.north) -- ([yshift=-2pt]s3.south);
+    
+    \node [anchor=south] (o0) at ([yshift=0.4*\ssep,xshift=-0.0cm]s0.north) {\scriptsize{$\Pr({\color{blue} x_1}|x_0)$}};
+    \node [anchor=south] (o1) at ([yshift=0.8*\ssep,xshift=0.0cm]s1.north) {\scriptsize{$\Pr({\color{blue} x_2}|x_0 x_1)$}};
+    \node [anchor=south] (o3) at ([yshift=1.2*\ssep,xshift=0.0cm]s3.north) {\scriptsize{$\Pr({\color{blue} x_m}|x_0 x_1 ... x_{m-1})$}};
+    
+    \draw [->] ([yshift=2pt]s0.north) -- ([yshift=-2pt]o0.south);
+    \draw [->] ([yshift=2pt]s1.north) -- ([yshift=-2pt]o1.south);
+    \draw [->] ([yshift=2pt]s3.north) -- ([yshift=-2pt]o3.south);
+    
+    \node [anchor=south] (p0) at ([yshift=1.3*\ssep]o0.center) {\footnotesize{$x_1$}};
+    \node [anchor=center] (p1) at ([xshift=\ssep]p0.center) {\footnotesize{$x_2$}};
+    \node [anchor=center] (p2) at ([xshift=\ssep]p1.center) {\footnotesize{$...$}};
+    \node [anchor=center] (p3) at ([xshift=\ssep]p2.center) {\footnotesize{$x_{m}$}};
+    
+    \draw [->] (o0.north) -- (p0.south);
+    \draw [->] (o1.north) -- (p1.south);
+    \draw [->] (o3.north) -- (p3.south);
+    
+    \node [anchor=south] (encodercaption) at ([yshift=0.02cm]lm.south) {语言模型};
+    
+    \end{scope}
+    
+    \begin{scope}
+    
+    \node [anchor=west] (h0) at ([xshift=7.5cm,yshift=0.1cm]w0.center) {\footnotesize{$\mathbf{z}_0$}};
+    \node [anchor=center] (h1) at ([xshift=\ssep]h0.center) {\footnotesize{$\mathbf{z}_1$}};
+    \node [anchor=center] (h2) at ([xshift=\ssep]h1.center) {\footnotesize{$...$}};
+    \node [anchor=center] (h3) at ([xshift=\ssep]h2.center) {\footnotesize{$\mathbf{z}_{m-1}$}};
+    
+    \node [anchor=south,minimum width=5*\ssep,minimum height=1.2*\ssep,draw,thick] (selfatt) at ([yshift=0.8*\ssep,xshift=0.5*\ssep]h1.north) {};
+    
+    \draw [arrows = {-Stealth[harpoon]},thick] ([xshift=0.5*\ssep,yshift=-0.8*\ssep]selfatt.south west) -- ([xshift=0.5*\ssep,yshift=-1pt]selfatt.south west);
+    \draw [arrows = {-Stealth[harpoon,swap]},thick] ([xshift=-0.5*\ssep,yshift=-0.8*\ssep]selfatt.south east) -- ([xshift=-0.5*\ssep,yshift=-1pt]selfatt.south east);
+    \path [fill=lolgreen!40,fill opacity=0.5] ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep]selfatt.south west) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1pt]selfatt.south west) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1pt]selfatt.south east) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-0.8*\ssep]selfatt.south east) -- ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep]selfatt.south west);
+    
+    \node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node00) at ([xshift=-1.8*\ssep,yshift=0.3cm]selfatt.south) {};
+    \node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node01) at ([xshift=-0.6*\ssep,yshift=0.3cm]selfatt.south) {};
+    \node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node02) at ([xshift=0.6*\ssep,yshift=0.3cm]selfatt.south) {};
+    \node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node03) at ([xshift=1.8*\ssep,yshift=0.3cm]selfatt.south) {};
+    \node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node10) at ([xshift=-1.8*\ssep,yshift=-0.4cm]selfatt.north) {};
+    \node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node11) at ([xshift=-0.6*\ssep,yshift=-0.4cm]selfatt.north) {};
+    \node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node12) at ([xshift=0.6*\ssep,yshift=-0.4cm]selfatt.north) {};
+    \node [anchor=center,circle,minimum size=4pt,inner sep=0,fill=black] (node13) at ([xshift=1.8*\ssep,yshift=-0.4cm]selfatt.north) {};
+    
+    \draw [-{Stealth[length=1mm]},gray!20] (node00.90) -- (node10.-90);
+    \draw [-{Stealth[length=1mm]},gray!20] (node00.75) -- (node11.-105);
+    \draw [-{Stealth[length=1mm]}] (node00.60) -- (node12.-140);
+    \draw [-{Stealth[length=1mm]},gray!20] (node00.45) -- (node13.-155);
+    \draw [-{Stealth[length=1mm]},gray!20] (node01.90) -- (node11.-90);
+    \draw [-{Stealth[length=1mm]}] (node01.75) -- (node12.-105);
+    \draw [-{Stealth[length=1mm]},gray!20] (node01.60) -- (node13.-130);
+    \draw [-{Stealth[length=1mm]}] (node02.90) -- (node12.-90);
+    \draw [-{Stealth[length=1mm]},gray!20] (node02.75) -- (node13.-105);
+    \draw [-{Stealth[length=1mm]},gray!20] (node03.90) -- (node13.-90);
+    
+    \node [anchor=south,minimum width=5*\ssep,minimum height=0.8*\ssep,draw,thick] (selfattlnorm) at ([yshift=0.8*\ssep]selfatt.north) {Post-norm or Pre-norm};
+    
+    \draw [arrows = {-Stealth[harpoon]},thick] ([xshift=0.5*\ssep,yshift=-0.8*\ssep+1pt]selfattlnorm.south west) -- ([xshift=0.5*\ssep,yshift=-1pt]selfattlnorm.south west);
+    \draw [arrows = {-Stealth[harpoon,swap]},thick] ([xshift=-0.5*\ssep,yshift=-0.8*\ssep+1pt]selfattlnorm.south east) -- ([xshift=-0.5*\ssep,yshift=-1pt]selfattlnorm.south east);
+    \path [fill=lolgreen!40,fill opacity=0.5] ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep+1pt]selfattlnorm.south west) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1pt]selfattlnorm.south west) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1pt]selfattlnorm.south east) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-0.8*\ssep+1pt]selfattlnorm.south east) -- ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep+1pt]selfattlnorm.south west);
+    
+    \node [anchor=south,minimum width=5*\ssep,minimum height=1.2*\ssep,draw,thick] (ffn) at ([yshift=1.2*\ssep]selfattlnorm.north) {};
+    
+    \coordinate (ffnb0) at ([xshift=1.2*\ssep,yshift=0.3*\ssep]ffn.south west);
+    \coordinate (ffnm0) at ([xshift=0.3*\ssep,yshift=0.6*\ssep]ffn.south west);
+    \coordinate (ffnh0) at ([xshift=1.2*\ssep,yshift=0.9*\ssep]ffn.south west);
+    \coordinate (ffnb1) at ([xshift=-1.2*\ssep,yshift=0.3*\ssep]ffn.south east);
+    \coordinate (ffnm1) at ([xshift=-0.3*\ssep,yshift=0.6*\ssep]ffn.south east);
+    \coordinate (ffnh1) at ([xshift=-1.2*\ssep,yshift=0.9*\ssep]ffn.south east);
+    
+    \path [fill=lolorange!30] (ffnb0) -- (ffnm0) -- (ffnm1) -- (ffnb1) -- (ffnb0);
+    \path [fill=lolpurple!30] (ffnm0) -- (ffnh0) -- (ffnh1) -- (ffnm1) -- (ffnm0);
+    
+    \draw [arrows = {-latex}] ([xshift=-1pt]ffnb0) -- ([xshift=-1pt,yshift=0]ffnm0);
+    \draw [arrows = {-latex}] ([xshift=-1pt,yshift=0]ffnm0) -- ([xshift=-1pt]ffnh0);
+    \draw [arrows = {-latex}] ([xshift=1pt]ffnb1) -- ([xshift=1pt,yshift=0]ffnm1);
+    \draw [arrows = {-latex}] ([xshift=1pt,yshift=0]ffnm1) -- ([xshift=1pt]ffnh1);
+    
+    \draw [arrows = {-Stealth[harpoon]},thick] ([xshift=0.5*\ssep,yshift=-1.2*\ssep+1pt]ffn.south west) -- ([xshift=0.5*\ssep,yshift=-1pt]ffn.south west);
+    \draw [arrows = {-Stealth[harpoon,swap]},thick] ([xshift=-0.5*\ssep,yshift=-1.2*\ssep+1pt]ffn.south east) -- ([xshift=-0.5*\ssep,yshift=-1pt]ffn.south east);
+    \path [fill=lolgreen!40,fill opacity=0.5] ([xshift=0.5*\ssep+0.5pt,yshift=-1.2*\ssep+1pt]ffn.south west) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1pt]ffn.south west) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1pt]ffn.south east) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1.2*\ssep+1pt]ffn.south east) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1.2*\ssep+1pt]ffn.south west);
+    
+    \node [anchor=south,minimum width=5*\ssep,minimum height=0.8*\ssep,draw,thick] (ffnlnorm) at ([yshift=0.8*\ssep]ffn.north) {Post-norm or Pre-norm};
+    \draw [arrows = {-Stealth[harpoon]},thick] ([xshift=0.5*\ssep,yshift=-0.8*\ssep+1pt]ffnlnorm.south west) -- ([xshift=0.5*\ssep,yshift=-1pt]ffnlnorm.south west);
+    \draw [arrows = {-Stealth[harpoon,swap]},thick] ([xshift=-0.5*\ssep,yshift=-0.8*\ssep+1pt]ffnlnorm.south east) -- ([xshift=-0.5*\ssep,yshift=-1pt]ffnlnorm.south east);
+    \path [fill=lolgreen!40,fill opacity=0.5] ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep+1pt]ffnlnorm.south west) -- ([xshift=0.5*\ssep+0.5pt,yshift=-1pt]ffnlnorm.south west) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-1pt]ffnlnorm.south east) -- ([xshift=-0.5*\ssep-0.5pt,yshift=-0.8*\ssep+1pt]ffnlnorm.south east) -- ([xshift=0.5*\ssep+0.5pt,yshift=-0.8*\ssep+1pt]ffnlnorm.south west);
+    
+    \draw [->,thick] ([xshift=0.5*\ssep,yshift=-0.4*\ssep]selfatt.south west) -- ([xshift=-0.5*\ssep,yshift=-0.4*\ssep]selfatt.south west) -- ([xshift=-0.5*\ssep]selfattlnorm.west) -- ([xshift=-1pt]selfattlnorm.west);
+    
+    \draw [->,thick] ([xshift=0.5*\ssep,yshift=-0.6*\ssep]ffn.south west) -- ([xshift=-0.5*\ssep,yshift=-0.6*\ssep]ffn.south west) -- ([xshift=-0.5*\ssep]ffnlnorm.west) -- ([xshift=-1pt]ffnlnorm.west);
+    
+    \node [anchor=north west,draw,fill=white,inner sep=0,rounded corners=0.05cm,minimum height=0.4cm,minimum width=2cm] (selfattlabel) at ([xshift=-0.1cm,yshift=0.2cm]selfatt.north west) {\scriptsize{自注意力}};
+    \node [anchor=north west,draw,fill=white,inner sep=0,rounded corners=0.05cm,minimum height=0.4cm,minimum width=2cm] (ffnlabel) at ([xshift=-0.1cm,yshift=0.2cm]ffn.north west) {\scriptsize{前馈网络}};
+    
+    \draw [decoration={brace,amplitude=5pt},decorate] ([xshift=-2em,yshift=-0.8*\ssep]selfatt.south west) -- ([xshift=-2em,yshift=2pt]ffnlnorm.north west) node [pos=0.5,left,xshift=-1.2em,yshift=2.5em,rotate=90] (timeslayer) {$L$ 个块};
+    
+    \draw [->,densely dashed] ([xshift=-0.5em]lm.east) .. controls +(east:1.3cm) and +(west:1.3cm) .. (timeslayer.north);
+    
+    \end{scope}
+    
+    \end{tikzpicture}

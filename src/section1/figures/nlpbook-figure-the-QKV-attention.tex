@@ -1,0 +1,142 @@
+\input{figures/figure-theme.tex}
+\begin{center}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\rowsep{1.0em}
+\def\colsep{1.0em}
+
+\tikzstyle{cnode} = [rectangle,inner sep=1pt,minimum width=1.8em,minimum height=1.8em,draw=FigureInk!65,line width=.7pt,fill=FigureMist,rounded corners=2pt]
+
+%----------------------------------------------------------------------------------------
+% queries, keys, and values
+\begin{scope}
+
+% queries
+\node [cnode,anchor=west] (q1base) at (0,0) {$\mathbf{q}_1$};
+\node [cnode,anchor=west] (q2base) at ([xshift=\colsep]q1base.east) {$\mathbf{q}_2$};
+\node [cnode,anchor=west] (q3base) at ([xshift=\colsep]q2base.east) {$\mathbf{q}_3$};
+\node [anchor=south] (qlabel) at ([yshift=0.3em]q2base.north) {Queries (e.g., $\{\mathbf{s}_1,...,\mathbf{s}_n\}$)};
+
+\draw[decoration={brace,amplitude=6pt},decorate,thick] ([yshift=-3pt]q3base.south east) -- ([yshift=-3pt]q1base.south west);
+\node [anchor=north] (qdef) at ([yshift=-\rowsep]q2base.south east) {$\mathbf{Q}= \begin{bmatrix} \colorbox{blue!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{q}_1$}} \\ \colorbox{blue!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{q}_2$}} \\ \colorbox{blue!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{q}_3$}} \end{bmatrix}$};
+
+% keys
+\node [cnode,anchor=west] (k1base) at ([xshift=5*\colsep]q3base.east) {$\mathbf{k}_1$};
+\node [cnode,anchor=west] (k2base) at ([xshift=\colsep]k1base.east) {$\mathbf{k}_2$};
+\node [cnode,anchor=west] (k3base) at ([xshift=\colsep]k2base.east) {$\mathbf{k}_3$};
+\node [anchor=south] (klabel) at ([yshift=0.3em]k2base.north) {Keys (e.g., $\{\mathbf{h}_1,...,\mathbf{h}_m\}$)};
+
+\draw[decoration={brace,amplitude=6pt},decorate,thick] ([yshift=-3pt]k3base.south east) -- ([yshift=-3pt]k1base.south west);
+\node [anchor=north] (kdef) at ([yshift=-\rowsep]k2base.south east) {$\mathbf{K}= \begin{bmatrix} \colorbox{red!30}{\parbox{1.4cm}{\hspace{0.5cm}\scriptsize{$\mathbf{k}_1$}}} \\ \colorbox{red!30}{\parbox{1.4cm}{\hspace{0.5cm}\scriptsize{$\mathbf{k}_2$}}} \\ \colorbox{red!30}{\parbox{1.4cm}{\hspace{0.5cm}\scriptsize{$\mathbf{k}_3$}}} \end{bmatrix}$};
+
+% values
+\node [cnode,anchor=west] (v1base) at ([xshift=5*\colsep]k3base.east) {$\mathbf{v}_1$};
+\node [cnode,anchor=west] (v2base) at ([xshift=\colsep]v1base.east) {$\mathbf{v}_2$};
+\node [cnode,anchor=west] (v3base) at ([xshift=\colsep]v2base.east) {$\mathbf{v}_3$};
+\node [anchor=south] (vlabel) at ([yshift=0.3em]v2base.north) {Values (e.g., $\{\mathbf{h}_1,...,\mathbf{h}_m\}$)};
+
+\draw[decoration={brace,amplitude=6pt},decorate,thick] ([yshift=-3pt]v3base.south east) -- ([yshift=-3pt]v1base.south west);
+\node [anchor=north] (vdef) at ([yshift=-\rowsep]v2base.south east) {$\mathbf{V}= \begin{bmatrix} \colorbox{green!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{v}_1$}} \\ \colorbox{green!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{v}_2$}} \\ \colorbox{green!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{v}_3$}} \end{bmatrix}$};
+
+% Q K^T
+\node[anchor=north east] (Q) at ([yshift=-5*\rowsep,xshift=-0.3cm]qdef.south east) {$\begin{matrix} \colorbox{blue!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{q}_1$}} \\ \colorbox{blue!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{q}_2$}} \\ \colorbox{blue!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{q}_3$}} \end{matrix}$};
+
+\node [anchor=west] (otimes) at ([xshift=1em]Q.east) {\LARGE{$\times$}};
+
+\node[anchor=west,minimum height=1.5cm,minimum width=0.3cm,inner sep=1pt,fill=red!30] (K1) at ([xshift=1em]otimes.east) {$\mathbf{k}_1^{\mathrm{T}}$};
+\node[anchor=west,minimum height=1.5cm,minimum width=0.3cm,inner sep=1pt,fill=red!30] (K2) at ([xshift=0.3em]K1.east) {$\mathbf{k}_2^{\mathrm{T}}$};
+\node[anchor=west,minimum height=1.5cm,minimum width=0.3cm,inner sep=1pt,fill=red!30] (K3) at ([xshift=0.3em]K2.east) {$\mathbf{k}_3^{\mathrm{T}}$};
+
+\node [anchor=west] (oeq) at ([xshift=1em]K3.east) {\LARGE{$=$}};
+
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK21) at ([xshift=1em]oeq.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK22) at ([xshift=0.3em]QK21.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK23) at ([xshift=0.3em]QK22.east) {};
+
+\node[anchor=south,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK11) at ([yshift=0.3em]QK21.north) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK12) at ([xshift=0.3em]QK11.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK13) at ([xshift=0.3em]QK12.east) {};
+
+\node[anchor=north,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK31) at ([yshift=-0.3em]QK21.south) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK32) at ([xshift=0.3em]QK31.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK33) at ([xshift=0.3em]QK32.east) {};
+
+\draw [<-,thick,dotted] ([yshift=1pt]Q.north) -- ([yshift=5*\rowsep + 1pt]Q.north);
+\draw [<-,thick,dotted] ([yshift=1pt]K2.north) .. controls +(north:1.6cm) and +(south:1.6cm) .. ([yshift=0.3pt,xshift=0.5cm]kdef.south);
+
+\node [anchor=south] (QKLabel) at (QK12.north) {$\mathbf{Q} \mathbf{K}^{\mathrm{T}}$};
+\node [anchor=north] (QKexample) at ([yshift=-0.5em]QK33.south) {\scriptsize{$\mathbf{q}_3 \mathbf{k}_3^{\mathrm{T}}$}};
+\draw [->] ([yshift=-1pt]QKexample.north) -- (QK33.center);
+
+% Softmax
+\node[anchor=north,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK21b) at ([yshift=-7*\rowsep]K1.south) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK22b) at ([xshift=0.3em]QK21b.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK23b) at ([xshift=0.3em]QK22b.east) {};
+
+\node[anchor=south,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK11b) at ([yshift=0.3em]QK21b.north) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK12b) at ([xshift=0.3em]QK11b.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK13b) at ([xshift=0.3em]QK12b.east) {};
+
+\node[anchor=north,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK31b) at ([yshift=-0.3em]QK21b.south) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK32b) at ([xshift=0.3em]QK31b.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=gray!30] (QK33b) at ([xshift=0.3em]QK32b.east) {};
+
+\draw [very thick] ([yshift=-0.4em,xshift=-0.2em]QK31b.south west) -- ([yshift=-0.4em,xshift=0.2em]QK33b.south east);
+\node [anchor=north] (beta) at ([yshift=-0.4em]QK32b.south) {\Large{$\beta$}};
+\node [anchor=east] (softmax) at (QK31b.south west) {\Large{$\mathrm{Softmax}\Big($}};
+\node [anchor=west] (softamx2) at (QK33b.south east) {\Large{$\Big)\ \ =$}};
+
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK21c) at ([xshift=1em]softamx2.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK22c) at ([xshift=0.3em]QK21c.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK23c) at ([xshift=0.3em]QK22c.east) {};
+
+\node[anchor=south,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK11c) at ([yshift=0.3em]QK21c.north) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK12c) at ([xshift=0.3em]QK11c.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK13c) at ([xshift=0.3em]QK12c.east) {};
+
+\node[anchor=north,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK31c) at ([yshift=-0.3em]QK21c.south) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK32c) at ([xshift=0.3em]QK31c.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK33c) at ([xshift=0.3em]QK32c.east) {};
+
+\node [anchor=south] (alphalabel) at (QK12c.north) {\LARGE{$\alpha$}};
+\node [anchor=north] (alphaexample) at ([yshift=-0.5em]QK33c.south) {\scriptsize{$\alpha_{3,3}$}};
+\draw [->] ([yshift=-1pt]alphaexample.north) -- (QK33c.center);
+
+\draw [<-,thick,dotted] ([yshift=1pt]QK12b.north) .. controls +(north:2.0cm) and +(south:2cm) .. ([yshift=-1pt,xshift=0cm]QK31.south);
+
+% results
+\node [anchor=north] (V) at ([yshift=-7*\rowsep]QK32b.south) {$\begin{matrix} \colorbox{green!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{v}_1$}} \\ \colorbox{green!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{v}_2$}} \\ \colorbox{green!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{v}_3$}} \end{matrix}$};
+
+\node [anchor=east] (otimes2) at ([xshift=-0.8em]V.west) {\LARGE{$\times$}};
+
+\node[anchor=east,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK23d) at ([xshift=-1em]otimes2.west) {};
+\node[anchor=east,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK22d) at ([xshift=-0.3em]QK23d.west) {};
+\node[anchor=east,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK21d) at ([xshift=-0.3em]QK22d.west) {};
+
+\node[anchor=south,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK11d) at ([yshift=0.3em]QK21d.north) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK12d) at ([xshift=0.3em]QK11d.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK13d) at ([xshift=0.3em]QK12d.east) {};
+
+\node[anchor=north,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK31d) at ([yshift=-0.3em]QK21d.south) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK32d) at ([xshift=0.3em]QK31d.east) {};
+\node[anchor=west,minimum height=0.4cm,minimum width=0.4cm,inner sep=1pt,fill=orange!30] (QK33d) at ([xshift=0.3em]QK32d.east) {};
+
+\node [anchor=west] (oeq2) at ([xshift=1em]V.east) {\LARGE{$=$}};
+
+\node [anchor=west] (cvectors) at ([xshift=1em]oeq2.east) {$\begin{matrix} \colorbox{purple!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{c}_1$}} \\ \colorbox{purple!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{c}_2$}} \\ \colorbox{purple!30}{\parbox{1.4cm}{\hspace{0.5cm}$\mathbf{c}_3$}} \end{matrix}$};
+
+\node [anchor=south] (resultlabel) at (cvectors.north) {Returned Values $\mathbf{C}$};
+\draw [<-,thick,dotted] ([yshift=-1pt,xshift=1em]V.north) .. controls +(north:2.0cm) and +(south:3.5cm) .. ([yshift=-7cm,xshift=0.0cm]vdef.south) -- ([yshift=0.3em,xshift=0.0cm]vdef.south);
+\draw [<-,thick,dotted] ([yshift=1pt]QK12d.north) .. controls +(north:2.0cm) and +(south:1.2cm) .. ([yshift=-1pt,xshift=0cm]QK31c.south);
+
+\node [anchor=west] (cvectorlabel) at ([xshift=1em]cvectors.east) {$\mathbf{c}_i = \sum_{j=1}^{3} \alpha_{i,j} \mathbf{v}_j$};
+
+\end{scope}
+
+\end{tikzpicture}
+
+\end{center}

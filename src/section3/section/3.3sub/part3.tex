@@ -11,27 +11,7 @@
 \end{equation}
 其中 $\mathbf{H}$ 为海森矩阵。选择影响力最大的子集，可高效驱动模型收敛。总体而言，使用更少但更高质量的数据训练 NLP 模型，往往能带来更好效果。
 
-上述发现与 NLP 的传统认知有所不同：复杂任务的执行能力可以通过少量标注数据激活，而非依赖大规模监督训练。一种解释是，生成正确响应的能力已在预训练阶段习得，但指令-响应的映射在推理时并非高概率路径。微调只需对模型进行微小调整即可使其遵循指令，所需的训练量远少于预训练。这与\textbf{\mindex{表面对齐假说}（superficial alignment hypothesis）}密切相关：知识的主体在预训练期间已经建立，后续的微调或对齐仅对表层行为进行修正，不会显著改变底层知识库 \cite{zhou-etal:2023lima}。图~\ref{fig:alignment-hypothesis} 直观地展示了这一思想：预训练构筑了模型能力的大厦，微调只是完成表层的意图对齐装修。
-
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}
-  \filldraw[fill=gray!10, draw=gray!50] (-0.5,-0.5) rectangle (8.5,5.5);
-  \node[anchor=north] at (4,5.5) {\textbf{模型知识与能力（预训练建立）}};
-  \filldraw[fill=blue!20, draw=blue!40, thick] (1,0.5) rectangle (7,2.8);
-  \node at (4,1.65) {\Large 核心知识库};
-  \draw[->, very thick, red] (4,2.8) -- (4,3.9);
-  \node at (4.3,3.35) [right] {\small 表面对齐（微调）};
-  \filldraw[fill=red!15, draw=red!40, thick] (2.2,3.9) rectangle (5.8,4.9);
-  \node at (4,4.4) {\small 指令遵循 / 偏好对齐};
-\end{tikzpicture}
-\caption{表面对齐假说示意：预训练完成知识与能力的主体构建，微调仅需少量数据实现浅层的行为对齐。}
-\label{fig:alignment-hypothesis}
-\end{figure}
-
-% 进一步的观察表明，微调甚至不必严格依赖成对的指令-响应数据。\citet{hewitt-etal:2024instruction} 发现，仅对响应进行微调而无需对应指令，也能隐式地实现指令遵循。
-
-% 与上述讨论紧密相关的是\textbf{样本效率}（\mindex{sample efficiency}）。若一种方法能从少量样本中有效学习，则称其是样本高效的。与预训练相比，指令微调正是样本高效的。从机器学习角度看，样本高效方法可视为对数据空间的高效采样，能最优地利用稀缺数据。因此，许多基于采样的学习技术（如强化学习算法）可从中受益，例如在人类偏好对齐中通过奖励模型高效采样偏好数据 \cite{liu-etal:2024statistical}，或在策略学习中提高采样效率 \cite{wang-etal:2024esrl}。
+上述发现与 NLP 的传统认知有所不同：复杂任务的执行能力可以通过少量标注数据激活，而非依赖大规模监督训练。一种解释是，生成正确响应的能力已在预训练阶段习得，但指令-响应的映射在推理时并非高概率路径。微调只需对模型进行微小调整即可使其遵循指令，所需的训练量远少于预训练。
 
 \subsubsection{参数高效微调方法}
 
@@ -44,62 +24,59 @@ W' = W_0 + \Delta W = W_0 + B A,\quad \text{其中 } B \in \mathbb{R}^{d \times 
 训练时 $W_0$ 被冻结，仅优化 $B$ 和 $A$。秩 $r$ 通常取 4、8 或 16，可带来巨大的参数缩减。以 LLaMA-7B 的某个注意力投影矩阵 ($d=k=4096$) 为例，若 $r=16$，原始矩阵参数量约 $4096^2 \approx 16.7\text{M}$，而 LoRA 的参数量仅 $2 \times 4096 \times 16 \approx 131\text{K}$，减少超过 100 倍。
 
 \begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[
-  >=Latex,
-  every node/.style={font=},
-  frozen/.style={rounded corners=6pt, draw=gray!60, fill=gray!10, line width=1pt},
-  train/.style={rounded corners=6pt, draw=orange!70!black, fill=orange!12, line width=1pt},
-  plusnode/.style={circle, draw=gray!60, fill=gray!10, line width=1pt, minimum size=0.9cm, font=\bfseries},
-  iobox/.style={rounded corners=4pt, draw=gray!55, fill=gray!6, line width=0.8pt, minimum width=1.2cm, minimum height=0.9cm},
-  sub/.style={font=\scriptsize, gray!40!black},
-  arrow/.style={->, gray!45!black, line width=0.8pt},
-]
-
-% ---- 输入 x ----
-\node[iobox] (x) at (0,0) {$x$};
-\coordinate (split) at (1.3,0);
-\draw[arrow] (x.east) -- (split);
-
-% ---- 上方路径：W0（冻结）----
-\node[frozen, minimum width=3.4cm, minimum height=2.0cm] (w0) at (4.2,2.0) {};
-\node[font=\bfseries] at (4.2,2.25) {$W_0$};
-\node[sub] at (4.2,1.85) {冻结, $d \times k$};
-\node[sub] at (4.2,1.6) {不参与梯度更新};
-
-% ---- 下方路径：先 A（r x k，压缩到秩 r）----
-\node[train, minimum width=1.5cm, minimum height=1.0cm] (a) at (3.6,-2.0) {};
-\node[font=\bfseries] at (3.6,-1.85) {$A$};
-\node[sub] at (3.6,-2.2) {$r \times k$};
-
-% ---- 再 B（d x r，展开回维度 d）----
-\node[train, minimum width=1.5cm, minimum height=2.6cm] (b) at (5.6,-2.0) {};
-\node[font=\bfseries] at (5.6,-1.6) {$B$};
-\node[sub] at (5.6,-2.9) {$d \times r$};
-
-% ---- 分支：x 进入上下两条路径 ----
-\draw[arrow] (split) |- (w0.west);
-\draw[arrow] (split) |- (a.west);
-
-% ---- 下方路径内部：A 先算，结果送入 B ----
-\draw[arrow] (a.east) -- (b.west);
-
-% ---- 汇合点（+）----
-\node[plusnode] (plus) at (8.0,0) {$+$};
-\draw[arrow] (w0.east) -| (plus.north);
-\draw[arrow] (b.east)  -| (plus.south);
-
-% ---- 输出 h ----
-\node[iobox] (h) at (9.6,0) {$h$};
-\draw[arrow] (plus.east) -- (h.west);
-
-% ---- 底部说明数据流向 ----
-\node[sub] at (4.6,-3.7) {输入 $x$ 先经过 $A$，再经过 $B$（$h = W_0x + BAx$）};
-
-\end{tikzpicture}
-\caption{LoRA 示意图。输入 $x$ 从左侧进入，分两条路径向右传播：上方路径穿过冻结的预训练权重 $W_0$；下方路径依次穿过可训练的低秩矩阵 $A$（$r \times k$，先将输入压缩到秩 $r$）和 $B$（$d \times r$，再展开回维度 $d$），两条路径最终在右侧汇合相加，得到输出 $h = W_0x + BAx$。}
-\label{fig:lora}
-\end{figure}
+  \centering
+  \begin{tikzpicture}[
+    >=Latex,
+    every node/.style={font=},
+    frozen/.style={rounded corners=6pt, draw=gray!60, fill=gray!10, line width=1pt},
+    train/.style={rounded corners=6pt, draw=orange!70!black, fill=orange!12, line width=1pt},
+    plusnode/.style={circle, draw=gray!60, fill=gray!10, line width=1pt, minimum size=0.9cm, font=\bfseries},
+    iobox/.style={rounded corners=4pt, draw=gray!55, fill=gray!6, line width=0.8pt, minimum width=1.2cm, minimum height=0.9cm},
+    sub/.style={font=\scriptsize, gray!40!black},
+    arrow/.style={->, gray!45!black, line width=0.8pt},
+  ]
+  
+  % ---- 输入 x ----
+  \node[iobox] (x) at (0,0) {$x$};
+  \coordinate (split) at (1.3,0);
+  \draw[arrow] (x.east) -- (split);
+  
+  % ---- 上方路径：W0（冻结）----
+  \node[frozen, minimum width=3.4cm, minimum height=1.8cm] (w0) at (4.2,1.3) {};
+  \node[font=\bfseries] at (4.2,1.52) {$W_0$};
+  \node[sub] at (4.2,1.24) {冻结, $d \times k$};
+  \node[sub] at (4.2,0.99) {不参与梯度更新};
+  
+  % ---- 下方路径：先 A（r x k，压缩到秩 r）----
+  \node[train, minimum width=1.5cm, minimum height=0.9cm] (a) at (3.6,-1.2) {};
+  \node[font=\bfseries] at (3.6,-1.05) {$A$};
+  \node[sub] at (3.6,-1.4) {$r \times k$};
+  
+  % ---- 再 B（d x r，展开回维度 d）----
+  \node[train, minimum width=1.5cm, minimum height=1.8cm] (b) at (5.6,-1.2) {};
+  \node[font=\bfseries] at (5.6,-0.9) {$B$};
+  \node[sub] at (5.6,-1.8) {$d \times r$};
+  
+  % ---- 分支：x 进入上下两条路径 ----
+  \draw[arrow] (split) |- (w0.west);
+  \draw[arrow] (split) |- (a.west);
+  
+  % ---- 下方路径内部：A 先算，结果送入 B ----
+  \draw[arrow] (a.east) -- (b.west);
+  
+  % ---- 汇合点（+）----
+  \node[plusnode] (plus) at (8.0,0) {$+$};
+  \draw[arrow] (w0.east) -| (plus.north);
+  \draw[arrow] (b.east)  -| (plus.south);
+  
+  % ---- 输出 h ----
+  \node[iobox] (h) at (9.6,0) {$h$};
+  \draw[arrow] (plus.east) -- (h.west);
+  
+  \end{tikzpicture}
+  \caption{LoRA 示意图。输入 $x$ 从左侧进入，分两条路径向右传播：上方路径穿过冻结的预训练权重 $W_0$；下方路径依次穿过可训练的低秩矩阵 $A$（$r \times k$，先将输入压缩到秩 $r$）和 $B$（$d \times r$，再展开回维度 $d$），两条路径最终在右侧汇合相加，得到输出 $h = W_0x + BAx$。}
+  \label{fig:lora}
+  \end{figure}
 
 LoRA 的一大优势是训练后低秩矩阵可直接合并回原权重 ($W' = W_0 + BA$)，推理时不会引入任何额外延迟。近年来涌现出众多 LoRA 变体：QLoRA 将 $W_0$ 以 4-bit NormalFloat 量化存储并配合分页优化器，使得在单张 48GB 消费级 GPU 上微调 65B 模型成为可能 \cite{dettmers-etal:2023qlora}；DoRA 则将权重矩阵解耦为幅度与方向分别学习，进一步提升了微调的稳定性和任务表现 \cite{liu-etal:2024dora}。
 
@@ -126,49 +103,4 @@ QLoRA (4-bit)     & 0.1\%--0.5\% & $\sim$10 GB & 无增加 \\
 LoRA 通过低秩分解将权重更新压缩为两个小矩阵的乘积，仅训练极少量参数即可达到接近全量微调的性能。其核心优势在于推理时零延迟（可合并回原权重），且显存占用大幅降低。需注意秩r的选择会影响表现，通常 8～16 即可，过大则失去高效性。
 \end{importantnote}
 
-PEFT 方法之所以能用极少参数达到全参数微调的效果，可从\textbf{内在维度}（\mindex{intrinsic dimensionality}）假说得到解释 \cite{li-etal:2018intrinsic}。该假说认为，尽管预训练模型参数规模庞大，但适配特定下游任务的有效解空间实际上处于一个低维子流形中。如图~\ref{fig:intrinsic-dim} 所示，预训练已将参数 $\theta_0$ 置于良好的损失盆地内，微调只需在其周围的低维子空间中寻找适合任务的 $\theta^*$：
-\begin{equation}
-\theta^* = \theta_0 + P \cdot \delta,\quad \delta \in \mathbb{R}^m,\; m \ll |\theta|,
-\end{equation}
-其中 $P$ 为投影矩阵。LoRA 这类低秩方法恰好契合了低维更新的特性，能高效捕捉任务特定的变化，无需在高维参数空间进行昂贵搜索。
 
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[scale=0.9]
-  \draw[fill=gray!10] (0,0) ellipse (5cm and 3.5cm);
-  \draw[fill=gray!20] (0.5,-0.3) ellipse (3.8cm and 2.6cm);
-  \draw[fill=gray!30] (1.0,-0.6) ellipse (2.5cm and 1.7cm);
-  \node[align=center] at (1.8,-1.5) {\small 低损失};
-  \fill[blue] (1.2,-0.8) circle (0.12) node[below right] {$\theta_0$ (预训练)};
-  \fill[red] (0.6,0.2) circle (0.12) node[above left] {$\theta^*$ (微调后)};
-  \draw[->, thick, dashed, >=stealth] (1.2,-0.8) -- (0.6,0.2);
-  \node at (2.5,2.5) {\textbf{损失盆地}};
-  \draw[red, thick] (2.5,-2.2) ellipse (1.2cm and 0.5cm);
-  \node[red] at (3.8,-2.5) {\small 低维子空间};
-  \draw[->, red, thick, >=stealth] (2.8,-1.5) -- (2.8,-1.9);
-\end{tikzpicture}
-\caption{内在维度假说示意：预训练模型处于宽广的损失盆地中，微调只需在低维子空间内进行微小扰动即可适配下游任务。}
-\label{fig:intrinsic-dim}
-\end{figure}
-
-
-% \subsubsection{使用更少数据进行微调}
-
-% 尽管 SFT 的数据规模远小于预训练，但在包含数十亿参数的模型上进行全参数微调依然需要消耗可观的 GPU 内存和计算时间。这催生了参数高效微调（PEFT）技术的快速发展，例如 LoRA、适配器（Adapter）等方法。它们仅更新少量额外参数，从而大幅降低资源需求。
-
-% \noindent 随着指令微调的日益普及，对大规模、高质量微调数据的需求激增。例如，FLAN 微调数据集由 1,836 个任务汇编而成，包含 1500 万个样本 \cite{longpre-etal:2023flan}。用如此庞大的数据集微调 LLM 通常是一项计算成本高昂的任务，尤其是考虑到更新 LLM 中大量的参数是资源密集型的。缓解此问题的一种方法是探索高效的模型训练方法，例如，可以使用参数高效的方法仅更新模型的一小部分。然而，许多微调数据集包含大量合成数据，其中错误和偏见仍然不可避免。
-
-% 另一种高效微调的方法是只考虑最相关和最有影响力的样本进行微调。这样，我们可以在保持模型更新质量的同时，减少需要处理的数据量。有几种方法可以实现这一点。例如，\citet{zhou-etal:2023lima} 通过精心设计提示并从各种 NLP 任务中收集样本，构建了一个仅包含 1,000 个样本的指令遵循数据集。他们表明，使用该数据集微调的 LLaMa 65B 模型，其竞争力可与那些投入更多微调努力的模型相媲美，甚至更优。这表明 LLM 能够适应并响应多样的任务，而无需在所有类型的指令遵循数据上进行微调。\citet{chen-etal:2024alpagasus} 开发了一个基于 GPT-3.5 模型的系统，用于评估每个指令遵循样本的质量。因此，他们可以从现有数据集中筛选出高质量的样本，用更少的微调样本展现出更好的微调性能。研究人员还开发了一些方法，利用启发式规则来选择或筛选数据 \cite{zhao-etal:2024long,ge-etal:2024clustering}，或者优先考虑对微调过程影响更大的数据 \cite{xia-etal:2024less}。事实上，这些方法大多可以看作是更大数据选择和筛选方法家族中的实例。而且，使用更高质量（但可能数量更少）的数据通常对训练 NLP 模型有益。
-
-% 指令微调领域的发现与 NLP 的传统观点有所不同：模型处理复杂问题的能力可以通过少量标注数据来激活，而不需要大量的监督数据进行广泛训练。一种可能的解释是，根据指令生成正确响应的能力已在预训练期间学到，但这种指令-响应的映射在推理过程中概率不高。微调可以对模型进行微小调整，使其遵循指令，这比预训练所需的训练量要少得多。这与所谓的 \mindex{superficial alignment hypothesis} （表面对齐假说）密切相关，该假说认为，学习主要发生在预训练期间，而后续的微调或对齐阶段并不会对 LLM 的底层知识库做出重大贡献 \cite{zhou-etal:2023lima}。由于模型的核心能力和知识已在预训练中建立，因此只需相对较少的训练微调工作，即可实现与用户需求对齐的有效微调。这意味着用极少量数据微调 LLM 是可能的。从另一个方向看，微调可能不必局限于成对的指令-响应数据。例如，\citet{hewitt-etal:2024instruction} 发现，仅对响应进行微调而无需相应的指令，也可以隐式地实现指令遵循。
-
-% 与此处的讨论相关的一个概念是样本效率。如果一种机器学习方法能够从少量训练样本中有效学习，那么它就被称为 \mindex{sample efficient} （样本高效的）。从这个意义上说，与预训练相比，指令微调是样本高效的。从机器学习的角度来看，样本高效的方法可以被视为对数据空间进行高效采样的方式，并且由于它们能最优化地利用稀缺数据而具有优势。因此，基于采样的学习技术，例如许多强化学习算法，可以从这些样本高效的方法中受益。例如，在人类偏好对齐中，我们可以通过奖励模型高效地采样偏好数据 \cite{liu-etal:2024statistical}，或者在策略学习中提高采样效率 \cite{wang-etal:2024esrl}。
-
-% \subsubsection{参数高效微调方法}
-% \noindent 缓解计算成本高昂问题的另一种途径是采用参数高效微调（Parameter-Efficient Fine-Tuning, PEFT）方法。与更新模型所有参数的全参数微调（Full Fine-Tuning, FFT）不同，PEFT 旨在冻结预训练模型的大部分权重，仅训练少量附加参数或特定层。早期的 PEFT 方法主要通过在 Transformer 层之间插入小型的全连接网络（即 \mindex{adapter}）来实现 \cite{houlsby-etal:2019adapter}，或者通过在输入端添加可学习的连续提示向量（如 \mindex{prefix tuning} 和 \mindex{prompt tuning}）来引导模型生成 \cite{li-liang:2021prefix,lester-etal:2021prompt}。然而，这些方法在推理阶段往往会引入额外的计算延迟，或者在复杂任务上难以达到全参数微调的性能上限。
-
-% \noindent 为了克服上述局限性，\citet{hu-etal:2021lora} 提出了低秩自适应（Low-Rank Adaptation, \mindex{lora}）方法。LoRA 的核心思想是假设模型在微调过程中的权重更新也具有较低的“内在秩”。因此，它冻结了预训练的权重矩阵，并将可训练的更新分解为两个低秩矩阵的乘积（即 $\Delta W = BA$）。在训练时，仅更新这两个低秩矩阵，从而大幅减少了可训练参数的数量（通常减少到原来的 0.1\% 甚至更少）。LoRA 的一个显著优势在于，训练完成后，低秩矩阵可以直接合并到原始权重中，这意味着在推理阶段不会引入任何额外的延迟。近年来，基于 LoRA 的变体不断涌现，例如 \citet{dettmers-etal:2023qlora} 提出的 QLoRA，通过结合 4-bit 量化和分页优化器，使得在单张消费级 GPU 上微调 65B 参数规模的模型成为可能；而 \citet{liu-etal:2024dora} 提出的 DoRA 则进一步解耦了权重矩阵的幅度和方向，提升了微调的稳定性和任务性能。
-
-% \noindent PEFT 方法之所以能够以极少的参数达到媲美全参数微调的效果，其背后的理论机制值得深入探讨。一种可能的解释与 \mindex{intrinsic dimensionality} （内在维度）假说密切相关 \cite{li-etal:2018intrinsic}。该假说认为，尽管预训练 LLM 拥有数以百亿计的参数，但其在学习特定下游任务时，有效的解空间实际上存在于一个低维的子流形中。换言之，预训练过程已经为模型赋予了强大的通用表示能力，使其处于一个较好的损失盆地（loss basin）中。微调的本质并非从头学习新知识，而是沿着这个低维子空间进行微小的参数扰动，以适配特定任务的数据分布。因此，像 LoRA 这样的低秩方法恰好契合了这种低维更新的特性，能够高效地捕捉任务特定的变化，而无需在整个高维参数空间中进行昂贵的搜索。
-
-% \noindent 与此处的讨论相关的一个概念是 \mindex{compute-memory trade-off} （计算-内存权衡）。在资源受限的场景下，全参数微调不仅受限于 GPU 显存，还面临优化器状态和激活值存储的巨大压力。PEFT 方法通过极大地减少可训练参数，显著降低了内存占用，使得大模型的微调变得更加平民化。从这个意义上说，PEFT 与前述的样本高效方法在目标上高度一致：前者优化了“参数空间”的利用效率，后者优化了“数据空间”的利用效率。在实际应用中，将参数高效（如 LoRA）与数据高效（如高质量数据筛选）相结合，往往能产生显著的协同效应。例如，在使用极少量高质量数据进行微调时，配合 LoRA 可以有效防止模型在微小数据集上发生过拟合，从而在极低的计算成本下实现最优的指令对齐效果。

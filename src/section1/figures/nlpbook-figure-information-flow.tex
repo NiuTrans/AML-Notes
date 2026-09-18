@@ -1,0 +1,76 @@
+% !Mode:: "TeX:UTF-8"
+% !TEX encoding = UTF-8 Unicode
+\input{figures/figure-theme.tex}
+
+\begin{center}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\rowsep{0.5cm}
+\def\colsep{0.4cm}
+\def\ballsize{0.1cm}
+\def\stepsize{0.5cm}
+
+\tikzstyle{pnode} = [circle,minimum size=\ballsize,inner sep=2pt,fill=FigureMuted,draw=FigureInk!45,line width=.4pt]
+
+%----------------------------------------------------------------------------------------
+% rnn
+\begin{scope}
+
+\node [anchor=west,pnode] (p1) at (0,0) {};
+\node [anchor=west,pnode] (p2) at ([xshift=\stepsize]p1.east) {};
+\node [anchor=west,pnode] (p3) at ([xshift=\stepsize]p2.east) {};
+\node [anchor=west,pnode] (p4) at ([xshift=\stepsize]p3.east) {};
+\node [anchor=west,pnode,fill=blue] (p5) at ([xshift=\stepsize]p4.east) {};
+
+\draw [->,thick] ([yshift=0.1em,xshift=-0.1em]p2.north)  .. controls +(north:0.5cm) and +(north:0.5cm) .. ([yshift=0.1em]p1.north);
+\draw [->,thick] ([yshift=0.1em,xshift=-0.1em]p3.north)  .. controls +(north:0.5cm) and +(north:0.5cm) .. ([yshift=0.1em,xshift=0.1em]p2.north);
+\draw [->,thick] ([yshift=0.1em,xshift=-0.1em]p4.north)  .. controls +(north:0.5cm) and +(north:0.5cm) .. ([yshift=0.1em,xshift=0.1em]p3.north);
+\draw [->,thick,blue] ([yshift=0.1em,xshift=-0.1em]p5.north)  .. controls +(north:0.5cm) and +(north:0.5cm) .. ([yshift=0.1em,xshift=0.1em]p4.north);
+
+\node [anchor=north] (rnnlabel) at ([yshift=-1em]p3.south) {(a) 循环神经网络};
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% cnn
+\begin{scope} [xshift=1.8in]
+
+\node [anchor=west,pnode] (p1) at (0,0) {};
+\node [anchor=west,pnode] (p2) at ([xshift=\stepsize]p1.east) {};
+\node [anchor=west,pnode,fill=blue] (p3) at ([xshift=\stepsize]p2.east) {};
+\node [anchor=west,pnode] (p4) at ([xshift=\stepsize]p3.east) {};
+\node [anchor=west,pnode] (p5) at ([xshift=\stepsize]p4.east) {};
+
+\draw [->,thick,blue] ([yshift=0.1em,xshift=-0.1em]p3.north)  .. controls +(north:0.5cm) and +(north:0.5cm) .. ([yshift=0.1em]p2.north);
+\draw [->,thick,blue] ([yshift=0.1em,xshift=0.1em]p3.north)  .. controls +(north:0.5cm) and +(north:0.5cm) .. ([yshift=0.1em]p4.north);
+
+\node [anchor=north] (rnnlabel) at ([yshift=-1em]p3.south) {(b) 卷积神经网络 ($r=3$)};
+
+\end{scope}
+
+%----------------------------------------------------------------------------------------
+% self-attention
+\begin{scope} [xshift=3.6in]
+
+\node [anchor=west,pnode] (p1) at (0,0) {};
+\node [anchor=west,pnode] (p2) at ([xshift=\stepsize]p1.east) {};
+\node [anchor=west,pnode] (p3) at ([xshift=\stepsize]p2.east) {};
+\node [anchor=west,pnode] (p4) at ([xshift=\stepsize]p3.east) {};
+\node [anchor=west,pnode,fill=blue] (p5) at ([xshift=\stepsize]p4.east) {};
+
+\draw [->,thick,blue] ([yshift=0.1em,xshift=-0.2em]p5.north)  .. controls +(north:0.2cm) and +(north:0.2cm) .. ([yshift=0.1em]p4.north);
+\draw [->,thick,blue] ([yshift=0.1em,xshift=-0.1em]p5.north)  .. controls +(north:0.35cm) and +(north:0.35cm) .. ([yshift=0.1em]p3.north);
+\draw [->,thick,blue] ([yshift=0.1em,xshift=0.1em]p5.north)  .. controls +(north:0.5cm) and +(north:0.5cm) .. ([yshift=0.1em]p2.north);
+\draw [->,thick,blue] ([yshift=0.1em,xshift=0.2em]p5.north)  .. controls +(north:0.65cm) and +(north:0.65cm) .. ([yshift=0.1em]p1.north);
+
+\node [anchor=north] (rnnlabel) at ([yshift=-1em]p3.south) {(c) 自注意力};
+
+\end{scope}
+
+\end{tikzpicture}
+
+\end{center}

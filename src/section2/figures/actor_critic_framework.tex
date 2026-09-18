@@ -1,133 +1,176 @@
-\begin{tikzpicture}[
-    font=\small,
-    box/.style={
-        draw=black,
-        rounded corners=4pt,
-        minimum width=2.8cm,
-        minimum height=1.15cm,
-        align=center,
-        line width=0.8pt
-    },
-    statebox/.style={
-        box,
-        fill=yellow!12,
-        minimum width=2.6cm
-    },
-    actorbox/.style={
-        box,
-        fill=blue!10,
-        minimum width=3.5cm,
-        minimum height=1.55cm
-    },
-    criticbox/.style={
-        box,
-        fill=green!12,
-        minimum width=3.5cm,
-        minimum height=1.55cm
-    },
-    envbox/.style={
-        box,
-        fill=orange!12,
-        minimum width=3.0cm,
-        minimum height=1.2cm
-    },
-    tdbox/.style={
-        box,
-        fill=gray!10,
-        minimum width=6.8cm,
-        minimum height=1.35cm
-    },
-    note/.style={
-        draw=black,
-        rounded corners=4pt,
-        fill=gray!5,
-        minimum width=5.0cm,
-        minimum height=0.95cm,
-        align=center,
-        line width=0.8pt
-    },
-    flow/.style={
-        draw=black,
-        -Latex,
-        line width=0.8pt
-    },
-    dashedflow/.style={
-        draw=black!75,
-        -Latex,
-        dashed,
-        line width=0.75pt
-    }
-]
+\begin{tikzpicture}[font=\small, >=Latex]
+
+\tikzset{
+  box/.style={
+    draw=black!75,
+    line width=0.8pt,
+    rounded corners=4pt,
+    align=center
+  },
+  statebox/.style={
+    box,
+    fill=yellow!12,
+    minimum width=2.7cm,
+    minimum height=1.15cm
+  },
+  actorbox/.style={
+    box,
+    fill=blue!9,
+    minimum width=3.4cm,
+    minimum height=1.55cm
+  },
+  criticbox/.style={
+    box,
+    fill=green!10,
+    minimum width=3.4cm,
+    minimum height=1.55cm
+  },
+  envbox/.style={
+    box,
+    fill=orange!10,
+    minimum width=3.1cm,
+    minimum height=1.15cm
+  },
+  tdbox/.style={
+    box,
+    fill=gray!8,
+    minimum width=6.2cm,
+    minimum height=1.35cm
+  },
+  rolebox/.style={
+    box,
+    draw=black!55,
+    fill=gray!3,
+    minimum width=4.6cm,
+    minimum height=0.85cm
+  },
+  flow/.style={
+    -{Latex[length=2.2mm,width=1.5mm]},
+    draw=black!80,
+    line width=0.9pt
+  },
+  update/.style={
+    -{Latex[length=2.2mm,width=1.5mm]},
+    draw=black!60,
+    line width=0.8pt,
+    dashed
+  },
+  edgelabel/.style={
+    fill=white,
+    inner sep=1.5pt
+  }
+}
 
 % =========================
 % Nodes
 % =========================
-\node[statebox] (state) at (0,1.8) {当前棋盘状态\\$s_t$};
 
-\node[actorbox] (actor) at (4.2,3.1) {Actor\\策略网络\\$\pi_{\theta}(a_t\mid s_t)$};
+\node[statebox] (state) at (-6.0,1.25)
+{
+  当前棋盘状态\\[-1mm]
+  $s_t$
+};
 
-\node[criticbox] (critic) at (10.8,3.1) {Critic\\价值网络\\$V_{\phi}(s)$};
+\node[actorbox] (actor) at (-2.0,1.75)
+{
+  \textbf{Actor}\\
+  策略网络\\[-1mm]
+  $\pi_{\theta}(a_t\mid s_t)$
+};
 
-\node[envbox] (env) at (7.5,0.9) {五子棋环境};
+\node[criticbox] (critic) at (3.5,1.75)
+{
+  \textbf{Critic}\\
+  价值网络\\[-1mm]
+  $V_{\phi}(s)$
+};
 
-\node[tdbox] (td) at (7.5,-2.0) {时序差分误差\\[0.08cm]
-$\delta_t=r_t+\gamma V_{\phi}(s_{t+1})-V_{\phi}(s_t)$};
+\node[envbox] (env) at (0.75,-0.45)
+{
+  五子棋环境
+};
 
-\node[note] (note1) at (4.2,5.1) {Actor 负责根据状态选择动作};
-\node[note] (note2) at (10.8,5.1) {Critic 负责估计状态价值并评价动作};
+\node[tdbox] (td) at (0.75,-3.0)
+{
+  \textbf{时序差分误差}\\[1mm]
+  $\displaystyle
+  \delta_t
+  =
+  r_t+\gamma V_{\phi}(s_{t+1})-V_{\phi}(s_t)
+  $
+};
+
+\node[rolebox] (actorrole) at (-2.0,4.15)
+{
+  Actor：根据当前状态选择动作
+};
+
+\node[rolebox] (criticrole) at (3.5,4.15)
+{
+  Critic：估计状态价值并评价当前策略
+};
 
 % =========================
-% Arrows: state input
+% Forward flow
 % =========================
-\draw[flow] (state.east) -- (actor.west);
-\node at (2.0,2.15) {$s_t$};
 
 \draw[flow]
-    (state.east)
-    .. controls (2.2,1.2) and (7.9,1.3)
-    .. (critic.west);
-\node at (5.4,1.25) {$s_t$};
+  (state.east)
+  --
+  (actor.west)
+  node[midway, above, edgelabel] {$s_t$};
+
+\draw[flow]
+  (state.north)
+  -- ++(0,1.55)
+  -| (critic.north)
+  node[pos=0.78, above, edgelabel] {$s_t$};
+
+\draw[flow]
+  (actor.south east)
+  --
+  (env.north west)
+  node[midway, above left, edgelabel]
+  {动作 $a_t$};
+
+\draw[flow]
+  (env.north east)
+  --
+  (critic.south west)
+  node[midway, below right, edgelabel]
+  {下一状态 $s_{t+1}$};
+
+\draw[flow]
+  (env.south)
+  --
+  (td.north)
+  node[midway, right, edgelabel]
+  {奖励 $r_t$};
+
+\draw[flow]
+  (critic.south east)
+  to[out=-65,in=20]
+  (td.east)
+  node[pos=0.52, right, edgelabel, align=left]
+  {$V_{\phi}(s_t)$\\
+   $V_{\phi}(s_{t+1})$};
 
 % =========================
-% Action and environment
+% Parameter update
 % =========================
-\draw[flow] (actor.south east) -- (env.north west);
-\node at (5.55,2.05) {动作 $a_t$};
 
-\draw[flow] (env.north east) -- (critic.south west);
-\node[align=center] at (9.45,2.0) {奖励 $r_t$\\下一状态 $s_{t+1}$};
+\draw[update]
+  (td.west)
+  to[out=175,in=-75]
+  (actor.south)
+  node[pos=0.52, left, edgelabel, align=center]
+  {策略更新\\Actor};
 
-% =========================
-% TD error construction
-% =========================
-\draw[flow] (env.south) -- (td.north);
-\node at (7.0,-0.45) {$r_t$};
-
-\draw[flow] (critic.south) -- (td.north east);
-\node[align=center] at (10.9,-0.2) {$V_{\phi}(s_t)$\\$V_{\phi}(s_{t+1})$};
-
-% =========================
-% Updates from TD error
-% =========================
-\draw[dashedflow]
-    (td.north west)
-    .. controls (5.4,-0.8) and (4.0,0.9)
-    .. (actor.south);
-\node[align=center] at (4.3,-0.6) {策略更新\\Actor};
-
-\draw[dashedflow]
-    (td.north east)
-    .. controls (9.8,-0.8) and (11.0,0.9)
-    .. (critic.south);
-\node[align=center] at (10.8,-0.7) {价值更新\\Critic};
-
-% =========================
-% Optional environment loop
-% =========================
-\draw[dashedflow]
-    (env.west)
-    .. controls (5.2,0.1) and (1.8,0.1)
-    .. (state.south);
-\node[align=center] at (3.2,0.35) {\footnotesize 下一状态用于下一轮决策};
+\draw[update]
+  (td.east)
+  to[out=0,in=-80]
+  (critic.south east)
+  node[pos=0.50, right, edgelabel, align=center]
+  {价值更新\\Critic};
 
 \end{tikzpicture}

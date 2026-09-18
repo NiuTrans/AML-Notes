@@ -1,0 +1,288 @@
+\input{figures/figure-theme.tex}
+\begin{center}
+
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+%----------------------------------------------------------------------------------------
+% variables
+\def\nodesep{1.5em}
+\def\noderowsep{7.0em}
+\def\snodesep{0.2em}
+\tikzstyle{nnode} = [circle,minimum size=2.2em,draw=FigureInk!65,line width=.7pt]
+\tikzstyle{snode} = [circle,minimum size=0.7em,inner sep=0pt]
+
+%----------------------------------------------------------------------------------------
+% layer 1 (hidden 1)
+
+\node [anchor=center,nnode,fill=blue!30] (n11) at (0,0) {};
+\node [anchor=west,nnode,fill=blue!30] (n12) at ([xshift=\nodesep]n11.east) {};
+\node [anchor=west,nnode,fill=blue!30] (n13) at ([xshift=\nodesep]n12.east) {};
+\node [anchor=west,nnode,fill=blue!30] (n14) at ([xshift=\nodesep]n13.east) {};
+
+%----------------------------------------------------------------------------------------
+% layer 0 (input)
+
+\node [anchor=north,nnode,fill=red!30] (n01) at ([xshift=0.5*\nodesep,yshift= -\noderowsep]n11.east) {$x_1$};
+\node [anchor=west,nnode,fill=red!30] (n02) at ([xshift=\nodesep]n01.east) {$x_2$};
+\node [anchor=west,nnode,fill=red!30] (n03) at ([xshift=\nodesep]n02.east) {$x_3$};
+
+%----------------------------------------------------------------------------------------
+% layer 2 (hidden 2)
+
+\node [anchor=south,nnode,fill=ugreen!30] (n21) at ([xshift=0.5*\nodesep,yshift= \noderowsep]n11.east) {};
+\node [anchor=west,nnode,fill=ugreen!30] (n22) at ([xshift=\nodesep]n21.east) {};
+\node [anchor=west,nnode,fill=ugreen!30] (n23) at ([xshift=\nodesep]n22.east) {};
+
+%----------------------------------------------------------------------------------------
+% layer 2 (bias 2)
+
+\node [anchor=west,nnode,fill=purple!30] (b2) at ([xshift=\nodesep]n23.east) {$\bf{1}$};
+
+%----------------------------------------------------------------------------------------
+% layer 3 (hidden 3)
+
+\node [anchor=south,nnode,fill=orange!30] (n31) at ([xshift=0,yshift= \noderowsep]n21.center) {};
+\node [anchor=west,nnode,fill= orange!30] (n32) at ([xshift=\nodesep]n31.east) {};
+\node [anchor=west,nnode,fill= orange!30] (n33) at ([xshift=\nodesep]n32.east) {};
+
+%----------------------------------------------------------------------------------------
+% output
+
+\node [anchor=south,circle,fill=cyan!30,minimum size=1.2em] (n41) at ([xshift=0,yshift= \noderowsep]n31.center) {\large{$y_1$}};
+\node [anchor=south,circle,fill=cyan!30,minimum size=1.2em] (n42) at ([xshift=0,yshift= \noderowsep]n32.center) {\large{$y_2$}};
+\node [anchor=south,circle,fill=cyan!30,minimum size=1.2em] (n43) at ([xshift=0,yshift= \noderowsep]n33.center) {\large{$y_3$}};
+
+%----------------------------------------------------------------------------------------
+% connections
+
+% input -> layer 1
+\draw [->,thick] ([yshift=1pt]n01.100) -- ([yshift=-1pt]n11.-90);
+\draw [->,thick] ([yshift=1pt]n01.90) -- ([yshift=-1pt]n12.-100);
+\draw [->,thick] ([yshift=1pt]n01.80) -- ([yshift=-1pt]n13.-100);
+\draw [->,thick] ([yshift=1pt]n01.70) -- ([yshift=-1pt]n14.-110);
+\draw [->,thick] ([yshift=1pt]n02.105) -- ([yshift=-1pt]n11.-80);
+\draw [->,thick] ([yshift=1pt]n02.95) -- ([yshift=-1pt]n12.-90);
+\draw [->,thick] ([yshift=1pt]n02.85) -- ([yshift=-1pt]n13.-90);
+\draw [->,thick] ([yshift=1pt]n02.75) -- ([yshift=-1pt]n14.-100);
+\draw [->,thick] ([yshift=1pt]n03.110) -- ([yshift=-1pt]n11.-70);
+\draw [->,thick] ([yshift=1pt]n03.100) -- ([yshift=-1pt]n12.-80);
+\draw [->,thick] ([yshift=1pt]n03.90) -- ([yshift=-1pt]n13.-80);
+\draw [->,thick] ([yshift=1pt]n03.80) -- ([yshift=-1pt]n14.-90);
+
+% layer 1 -> layer 2
+\draw [->,thick] ([yshift=1pt]n11.90) -- ([yshift=-1pt]n21.-105);
+\draw [->,thick] ([yshift=1pt]n11.80) -- ([yshift=-1pt]n22.-115);
+\draw [->,thick] ([yshift=1pt]n11.70) -- ([yshift=-1pt]n23.-125);
+\draw [->,thick] ([yshift=1pt]n12.95) -- ([yshift=-1pt]n21.-90);
+\draw [->,thick] ([yshift=1pt]n12.85) -- ([yshift=-1pt]n22.-100);
+\draw [->,thick] ([yshift=1pt]n12.75) -- ([yshift=-1pt]n23.-110);
+\draw [->,thick] ([yshift=1pt]n13.100) -- ([yshift=-1pt]n21.-80);
+\draw [->,thick] ([yshift=1pt]n13.90) -- ([yshift=-1pt]n22.-85);
+\draw [->,thick] ([yshift=1pt]n13.80) -- ([yshift=-1pt]n23.-95);
+\draw [->,thick] ([yshift=1pt]n14.105) -- ([yshift=-1pt]n21.-60);
+\draw [->,thick] ([yshift=1pt]n14.95) -- ([yshift=-1pt]n22.-70);
+\draw [->,thick] ([yshift=1pt]n14.85) -- ([yshift=-1pt]n23.-80);
+
+% layer 2 -> layer 3
+\draw [->,thick] ([yshift=1pt]n21.90) -- ([yshift=-1pt]n31.-90);
+\draw [->,thick] ([yshift=1pt]n21.80) -- ([yshift=-1pt]n32.-100);
+\draw [->,thick] ([yshift=1pt]n21.70) -- ([yshift=-1pt]n33.-110);
+\draw [->,thick] ([yshift=1pt]n22.100) -- ([yshift=-1pt]n31.-80);
+\draw [->,thick] ([yshift=1pt]n22.90) -- ([yshift=-1pt]n32.-90);
+\draw [->,thick] ([yshift=1pt]n22.80) -- ([yshift=-1pt]n33.-100);
+\draw [->,thick] ([yshift=1pt]n23.110) -- ([yshift=-1pt]n31.-70);
+\draw [->,thick] ([yshift=1pt]n23.100) -- ([yshift=-1pt]n32.-80);
+\draw [->,thick] ([yshift=1pt]n23.90) -- ([yshift=-1pt]n33.-90);
+\draw [->,thick] ([yshift=1pt]b2.120) -- ([yshift=-1pt]n31.-55);
+\draw [->,thick] ([yshift=1pt]b2.110) -- ([yshift=-1pt]n32.-65);
+\draw [->,thick] ([yshift=1pt]b2.100) -- ([yshift=-1pt]n33.-75);
+
+% layer 3 -> output
+\draw [->,thick] ([yshift=1pt]n31.90) -- ([yshift=-1pt]n41.-90);
+\draw [->,thick] ([yshift=1pt]n32.90) -- ([yshift=-1pt]n42.-90);
+\draw [->,thick] ([yshift=1pt]n33.90) -- ([yshift=-1pt]n43.-90);
+
+% layer 0 (input) variables
+\node [anchor=west,snode,fill=red!30] (l01) at ([xshift=5.5em]n03.east) {};
+\node [anchor=west,snode,fill=red!30] (l02) at ([xshift= \snodesep]l01.east) {};
+\node [anchor=west,snode,fill=red!30] (l03) at ([xshift= \snodesep]l02.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (l01) (l03)] (inputvar) {};
+\end{pgfonlayer}
+
+\node [anchor=south] (l0label) at (inputvar.north) {\small{$\mathbf{x}$}};
+\node [anchor=north west,inner sep=0] (l0labelbelow) at ([yshift=-0.5em]inputvar.south west) {\footnotesize{\bf{第 0 层（输入层）}}};
+
+% layer 1 states
+\node [anchor=south,snode,fill=blue!30] (l11) at ([yshift= \noderowsep+0.4em]l01.north) {};
+\node [anchor=west,snode,fill=blue!30] (l12) at ([xshift= \snodesep]l11.east) {};
+\node [anchor=west,snode,fill=blue!30] (l13) at ([xshift= \snodesep]l12.east) {};
+\node [anchor=west,snode,fill=blue!30] (l14) at ([xshift= \snodesep]l13.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (l11) (l14)] (layer1var) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l1eqn) at ([xshift=0.1em]layer1var.east) {$= \rm{ReLU} \Big($};
+
+\node [anchor=west,snode,fill=red!30] (l01copy) at ([xshift=0.3em]l1eqn.east) {};
+\node [anchor=west,snode,fill=red!30] (l02copy) at ([xshift= \snodesep]l01copy.east) {};
+\node [anchor=west,snode,fill=red!30] (l03copy) at ([xshift= \snodesep]l02copy.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (l01copy) (l03copy)] (inputvarcopy) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l1times) at ([xshift=0.1em]inputvarcopy.east) {\Large{$\times$}};
+
+\node [anchor=west,snode,fill=gray!30] (w121) at ([xshift=2.0em]inputvarcopy.east) {};
+\node [anchor=west,snode,fill=gray!30] (w122) at ([xshift=\snodesep]w121.east) {};
+\node [anchor=west,snode,fill=gray!30] (w123) at ([xshift=\snodesep]w122.east) {};
+\node [anchor=west,snode,fill=gray!30] (w124) at ([xshift=\snodesep]w123.east) {};
+\node [anchor=north,snode,fill=gray!30] (w131) at ([yshift=-\snodesep]w121.south) {};
+\node [anchor=west,snode,fill=gray!30] (w132) at ([xshift=\snodesep]w131.east) {};
+\node [anchor=west,snode,fill=gray!30] (w133) at ([xshift=\snodesep]w132.east) {};
+\node [anchor=west,snode,fill=gray!30] (w134) at ([xshift=\snodesep]w133.east) {};
+\node [anchor=south,snode,fill=gray!30] (w111) at ([yshift=\snodesep]w121.north) {};
+\node [anchor=west,snode,fill=gray!30] (w112) at ([xshift=\snodesep]w111.east) {};
+\node [anchor=west,snode,fill=gray!30] (w113) at ([xshift=\snodesep]w112.east) {};
+\node [anchor=west,snode,fill=gray!30] (w114) at ([xshift=\snodesep]w113.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (w111) (w134)] (w1box) {};
+\end{pgfonlayer}
+
+\node [anchor=north] (w1label) at (w1box.south) {\small{$\mathbf{w}_1$}};
+
+\node [anchor=west] (l1eqn2) at ([xshift=0.3em]w124.east) {$\Big)$};
+
+\node [anchor=north west,inner sep=0] (l1labelbelow) at ([yshift=-0.5em]layer1var.south west) {\footnotesize{\bf{第 1 层}}};
+
+% layer 2 states
+\node [anchor=south,snode,fill=ugreen!30] (l21) at ([yshift= \noderowsep+0.4em]l11.north) {};
+\node [anchor=west,snode,fill=ugreen!30] (l22) at ([xshift= \snodesep]l21.east) {};
+\node [anchor=west,snode,fill=ugreen!30] (l23) at ([xshift= \snodesep]l22.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (l21) (l23)] (layer2var) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l2eqn) at ([xshift=0.1em]layer2var.east) {$= \rm{Sigmoid} \Big($};
+
+\node [anchor=west,snode,fill=blue!30] (l11copy) at ([xshift=0.3em]l2eqn.east) {};
+\node [anchor=west,snode,fill=blue!30] (l12copy) at ([xshift= \snodesep]l11copy.east) {};
+\node [anchor=west,snode,fill=blue!30] (l13copy) at ([xshift= \snodesep]l12copy.east) {};
+\node [anchor=west,snode,fill=blue!30] (l14copy) at ([xshift= \snodesep]l13copy.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (l11copy) (l14copy)] (l1varcopy) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l2times) at ([xshift=0.1em]l1varcopy.east) {\Large{$\times$}};
+
+\node [anchor=west,snode,fill=gray!30] (w221) at ([xshift=2.0em,yshift=0.5*\snodesep+0.35em]l1varcopy.east) {};
+\node [anchor=west,snode,fill=gray!30] (w222) at ([xshift=\snodesep]w221.east) {};
+\node [anchor=west,snode,fill=gray!30] (w223) at ([xshift=\snodesep]w222.east) {};
+\node [anchor=south,snode,fill=gray!30] (w211) at ([yshift=\snodesep]w221.north) {};
+\node [anchor=west,snode,fill=gray!30] (w212) at ([xshift=\snodesep]w211.east) {};
+\node [anchor=west,snode,fill=gray!30] (w213) at ([xshift=\snodesep]w212.east) {};
+\node [anchor=west,snode,fill=gray!30] (w231) at ([xshift=2.0em,yshift=-0.5*\snodesep-0.35em]l1varcopy.east) {};
+\node [anchor=west,snode,fill=gray!30] (w232) at ([xshift=\snodesep]w231.east) {};
+\node [anchor=west,snode,fill=gray!30] (w233) at ([xshift=\snodesep]w232.east) {};
+\node [anchor=north,snode,fill=gray!30] (w241) at ([yshift=-\snodesep]w231.south) {};
+\node [anchor=west,snode,fill=gray!30] (w242) at ([xshift=\snodesep]w241.east) {};
+\node [anchor=west,snode,fill=gray!30] (w243) at ([xshift=\snodesep]w242.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (w211) (w243)] (w2box) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l2eqn2) at ([xshift=0.1em]w2box.east) {$\Big)$};
+
+\node [anchor=north] (w2label) at (w2box.south) {\small{$\mathbf{w}_2$}};
+
+\node [anchor=north west,inner sep=0] (l2labelbelow) at ([yshift=-0.5em]layer2var.south west) {\footnotesize{\bf{第 2 层}}};
+
+% layer 3 states
+\node [anchor=south,snode,fill=orange!30] (l31) at ([yshift= \noderowsep+0.4em]l21.north) {};
+\node [anchor=west,snode,fill=orange!30] (l32) at ([xshift= \snodesep]l31.east) {};
+\node [anchor=west,snode,fill=orange!30] (l33) at ([xshift= \snodesep]l32.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (l31) (l33)] (layer3var) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l3eqn) at ([xshift=0.1em]layer3var.east) {$= \rm{Softmax} \Big($};
+
+\node [anchor=west,snode,fill=ugreen!30] (l21copy) at ([xshift=0.3em]l3eqn.east) {};
+\node [anchor=west,snode,fill=ugreen!30] (l22copy) at ([xshift=\snodesep]l21copy.east) {};
+\node [anchor=west,snode,fill=ugreen!30] (l23copy) at ([xshift=\snodesep]l22copy.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (l21copy) (l23copy)] (l2varcopy) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l3times) at ([xshift=0.1em]l2varcopy.east) {\Large{$\times$}};
+
+\node [anchor=west,snode,fill=gray!30] (w321) at ([xshift=2.0em]l2varcopy.east) {};
+\node [anchor=west,snode,fill=gray!30] (w322) at ([xshift=\snodesep]w321.east) {};
+\node [anchor=west,snode,fill=gray!30] (w323) at ([xshift=\snodesep]w322.east) {};
+\node [anchor=north,snode,fill=gray!30] (w331) at ([yshift=-\snodesep]w321.south) {};
+\node [anchor=west,snode,fill=gray!30] (w332) at ([xshift=\snodesep]w331.east) {};
+\node [anchor=west,snode,fill=gray!30] (w333) at ([xshift=\snodesep]w332.east) {};
+\node [anchor=south,snode,fill=gray!30] (w311) at ([yshift=\snodesep]w321.north) {};
+\node [anchor=west,snode,fill=gray!30] (w312) at ([xshift=\snodesep]w311.east) {};
+\node [anchor=west,snode,fill=gray!30] (w313) at ([xshift=\snodesep]w312.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (w311) (w333)] (w3box) {};
+\end{pgfonlayer}
+
+\node [anchor=south] (w3label) at (w3box.north) {\small{$\mathbf{w}_3$}};
+
+\node [anchor=north west] (l3sum) at ([yshift=-2.5em,xshift=-0.7em]l21copy.south) {\Large{$+$}};
+
+\node [anchor=west,snode,fill=purple!30] (const1) at ([xshift=0.5em]l3sum.east) {\tiny{$\bf{1}$}};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (const1)] (const1box) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l3times2) at ([xshift=0.1em]const1box.east) {\Large{$\times$}};
+
+\node [anchor=west,snode,fill=gray!30] (b31) at ([xshift=0.2em]l3times2.east) {};
+\node [anchor=west,snode,fill=gray!30] (b32) at ([xshift=\snodesep]b31.east) {};
+\node [anchor=west,snode,fill=gray!30] (b33) at ([xshift=\snodesep]b32.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (b31) (b33)] (b3box) {};
+\end{pgfonlayer}
+
+\node [anchor=west] (l3eqn2) at ([xshift=0.3em]b3box.east) {$\Big)$};
+
+\node [anchor=south] (b3label) at ([yshift=-0.2em]b3box.north) {\small{$\mathbf{b}_3$}};
+
+\node [anchor=north west,inner sep=0] (l3labelbelow) at ([yshift=-0.5em]layer3var.south west) {\footnotesize{\bf{第 3 层（输出层）}}};
+
+% layer 3 (output) variables
+\node [anchor=south,snode,fill=cyan!30] (l41) at ([yshift= \noderowsep+0.4em]l31.north) {};
+\node [anchor=west,snode,fill=cyan!30] (l42) at ([xshift= \snodesep]l41.east) {};
+\node [anchor=west,snode,fill=cyan!30] (l43) at ([xshift= \snodesep]l42.east) {};
+
+\begin{pgfonlayer}{background}
+\node [draw,inner sep=2pt,fill=white]  [fit = (l41) (l43)] (outputvar) {};
+\end{pgfonlayer}
+
+\node [anchor=south] (l3label) at (outputvar.north) {\small{$\mathbf{y}$}};
+
+% figure connections
+\draw [->,thick,dotted] ([xshift=1em,yshift=2pt]inputvar.north) .. controls +(north:6em) and +(south:6em) .. ([yshift=-2pt]inputvarcopy.south);
+\draw [->,thick,dotted] ([xshift=0,yshift=2pt]layer1var.north) .. controls +(north:6em) and +(south:6em) .. ([yshift=-2pt]l1varcopy.south);
+\draw [->,thick,dotted] ([xshift=0,yshift=2pt]layer2var.north) .. controls +(north:6em) and +(south:5em) .. ([yshift=-2pt,xshift=-0.0em]l2varcopy.south);
+\draw [->,thick,dotted] ([xshift=0,yshift=2pt]layer3var.north) -- ([yshift=-2pt,xshift=0]outputvar.south);
+
+\end{tikzpicture}
+
+\end{center}

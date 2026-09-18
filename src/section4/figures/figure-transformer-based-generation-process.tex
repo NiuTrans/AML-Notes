@@ -93,9 +93,9 @@
 
 \node [snode,anchor=center,draw=white] (final) at ([yshift=1cm]pdots.north) {\footnotesize{终态 $\bar{\mathbf{s}}(0)$}};
 
-\node [snode,anchor=center] (mapping) at ([yshift=1cm]final.north) {\footnotesize{映射为词元}};
+\node [snode,anchor=center] (mapping) at ([yshift=1cm]final.north) {\footnotesize{映射为 token }};
 
-\node [anchor=center] (tokens) at ([yshift=1cm]mapping.north) {\footnotesize{词元序列 $\mathbf{x}$}};
+\node [anchor=center] (tokens) at ([yshift=1cm]mapping.north) {\footnotesize{ token 序列 $\mathbf{x}$}};
 
 \draw [->,thick] (sinitial.north) -- (mdots.south);
 \draw [->,thick] (mdots.north) -- ([yshift=-3pt]st.south);

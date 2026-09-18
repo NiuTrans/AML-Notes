@@ -141,11 +141,11 @@
 \draw[flow] (s1.east) -- (s2.west);
 \draw[flow] (s2.east) -- (s3.west);
 
-\draw[flow] (s3.south west) .. controls (14.0,8.5) and (4.8,8.2) .. (s4.north east);
+\draw[flow] (s3.south west) -- (s4.north east);
 \draw[flow] (s4.east) -- (s5.west);
 \draw[flow] (s5.east) -- (s6.west);
 
-\draw[flow] (s6.south west) .. controls (14.0,5.6) and (11.7,5.0) .. (s7.north east);
+\draw[flow] (s6.south west) -- (s7.north east);
 \draw[flow] (s7.south) -- (s8.north);
 
 % =========================
@@ -153,25 +153,24 @@
 % =========================
 \draw[dashedflow]
     (s7.west)
-    .. controls (4.8,4.4) and (4.8,6.0)
-    .. node[midway, above] {\footnotesize 重复 $K$ 轮} (s4.south);
+    -- node[midway, above,xshift=5mm] {\footnotesize 重复 $K$ 轮} (s4.south);
 
 % =========================
 % Comparison note
 % =========================
-\node[comparebox] at (3.5,2.1) {
-\textbf{与 A2C 的区别：}\\
-A2C：采集一批数据后通常只更新一次\\
-PPO：采集一批数据后可划分小批次并重复更新多轮
-};
+% \node[comparebox] at (3.5,2.1) {
+% \textbf{与 A2C 的区别：}\\
+% A2C：采集一批数据后通常只更新一次\\
+% PPO：采集一批数据后可划分小批次并重复更新多轮
+% };
 
 % =========================
 % Small note
 % =========================
-\node[comparebox, minimum width=5.0cm, minimum height=1.6cm] at (15.1,2.1) {
-\textbf{核心原因：}\\
-裁剪目标限制单次策略更新幅度\\
-因此同一批样本可以在一定范围内重复利用
-};
+% \node[comparebox, minimum width=5.0cm, minimum height=1.6cm] at (15.1,2.1) {
+% \textbf{核心原因：}\\
+% 裁剪目标限制单次策略更新幅度\\
+% 因此同一批样本可以在一定范围内重复利用
+% };
 
 \end{tikzpicture}

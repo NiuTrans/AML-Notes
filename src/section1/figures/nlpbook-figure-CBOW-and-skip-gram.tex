@@ -1,0 +1,97 @@
+\input{figures/figure-theme.tex}
+\begingroup
+\begin{tikzpicture}[aml figure]
+\amlfigurepalette
+
+\def\nodesep{1.5em}
+\def\noderowsep{2em}
+\tikzstyle{pnode} = [minimum width=6.5em,minimum height=2em,inner sep=3pt,draw=FigureInk!65,fill=FigureMist,line width=.7pt,rounded corners=2pt]
+
+%%%%%%%%%%
+%% CBOW
+
+\begin{scope}
+
+%% word vectors
+
+\node [pnode,anchor=east] (e2) at (-\nodesep,0) {\footnotesize{$\mathbf{e}_{i-1}=\boldsymbol{1}_{w_{i-1}} \mathbf{C}$}};
+\node [pnode,anchor=east] (e1) at ([xshift=-\nodesep]e2.west) {\footnotesize{$\mathbf{e}_{i-2}=\boldsymbol{1}_{w_{i-2}} \mathbf{C}$}};
+\node [pnode,anchor=west] (e4) at (\nodesep,0) {\footnotesize{$\mathbf{e}_{i+1}=\boldsymbol{1}_{w_{i+1}} \mathbf{C}$}};
+\node [pnode,anchor=west] (e5) at ([xshift=\nodesep]e4.east) {\footnotesize{$\mathbf{e}_{i+2}=\boldsymbol{1}_{w_{i+2}} \mathbf{C}$}};
+
+%% input words
+\node [anchor=north] (w1) at ([yshift=-0.8*\noderowsep]e1.south) {$w_{i-2}$};
+\node [anchor=north] (w2) at ([yshift=-0.8*\noderowsep]e2.south) {$w_{i-1}$};
+\node [anchor=north] (w4) at ([yshift=-0.8*\noderowsep]e4.south) {$w_{i+1}$};
+\node [anchor=north] (w5) at ([yshift=-0.8*\noderowsep]e5.south) {$w_{i+2}$};
+
+%% hidden states
+\node [pnode,anchor=south,minimum width=18.0em,minimum height=2.5em] (hidden) at ([xshift=\nodesep,yshift=\noderowsep]e2.north east) {$\mathbf{h} = \frac{1}{4} \left( \sum_{j=i-2}^{i-1} \mathbf{e}_{j} + \sum_{j=i+1}^{i+2} \mathbf{e}_{j} \right)$};
+
+%% softmax
+\node [pnode,anchor=south,minimum width=18.0em,minimum height=2.5em] (softmax) at ([yshift=\noderowsep]hidden.north) {$\mathbf{y} = \mathrm{Softmax}(\mathbf{h} \mathbf{U} + \mathbf{b})$};
+
+%% output
+\node [anchor=south] (output) at ([yshift=0.8*\noderowsep]softmax.north) {$\Pr(w_{i}|w_{i-2},w_{i-1},w_{i+1},w_{i+2})=y(w_{i})$};
+
+%% connections
+\draw [->,thick] ([yshift=1pt]w1.north) -- ([yshift=-1pt]e1.south);
+\draw [->,thick] ([yshift=1pt]w2.north) -- ([yshift=-1pt]e2.south);
+\draw [->,thick] ([yshift=1pt]w4.north) -- ([yshift=-1pt]e4.south);
+\draw [->,thick] ([yshift=1pt]w5.north) -- ([yshift=-1pt]e5.south);
+\draw [->,thick] ([yshift=1pt]e1.north) .. controls +(north:2em) and +(south:1.5em) .. ([xshift=-5em,yshift=-1pt]hidden.south);
+\draw [->,thick] ([yshift=1pt,xshift=-0em]e2.north) .. controls +(north:1.5em) and +(south:1.5em) ..  ([xshift=-1.5em,yshift=-1pt]hidden.south);
+\draw [->,thick] ([yshift=1pt,xshift=0em]e4.north) .. controls +(north:1.5em) and +(south:1.5em) ..  ([xshift=1.5em,yshift=-1pt]hidden.south);
+\draw [->,thick] ([yshift=1pt]e5.north) .. controls +(north:2em) and +(south:1.5em) ..  ([xshift=5em,yshift=-1pt]hidden.south);
+\draw [->,thick] ([yshift=1pt]hidden.north) -- ([yshift=-1pt]softmax.south);
+\draw [->,thick] ([yshift=1pt]softmax.north) -- ([yshift=-1pt]output.south);
+
+%% label
+\node [anchor=north] (labela) at ([xshift=\nodesep,yshift=-1.6*\noderowsep]e2.south east) {(a) 连续词袋模型};
+\node [anchor=south] (embeddinglabel) at (e1.north west) {\textbf{词嵌入}};
+
+\end{scope}
+
+%%%%%%%%%%
+%% skip-gram
+
+\begin{scope}[yshift=-16em]
+
+%% softmax
+\node [pnode,anchor=east,align=left] (softmax2) at (-\nodesep,0) {\footnotesize{$\mathbf{y}_{-1}=\mathrm{Softmax}($}\\\footnotesize{$\mathbf{h} \mathbf{V}_{-1} + \mathbf{b}_{-1})$}};
+\node [pnode,anchor=east,align=left] (softmax1) at ([xshift=-\nodesep]softmax2.west) {\footnotesize{$\mathbf{y}_{-2}=\mathrm{Softmax}($}\\\footnotesize{$\mathbf{h} \mathbf{V}_{-2} + \mathbf{b}_{-2})$}};
+\node [pnode,anchor=west,align=left] (softmax4) at (\nodesep,0) {\footnotesize{$\mathbf{y}_{1}=\mathrm{Softmax}($}\\\footnotesize{$\mathbf{h} \mathbf{V}_{1} + \mathbf{b}_{1})$}};
+\node [pnode,anchor=west,align=left] (softmax5) at ([xshift=\nodesep]softmax4.east) {\footnotesize{$\mathbf{y}_{2}=\mathrm{Softmax}($}\\\footnotesize{$\mathbf{h} \mathbf{V}_{2} + \mathbf{b}_{2})$}};
+
+%% output
+\node [anchor=south,align=left] (output1) at ([yshift=0.8*\noderowsep]softmax1.north) {\ \ \ \footnotesize{$\Pr(w_{i-2}|w_i)$}\\\footnotesize{$=y_{-2}(w_{i-2})$}};
+\node [anchor=south,align=left] (output2) at ([yshift=0.8*\noderowsep]softmax2.north) {\ \ \ \footnotesize{$\Pr(w_{i-1}|w_i)$}\\\footnotesize{$=y_{-1}(w_{i-1})$}};
+\node [anchor=south,align=left] (output4) at ([yshift=0.8*\noderowsep]softmax4.north) {\ \ \ \footnotesize{$\Pr(w_{i+1}|w_i)$}\\\footnotesize{$=y_{1}(w_{i+1})$}};
+\node [anchor=south,align=left] (output5) at ([yshift=0.8*\noderowsep]softmax5.north) {\ \ \ \footnotesize{$\Pr(w_{i+2}|w_i)$}\\\footnotesize{$=y_{2}(w_{i+2})$}};
+
+%% hidden states
+\node [pnode,anchor=north] (hidden) at ([xshift=\nodesep,yshift=-1.2*\noderowsep]softmax2.south east) {$\mathbf{h} = w_i \mathbf{C}$};
+
+%% input
+\node [anchor=north] (input) at ([yshift=-0.8*\noderowsep]hidden.south) {$w_i$};
+
+%% connections
+\draw [->,thick] ([yshift=1pt]softmax1.north) -- ([yshift=-1pt]output1.south);
+\draw [->,thick] ([yshift=1pt]softmax2.north) -- ([yshift=-1pt]output2.south);
+\draw [->,thick] ([yshift=1pt]softmax4.north) -- ([yshift=-1pt]output4.south);
+\draw [->,thick] ([yshift=1pt]softmax5.north) -- ([yshift=-1pt]output5.south);
+\draw [->,thick] ([xshift=1em,yshift=1pt]hidden.north west) .. controls +(north:2em) and +(south:2.5em) .. ([yshift=-1pt]softmax1.south);
+\draw [->,thick] ([xshift=-1em,yshift=1pt]hidden.north) .. controls +(north:2.5em) and +(south:1.5em) .. ([yshift=-1pt]softmax2.south);
+\draw [->,thick] ([xshift=1em,yshift=1pt]hidden.north) .. controls +(north:2.5em) and +(south:1.5em) .. ([yshift=-1pt]softmax4.south);
+\draw [->,thick] ([xshift=-1em,yshift=1pt]hidden.north east) .. controls +(north:2em) and +(south:2.5em) .. ([yshift=-1pt]softmax5.south);
+\draw [->,thick] ([yshift=1pt]input.north) -- ([yshift=-1pt]hidden.south);
+
+%% label
+\node [anchor=north] (labelb) at ([xshift=0,yshift=-0.5em]input.south) {(b) 跳字模型};
+\node [anchor=east] (embeddinglabel) at (hidden.west) {\textbf{词嵌入}};
+
+\end{scope}
+
+
+\end{tikzpicture}
+\endgroup

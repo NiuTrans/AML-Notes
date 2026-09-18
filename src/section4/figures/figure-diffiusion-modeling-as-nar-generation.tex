@@ -33,7 +33,7 @@
 \draw [->,dotted] ([xshift=-0.6cm,yshift=2pt]c.north east) .. controls +(north:3cm) and +(west:1.1cm) .. ([xshift=-2pt]s0.west);
 
 \node [snode,anchor=south] (x) at ([yshift=2cm,xshift=2cm]s0.north) {\small{$\mathbf{x}$}};
-\draw [->] ([yshift=2pt]s0.north) .. controls +(80:3cm) and +(-100:3cm) .. ([yshift=-2pt]x.south) node [pos=0.95,right] {\footnotesize{映射为词元}};
+\draw [->] ([yshift=2pt]s0.north) .. controls +(80:3cm) and +(-100:3cm) .. ([yshift=-2pt]x.south) node [pos=0.95,right] {\footnotesize{映射为 token }};
 
 \draw [->,thick] ([xshift=2cm,yshift=-0.2cm]sT.south east) -- ([xshift=2cm,yshift=0.5cm]s0.north east);
 \node [anchor=center,circle,inner sep=0,minimum size=4pt,fill=black] (pT) at ([xshift=2cm]sT.east) {};
@@ -45,7 +45,7 @@
 \node [anchor=center] (clabel) at ([yshift=-0.3cm]c.south) {\footnotesize{上下文}};
 \node [anchor=center] (sTlabel) at ([yshift=-0.3cm]sT.south) {\footnotesize{先验}};
 \node [anchor=south] (s0label) at ([yshift=2pt,xshift=0.3cm]s0.north west) {\footnotesize{去噪信号}};
-\node [anchor=south] (xlabel) at ([yshift=2pt]x.north) {\footnotesize{词元序列}};
+\node [anchor=south] (xlabel) at ([yshift=2pt]x.north) {\footnotesize{ token 序列}};
 
 \end{scope}
 

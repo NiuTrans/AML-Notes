@@ -1,51 +1,50 @@
-
 \begin{center}
-\begin{tikzpicture}
-
-\def\ssep{1.0cm}
-
-\tikzstyle{snode} = [minimum width=7.6cm,minimum height=0.7cm,inner sep=0,draw,fill=white];
-
-\begin{scope}
-
-\node [snode,anchor=west] (x1) at (0,0) {};
-\node [anchor=west] (x1c) at ([xshift=0.1cm]x1.west) {\footnotesize{{\color{gray} User:} I've been feeling very tired lately.}};
-
-\node [snode,anchor=north west,minimum height=1.15cm] (y1) at ([yshift=-0.5cm,xshift=0.5cm]x1.south) {};
-\node [anchor=north west] (y1c) at ([xshift=0.1cm,yshift=-0.1cm]y1.north west) {\footnotesize{{\color{blue} Chatbot:} I'm sorry to hear that. Besides feeling tired,}};
-\node [anchor=north west] (y1c2) at ([xshift=1.2cm,yshift=0.1cm]y1c.south west) {\footnotesize{have you noticed any other symptoms?}};
-
-\node [snode,anchor=north west] (x2) at ([yshift=-2.2cm]x1.south west) {};
-\node [anchor=west] (x2c) at ([xshift=0.1cm]x2.west) {\footnotesize{{\color{gray} User:} Yes, I'm also experiencing headaches frequently.}};
-
-\node [snode,anchor=north west] (y2) at ([yshift=-1.8cm]y1.south west) {};
-\node [anchor=west] (y2c) at ([xshift=0.1cm]y2.west) {\footnotesize{{\color{blue} Chatbot:} How long have these symptoms been going on?}};
-
-\node [anchor=north] (dots) at ([yshift=-0.1cm,xshift=1cm]y2.south west) {$\vdots$};
-
-\node [anchor=south west,minimum width=3cm,minimum height=0.6cm,fill=gray!50] (x1box) at ([yshift=1.5cm]x1.north west) {\small{$\mathbf{x}^1$}};
-\node [anchor=west,minimum width=3cm,minimum height=0.6cm,fill=blue!30] (y1box) at ([xshift=1pt]x1box.east) {\small{$\mathbf{y}^1$}};
-\node [anchor=west,minimum width=3cm,minimum height=0.6cm,fill=gray!50] (x2box) at ([xshift=1pt]y1box.east) {\small{$\mathbf{x}^2$}};
-\node [anchor=west,minimum width=3cm,minimum height=0.6cm,fill=blue!30] (y2box) at ([xshift=1pt]x2box.east) {\small{$\mathbf{y}^2$}};
-\node [anchor=west] (xdots) at ([xshift=0.3cm]y2box.east) {$\cdots$};
-
-\begin{pgfonlayer}{background}
-\draw [->] ([yshift=-1pt,xshift=0.2cm]x1box.south) .. controls +(south:1cm) and +(north:1cm) .. ([yshift=1pt,xshift=0.5cm]x1.north west);
-\draw [->] ([yshift=-1pt,xshift=0.0cm]x2box.south) .. controls +(south:3cm) and +(north:4cm) .. ([yshift=1pt,xshift=1.5cm]x2.north west);
-\draw [->] ([yshift=-1pt,xshift=0.0cm]y1box.south) .. controls +(south:2cm) and +(north:2.5cm) .. ([yshift=1pt,xshift=0.5cm]y1.north);
-\draw [->] ([yshift=-1pt,xshift=-0.0cm]y2box.south) -- ([yshift=-5.65cm,xshift=-0.0cm]y2box.south);
-\end{pgfonlayer}
-
-\node [anchor=south] (x1p) at (x1box.north) {\small{$\mathrm{Pr}_{\theta}(\mathbf{x}^1)$}};
-\node [anchor=south] (y1p) at (y1box.north) {\small{$\mathrm{Pr}_{\theta}(\mathbf{y}^1|\mathbf{x}^1)$}};
-\node [anchor=south] (x2p) at (x2box.north) {\small{$\mathrm{Pr}_{\theta}(\mathbf{x}^2|\mathbf{x}^1,\mathbf{y}^1)$}};
-\node [anchor=south] (y2p) at (y2box.north) {\small{$\mathrm{Pr}_{\theta}(\mathbf{y}^2|\mathbf{x}^1,\mathbf{y}^1,\mathbf{x}^2)$}};
-\node [anchor=south] (x1l) at ([yshift=0.2cm]x1p.north) {\small{$\mathrm{Loss} = 0$}};
-\node [anchor=south] (y1l) at ([yshift=0.1cm]y1p.north) {\small{$\mathrm{Loss} \ne 0$}};
-\node [anchor=south] (x2l) at ([yshift=0.2cm]x2p.north) {\small{$\mathrm{Loss} = 0$}};
-\node [anchor=south] (y2l) at ([yshift=0.1cm]y2p.north) {\small{$\mathrm{Loss} \ne 0$}};
-
-\end{scope}
-
-\end{tikzpicture}
-\end{center}
+    \begin{tikzpicture}
+    
+    \def\ssep{1.0cm}
+    
+    \tikzstyle{snode} = [minimum width=7.6cm,minimum height=0.7cm,inner sep=0,draw,fill=white];
+    
+    \begin{scope}
+    
+    \node [snode,anchor=west] (x1) at (0,0) {};
+    \node [anchor=west] (x1c) at ([xshift=0.1cm]x1.west) {\footnotesize{{\color{gray} 用户：} 我最近感到很累。}};
+    
+    \node [snode,anchor=north west,minimum height=1.15cm] (y1) at ([yshift=-0.5cm,xshift=0.5cm]x1.south) {};
+    \node [anchor=north west] (y1c) at ([xshift=0.1cm,yshift=-0.1cm]y1.north west) {\footnotesize{{\color{blue} 聊天机器人：} 听到这个我很难过。除了感到累，}};
+    \node [anchor=north west] (y1c2) at ([xshift=1.2cm,yshift=0.1cm]y1c.south west) {\footnotesize{你有没有注意到其他症状？}};
+    
+    \node [snode,anchor=north west] (x2) at ([yshift=-2.2cm]x1.south west) {};
+    \node [anchor=west] (x2c) at ([xshift=0.1cm]x2.west) {\footnotesize{{\color{gray} 用户：} 是的，我还经常头痛。}};
+    
+    \node [snode,anchor=north west] (y2) at ([yshift=-1.8cm]y1.south west) {};
+    \node [anchor=west] (y2c) at ([xshift=0.1cm]y2.west) {\footnotesize{{\color{blue} 聊天机器人：} 这些症状持续多久了？}};
+    
+    \node [anchor=north] (dots) at ([yshift=-0.1cm,xshift=1cm]y2.south west) {$\vdots$};
+    
+    \node [anchor=south west,minimum width=3cm,minimum height=0.6cm,fill=gray!50] (x1box) at ([yshift=1.5cm]x1.north west) {\small{$\mathbf{x}^1$}};
+    \node [anchor=west,minimum width=3cm,minimum height=0.6cm,fill=blue!30] (y1box) at ([xshift=1pt]x1box.east) {\small{$\mathbf{y}^1$}};
+    \node [anchor=west,minimum width=3cm,minimum height=0.6cm,fill=gray!50] (x2box) at ([xshift=1pt]y1box.east) {\small{$\mathbf{x}^2$}};
+    \node [anchor=west,minimum width=3cm,minimum height=0.6cm,fill=blue!30] (y2box) at ([xshift=1pt]x2box.east) {\small{$\mathbf{y}^2$}};
+    \node [anchor=west] (xdots) at ([xshift=0.3cm]y2box.east) {$\cdots$};
+    
+    \begin{pgfonlayer}{background}
+    \draw [->] ([yshift=-1pt,xshift=0.2cm]x1box.south) .. controls +(south:1cm) and +(north:1cm) .. ([yshift=1pt,xshift=0.5cm]x1.north west);
+    \draw [->] ([yshift=-1pt,xshift=0.0cm]x2box.south) .. controls +(south:3cm) and +(north:4cm) .. ([yshift=1pt,xshift=1.5cm]x2.north west);
+    \draw [->] ([yshift=-1pt,xshift=0.0cm]y1box.south) .. controls +(south:2cm) and +(north:2.5cm) .. ([yshift=1pt,xshift=0.5cm]y1.north);
+    \draw [->] ([yshift=-1pt,xshift=-0.0cm]y2box.south) -- ([yshift=-5.65cm,xshift=-0.0cm]y2box.south);
+    \end{pgfonlayer}
+    
+    \node [anchor=south] (x1p) at (x1box.north) {\small{$\mathrm{Pr}_{\theta}(\mathbf{x}^1)$}};
+    \node [anchor=south] (y1p) at (y1box.north) {\small{$\mathrm{Pr}_{\theta}(\mathbf{y}^1|\mathbf{x}^1)$}};
+    \node [anchor=south] (x2p) at (x2box.north) {\small{$\mathrm{Pr}_{\theta}(\mathbf{x}^2|\mathbf{x}^1,\mathbf{y}^1)$}};
+    \node [anchor=south] (y2p) at (y2box.north) {\small{$\mathrm{Pr}_{\theta}(\mathbf{y}^2|\mathbf{x}^1,\mathbf{y}^1,\mathbf{x}^2)$}};
+    \node [anchor=south] (x1l) at ([yshift=0.2cm]x1p.north) {\small{$\mathrm{Loss} = 0$}};
+    \node [anchor=south] (y1l) at ([yshift=0.1cm]y1p.north) {\small{$\mathrm{Loss} \ne 0$}};
+    \node [anchor=south] (x2l) at ([yshift=0.2cm]x2p.north) {\small{$\mathrm{Loss} = 0$}};
+    \node [anchor=south] (y2l) at ([yshift=0.1cm]y2p.north) {\small{$\mathrm{Loss} \ne 0$}};
+    
+    \end{scope}
+    
+    \end{tikzpicture}
+    \end{center}
