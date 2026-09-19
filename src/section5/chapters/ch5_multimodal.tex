@@ -153,7 +153,7 @@
   \label{fig:conv-edge}
 \end{figure}
 
-把多层卷积叠加起来，可从低层的边缘、纹理逐层组合出更高层的语义，这类网络称为卷积神经网络（CNN）。CNN 的发展大体经历了从 AlexNet\cite{alexnet}确立深度卷积网络在图像识别上的有效性，到 VGG\cite{vgg}、ResNet\cite{resnet}通过残差连接把网络显著加深的过程。另一类做法不依赖卷积，而是把图像切成固定大小的图块（patch）：例如把 $224\times224$ 的图像切成 $14\times14$ 个 $16\times16$ 的图块，每个图块经线性映射成一个向量，即一个视觉 token，随后用自注意力建模这些 token 间的关系，这便是 Vision Transformer（其结构见图~\ref{fig:vit}）\cite{vit}。两类结构的训练目标类似，都是让所得视觉表示服务于具体任务（如分类），并使语义相近的图像表示彼此接近。经过编码后，图像被表示为一组视觉 token，其序列形式与文本 token 较为接近，这为二者进入同一模型创造了条件；不过二者在语义粒度上仍有差异，视觉 token 更接近局部区域特征，而文本 token 通常已对应较完整的语义单位。
+把多层卷积叠加起来，可从低层的边缘、纹理逐层组合出更高层的语义，这类网络称为卷积神经网络（convolutional neural network, CNN）。CNN 的发展大体经历了从 AlexNet\cite{alexnet}确立深度卷积网络在图像识别上的有效性，到 VGG\cite{vgg}、ResNet\cite{resnet}通过残差连接把网络显著加深的过程。另一类做法不依赖卷积，而是把图像切成固定大小的图块（patch）：例如把 $224\times224$ 的图像切成 $14\times14$ 个 $16\times16$ 的图块，每个图块经线性映射成一个向量，即一个视觉 token，随后用自注意力建模这些 token 间的关系，这便是 Vision Transformer（其结构见图~\ref{fig:vit}）\cite{vit}。两类结构的训练目标类似，都是让所得视觉表示服务于具体任务（如分类），并使语义相近的图像表示彼此接近。经过编码后，图像被表示为一组视觉 token，其序列形式与文本 token 较为接近，这为二者进入同一模型创造了条件；不过二者在语义粒度上仍有差异，视觉 token 更接近局部区域特征，而文本 token 通常已对应较完整的语义单位。
 
 \begin{figure}[htbp]
   \centering
@@ -389,17 +389,15 @@ M(t,m)=\log\left(\sum_k F_m(k)\,|X(t,k)|^2+\epsilon\right),
   \includegraphics[width=0.9\linewidth]
     {figures/image.png}
   \caption{语音--文本表示的对齐过程。左图为对齐前，右图为对齐后；
-  圆形表示语音，三角形表示对应的文字转写。}
+  圆形表示语音，三角形表示对应的文字转写（图片源于\cite{ye-etal-2022-cross}）。}
   \label{fig:speech-text-alignment}
 \end{figure}
 
-句级与词级对齐。
 句级对齐将整段语音与整句话分别压缩为一个向量，适合语音检索和
 语音翻译。词级对齐则进一步确定某段语音帧对应哪个文本 token。
 例如，WACO\cite{waco}通过拉近语音词片段与对应文本词的表示，
 提升低资源语音翻译效果。
 
-音频--文本对齐。
 更广义的音频还包括音乐、动物叫声、交通声和环境声等。
 这类音频通常与“狗在吠叫”“雨声伴随雷声”等文字描述配对。
 CLAP\cite{clap}将 CLIP 中的图像编码器替换为音频编码器，
@@ -444,7 +442,6 @@ CLAP\cite{clap}将 CLIP 中的图像编码器替换为音频编码器，
   \label{fig:audio-text-pairs}
 \end{figure}
 
-需要注意。
 文字转写主要描述语音中的“说了什么”，通常不会完整记录说话人、
 情绪、音色和韵律。因此，只使用转写进行对齐时，模型更容易学习
 语言内容；若要保留副语言信息，还需加入说话人、情绪或韵律相关的
@@ -726,7 +723,7 @@ $\mathbf{a}_1,\mathbf{a}_2,\ldots,\mathbf{a}_T$。这些 token 与文本或图�
 \subsection{视觉语言模型}
 \label{sub:vlm}
 
-把上述通用结构配以图像编码器，即得到视觉语言模型（VLM）：能够接收图像输入，并围绕图像进行描述、问答与推理。从机器学习角度看，视觉语言模型把图像表示作为条件，使大语言模型在该条件下进行文本生成，即建模条件分布 $p(\text{文本}\mid\text{图像})$。
+把上述通用结构配以图像编码器，即得到视觉语言模型（vision language model, VLM）：能够接收图像输入，并围绕图像进行描述、问答与推理。从机器学习角度看，视觉语言模型把图像表示作为条件，使大语言模型在该条件下进行文本生成，即建模条件分布 $p(\text{文本}\mid\text{图像})$。
 
 其工作方式如图~\ref{fig:vlm} 所示：图像经编码器与连接模块转化为若干视觉 token，置于文本提示词之前，与文本 token 共同构成大语言模型的输入；模型随后如同处理普通文本上下文那样，自回归地逐词生成回答。对模型而言，图像相当于上下文的一部分，区别在于这部分来自图像。
 
@@ -789,9 +786,9 @@ $\mathbf{a}_1,\mathbf{a}_2,\ldots,\mathbf{a}_T$。这些 token 与文本或图�
   \label{fig:vlm-connect}
 \end{figure}
 
-对照图~\ref{fig:vlm-connect}：第一行的 Flamingo\cite{flamingo} 在冻结的语言模型各层中插入门控交叉注意力，让文本在生成时按需“查看”视觉特征，适合处理图文交错的序列与少样本学习；第二行的 BLIP-2\cite{blip2} 在冻结的图像编码器与冻结的大语言模型之间接入一个轻量的 Q-Former：它带有一组可学习的查询向量（如 $32$ 个），通过交叉注意力从图像特征中提取出固定数量的视觉向量（数量只由查询个数决定，与图像分辨率、图块数量无关），经一个线性层投影后作为“软提示”送入语言模型；训练时只更新 Q-Former 与该投影层，并分两阶段进行——先把 Q-Former 接在图像编码器上学习图文对齐的视觉表示，再把其输出接入语言模型学习看图生成文本，因而参数高效；第三行的 LLaVA\cite{llava} 采用最简单的线性投影（或 MLP），把视觉特征直接映射到词向量空间，充当视觉 token。可以看出，连接模块从复杂的交叉注意力逐步走向更轻量的投影，而模型效果并未因此下降——这与下面要讲的训练方式密切相关。
+对照图~\ref{fig:vlm-connect}：第一行的 Flamingo\cite{flamingo} 在冻结的语言模型各层中插入门控交叉注意力，让文本在生成时按需“查看”视觉特征，适合处理图文交错的序列与少样本学习；第二行的 BLIP-2（Bootstrapping Language-Image Pre-training）\cite{blip2} 在冻结的图像编码器与冻结的大语言模型之间接入一个轻量的 Q-Former：它带有一组可学习的查询向量（如 $32$ 个），通过交叉注意力从图像特征中提取出固定数量的视觉向量（数量只由查询个数决定，与图像分辨率、图块数量无关），经一个线性层投影后作为“软提示”送入语言模型；训练时只更新 Q-Former 与该投影层，并分两阶段进行——先把 Q-Former 接在图像编码器上学习图文对齐的视觉表示，再把其输出接入语言模型学习看图生成文本，因而参数高效；第三行的 LLaVA（Large Language and Vision Assistant）\cite{llava} 采用最简单的线性投影（或 MLP），把视觉特征直接映射到词向量空间，充当视觉 token。可以看出，连接模块从复杂的交叉注意力逐步走向更轻量的投影，而模型效果并未因此下降——这与下面要讲的训练方式密切相关。
 
-图~\ref{fig:vlm-connect} 只标出了连接模块的名称，下面进一步说明每一种“黄色方块”内部到底是什么。线性投影（图~\ref{fig:conn-proj}）最简单：把视觉编码器输出的每个特征向量，用一个矩阵 $W$（或两层 MLP）映射到与词向量相同的维度，所得向量直接当作视觉 token 插入文本序列。Q-Former（图~\ref{fig:conn-qformer}）引入一组可学习的查询向量，通过交叉注意力从大量图像特征中“问”出所需信息，输出固定数量的少量 token，从而把成百上千个图像特征压缩到几十个，显著缩短序列。门控交叉注意力（图~\ref{fig:conn-xattn}）不改动文本序列，而是在语言模型的层中插入一个交叉注意力子层，让文本隐状态去读取视觉特征；其输出先乘一个门控 $\tanh(\alpha)$ 再残差加回，$\alpha$ 初始为 $0$，使训练之初几乎不影响原语言模型，因而更稳定。可以看出，从线性投影到 Q-Former 再到门控交叉注意力，连接模块在结构复杂度和对原模型的改动程度上依次增加。
+图~\ref{fig:vlm-connect} 只标出了连接模块的名称，下面进一步说明每一种“黄色方块”内部到底是什么。线性投影（图~\ref{fig:conn-proj}）最简单：把视觉编码器输出的每个特征向量，用一个矩阵 $W$（或两层 MLP，即 multilayer perceptron）映射到与词向量相同的维度，所得向量直接当作视觉 token 插入文本序列。Q-Former（图~\ref{fig:conn-qformer}）引入一组可学习的查询向量，通过交叉注意力从大量图像特征中“问”出所需信息，输出固定数量的少量 token，从而把成百上千个图像特征压缩到几十个，显著缩短序列。门控交叉注意力（图~\ref{fig:conn-xattn}）不改动文本序列，而是在语言模型的层中插入一个交叉注意力子层，让文本隐状态去读取视觉特征；其输出先乘一个门控 $\tanh(\alpha)$ 再残差加回，$\alpha$ 初始为 $0$，使训练之初几乎不影响原语言模型，因而更稳定。可以看出，从线性投影到 Q-Former 再到门控交叉注意力，连接模块在结构复杂度和对原模型的改动程度上依次增加。
 
 \begin{figure}[htbp]
   \centering
@@ -1294,7 +1291,7 @@ Qwen-Audio\cite{qwenaudio}和 SALMONN\cite{salmonn}等工作均通过混合多�
 \begin{equation}
   \mathbf{x}_t=\sqrt{\bar\alpha_t}\,\mathbf{x}_0+\sqrt{1-\bar\alpha_t}\,\boldsymbol{\epsilon},\qquad \boldsymbol{\epsilon}\sim\mathcal{N}(\mathbf{0},\mathbf{I}),
 \end{equation}
-其中系数 $\bar\alpha_t$ 随 $t$ 增大而减小，表示越靠后原图成分越少、噪声成分越多。训练一个网络 $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t,t,\mathbf{c})$，令其根据带噪图 $\mathbf{x}_t$、步数 $t$ 与条件 $\mathbf{c}$ 估计所加噪声 $\boldsymbol{\epsilon}$，目标是估计得尽量准确：
+其中 $\alpha_t=1-\beta_t$，$\bar\alpha_t=\prod_{s=1}^{t}\alpha_s$，$\beta_t\in(0,1)$ 为第 $t$ 步加入的噪声方差；$\bar\alpha_t$ 随 $t$ 增大而减小，表示越靠后原图成分越少、噪声成分越多。训练一个网络 $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t,t,\mathbf{c})$，令其根据带噪图 $\mathbf{x}_t$、步数 $t$ 与条件 $\mathbf{c}$ 估计所加噪声 $\boldsymbol{\epsilon}$，目标是估计得尽量准确：
 \begin{equation}
   \mathcal{L}_{\text{diff}}=\mathbb{E}_{\mathbf{x}_0,\boldsymbol{\epsilon},t}\big\lVert\,\boldsymbol{\epsilon}-\boldsymbol{\epsilon}_\theta(\mathbf{x}_t,t,\mathbf{c})\,\big\rVert_2^2 .
 \end{equation}
@@ -1430,8 +1427,7 @@ Qwen-Audio\cite{qwenaudio}和 SALMONN\cite{salmonn}等工作均通过混合多�
 同一句文本可以对应多种正确读法，因此语音生成是一种
 “一对多”任务。说话人条件决定声音像谁，音高、时长和能量
 共同影响语速、重音、停顿和语气；情感标签则可控制高兴、悲伤或平静等
-表达方式。模型需要同时满足三项基本要求：内容可懂、声音
-自然，并符合指定的说话人和表达风格。
+表达方式。模型需要同时满足三项基本要求：内容可懂、声音自然，并符合指定的说话人和表达风格。
 
 零样本合成与声音克隆。
 多说话人模型可以从一段参考语音中提取说话人的音色和风格，再使用该声音
@@ -1581,8 +1577,7 @@ Make-An-Audio\cite{makeanaudio}则将扩散模型应用于压缩后的音频表�
 例如：依据图像生成语音讲解；依据语音指令修改图像；依据图像与文本共同生成配套音效；或在多轮对话中不断修订生成结果。其主要难点在于不同模态的结构不一致——图像较重空间、语音/音频较重时间、文本较重逻辑——模型需在生成过程中尽量同时保持语义对应、空间一致、时间同步与用户意图一致。这与本讲前两节相呼应：往往需先具备跨模态对齐与多模态理解能力，才能实现较为可控的多模态生成。近年也出现了一些尝试在统一框架内支持“任意模态到任意模态”生成的工作，如 CoDi\cite{codi}。
 
 
-语音和音频既可以作为模型需要生成的目标，也可以作为理解用户意图的
-条件，如图~\ref{fig:audio-interactive-generation} 所示。
+语音和音频既可以作为模型需要生成的目标，也可以作为理解用户意图的条件，如图~\ref{fig:audio-interactive-generation} 所示。
 
 \begin{figure}[htbp]
   \centering
